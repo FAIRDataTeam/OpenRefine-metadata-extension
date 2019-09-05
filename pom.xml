@@ -5,19 +5,26 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>OpenRefine - FAIR Metadata extension</name>
-    <description>Example extension provided for demonstration purposes</description>
+    <description>Extension for managing metadata in FAIR way</description>
     <url>https://github.com/FAIRDataTeam/OpenRefine-metadata-extension</url>
 
     <groupId>org.fair.openrefine</groupId>
     <artifactId>metadata</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>maven-repository</id>
+            <url>file:///${project.basedir}/project-repository</url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>metadata</finalName>
         <resources>
             <resource>
-                <directory>src</directory>
+                <directory>src/main/java</directory>
             </resource>
         </resources>
         <outputDirectory>module/MOD-INF/classes</outputDirectory>
@@ -34,7 +41,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src</source>
+                                <source>src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -88,6 +95,16 @@
                     </filesets>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <descriptors>
+                        <descriptor>src/assembly/module.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -95,7 +112,7 @@
         <dependency>
             <groupId>org.openrefine</groupId>
             <artifactId>main</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -103,6 +120,14 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
