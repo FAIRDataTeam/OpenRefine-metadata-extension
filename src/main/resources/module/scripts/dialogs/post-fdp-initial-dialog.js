@@ -25,8 +25,27 @@ PostFDPInitialDialog.launch = function() {
 
     elmts.connectButton.click(function() {
         var fdpURI = elmts.baseURI.val();
-        alert("Connect to FDP @ " + fdpURI);
-        // TODO: Call command to contact FDP and show result or error
-        dismiss();
+        elmts.warningsArea.text('');
+        elmts.result.text('');
+
+        Refine.postProcess(
+            "metadata",
+            "connect-fdp",
+            {},
+            { uri: fdpURI },
+            {},
+            {
+                onDone: function(o) {
+                    if (o.status === "ok") {
+                        elmts.result.text(o.message);
+                    } else {
+                        elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
+                    }
+                },
+                onError: function(e) {
+                    elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
+                }
+            }
+        );
     });
 };
