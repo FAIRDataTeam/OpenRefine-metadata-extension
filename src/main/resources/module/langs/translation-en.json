@@ -1,0 +1,9 @@
+{
+    "menu-bar-extension/menu-label": "FAIR Metadata",
+    "menu-bar-extension/post-fdp": "POST to FAIR Data Point",
+    "post-fdp-initial-dialog/title": "FAIR Data Point Connection",
+    "post-fdp-initial-dialog/button-connect": "Connect",
+    "post-fdp-initial-dialog/button-cancel": "Cancel",
+    "post-fdp-initial-dialog/label-uri": "FAIR Data Point base URI",
+    "post-fdp-initial-dialog/description": "Fill in the base URI of your desired FAIR Data Point."
+}

@@ -1,0 +1,20 @@
+<div class="dialog-frame" style="width: 800px;">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+        <div class="fdp-post-warnings-area" bind="warningsArea">
+        </div>
+        <div class="fdp-post-area">
+            <form id="fdp-post-form" onsubmit="return false;" bind="fdpPostForm" autocomplete="on">
+                <p bind="descriptionText"></p>
+                <p>
+                    <label bind="baseURILabel" for="baseURI"></label>
+                    <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
+                </p>
+                <div class="fdp-port-buttons">
+                    <button class="button button-primary" bind="connectButton"></button>
+                    <button class="button cancel-button" bind="cancelButton"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
