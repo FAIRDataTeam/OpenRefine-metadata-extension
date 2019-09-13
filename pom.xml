@@ -119,11 +119,32 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <finalName>${project.artifactId}-${project.version}</finalName>
                     <descriptors>
                         <descriptor>src/assembly/module.xml</descriptor>
                     </descriptors>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-zip-versioned</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-zip-unversioned</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
