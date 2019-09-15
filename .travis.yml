@@ -24,3 +24,4 @@ deploy:
     file_glob: true
     file:
       - target/metadata-[0-9]*.zip  # only ZIP-dist with version
+      - target/metadata-[0-9]*.tgz  # only TGZ-dist with version

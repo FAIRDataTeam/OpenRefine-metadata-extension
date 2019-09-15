@@ -1,0 +1,15 @@
+/module
+/target
+
+.git
+.gitignore
+
+.dockerignore
+Dockerfile
+
+.idea
+*.iml
+
+LICENSE
+README.md
+.travis.yml

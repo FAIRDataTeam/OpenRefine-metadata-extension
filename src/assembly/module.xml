@@ -5,6 +5,7 @@
     <includeBaseDirectory>true</includeBaseDirectory>
     <baseDirectory>metadata</baseDirectory>
     <formats>
+        <format>tgz</format>
         <format>zip</format>
     </formats>
     <fileSets>
