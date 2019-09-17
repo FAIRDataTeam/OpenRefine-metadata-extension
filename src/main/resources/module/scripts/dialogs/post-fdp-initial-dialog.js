@@ -1,3 +1,4 @@
+/*global DOM, DialogSystem, Refine*/
 var PostFDPInitialDialog = {};
 
 PostFDPInitialDialog.launch = function() {
@@ -25,8 +26,8 @@ PostFDPInitialDialog.launch = function() {
 
     elmts.connectButton.click(function() {
         var fdpURI = elmts.baseURI.val();
-        elmts.warningsArea.text('');
-        elmts.result.text('');
+        elmts.warningsArea.text("");
+        elmts.result.text("");
 
         Refine.postProcess(
             "metadata",
@@ -35,14 +36,14 @@ PostFDPInitialDialog.launch = function() {
             { uri: fdpURI },
             {},
             {
-                onDone: function(o) {
+                onDone(o) {
                     if (o.status === "ok") {
                         elmts.result.text(o.message);
                     } else {
                         elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
                     }
                 },
-                onError: function(e) {
+                onError(e) {
                     elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
                 }
             }

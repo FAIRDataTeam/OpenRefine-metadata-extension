@@ -24,7 +24,6 @@ package org.fair.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;

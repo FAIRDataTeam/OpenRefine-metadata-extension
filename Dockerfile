@@ -4,7 +4,7 @@ FROM maven:3.6-jdk-11-slim as builder
 WORKDIR /usr/src/app/
 
 # Add necessary project parts (exclude in .dockerignore)
-ADD . .
+COPY . .
 
 # Compile and create package
 RUN mvn clean package
@@ -20,7 +20,10 @@ FROM openjdk:11-jre-slim
 LABEL maintainer="marek.suchanek@fit.cvut.cz"
 
 # Dependencies for running OpenRefine
-RUN apt-get -qq update && apt-get -qq -y install wget
+RUN apt-get -qq update \
+    && apt-get install -qq -y --no-install-recommends wget=1.20.* \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy prepared OpenRefine with extension
 COPY --from=builder /usr/src/app/openrefine-3.2 /app
