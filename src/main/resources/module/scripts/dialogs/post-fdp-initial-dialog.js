@@ -1,4 +1,4 @@
-/*global DOM, DialogSystem, Refine*/
+/* global $, DOM, DialogSystem, Refine */
 var PostFDPInitialDialog = {};
 
 PostFDPInitialDialog.launch = function() {
@@ -43,7 +43,7 @@ PostFDPInitialDialog.launch = function() {
                         elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
                     }
                 },
-                onError(e) {
+                onError() {
                     elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
                 }
             }

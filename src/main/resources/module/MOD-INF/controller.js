@@ -1,7 +1,8 @@
 /*
  * Main JS file for FAIR Metadata extension of OpenRefine
  */
-/*global org, Packages, ConnectFDPCommand, ClientSideResourceManager*/
+/* global importPackage, module, org, Packages, ConnectFDPCommand, ClientSideResourceManager */
+/* eslint-disable no-unused-vars */
 importPackage(org.fair.openrefine.metadata.commands);
 
 function init() {

@@ -1,7 +1,8 @@
-/*global lang, ExtensionBar, PostFDPInitialDialog*/
+/* global $, lang, ExtensionBar, PostFDPInitialDialog */
 
 // Load the localization file
 var dictionary = {};
+var language = lang;
 $.ajax({
     url : "command/core/load-language?",
     type : "POST",
@@ -11,10 +12,10 @@ $.ajax({
     },
     success(data) {
         dictionary = data["dictionary"];
-        lang = data["lang"];
+        language = data["lang"];
     }
 });
-$.i18n().load(dictionary, lang);
+$.i18n().load(dictionary, language);
 
 // Extend the extensions menu bar
 $(function(){
