@@ -1,0 +1,27 @@
+language: java
+jdk: openjdk12
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2
+
+env:
+  - DOCKER_IMAGE="openrefine-metadata-extension:travis"
+
+script:
+  # Create package and distribution ZIP file(s) = local build
+  - mvn clean package
+  # Create Docker image = in-Docker build
+  - docker build -t $DOCKER_IMAGE .
+
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    on:
+      tags: true
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file:
+      - target/metadata-[0-9]*.zip  # only ZIP-dist with version
+      - target/metadata-[0-9]*.tgz  # only TGZ-dist with version
