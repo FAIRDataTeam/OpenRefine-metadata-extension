@@ -46,37 +46,73 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Marek Suchánek</name>
+            <email>marek.suchanek@fit.cvut.cz</email>
+            <url>https://suchanek.cloud</url>
+            <organization>FIT CTU in Prague</organization>
+        </developer>
+    </developers>
+
     <properties>
+        <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Maven -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- Core -->
+        <openrefine.version>3.2</openrefine.version>
+        <servlet.version>2.5</servlet.version>
+        <slf4j.version>1.7.18</slf4j.version>
+
+        <!-- Test -->
+        <test.junit-jupiter.api.version>5.5.2</test.junit-jupiter.api.version>
+        <test.junit-jupiter.engine.version>5.5.2</test.junit-jupiter.engine.version>
+
+        <!-- Plugins -->
+        <maven.build-helper.version>3.0.0</maven.build-helper.version>
+        <maven.dependency.version>3.1.1</maven.dependency.version>
+        <maven.clean.version>3.1.0</maven.clean.version>
+        <maven.assembly.version>3.1.1</maven.assembly.version>
+        <maven.spotbug.version>3.1.12</maven.spotbug.version>
+        <maven.tidy.version>1.1.0</maven.tidy.version>
+        <maven.license.version>3.0</maven.license.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.openrefine</groupId>
             <artifactId>main</artifactId>
-            <version>3.2</version>
+            <version>${openrefine.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <version>${servlet.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.18</version>
+            <version>${slf4j.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- TEST -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${test.junit-jupiter.api.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${test.junit-jupiter.engine.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -90,12 +126,12 @@
 
     <build>
         <outputDirectory>module/MOD-INF/classes</outputDirectory>
-        <finalName>metadata</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
+                <version>${maven.build-helper.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -113,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven.dependency.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -130,7 +166,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${maven.clean.version}</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -141,7 +177,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven.assembly.version}</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/module.xml</descriptor>
@@ -173,7 +209,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.12</version>
+                <version>${maven.spotbug.version}</version>
                 <executions>
                     <execution>
                         <id>test-spotbugs-check</id>
@@ -187,7 +223,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tidy-maven-plugin</artifactId>
-                <version>1.1.0</version>
+                <version>${maven.tidy.version}</version>
                 <executions>
                     <execution>
                         <id>validate-tidy-check</id>
@@ -201,7 +237,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>${maven.license.version}</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
                     <properties>
