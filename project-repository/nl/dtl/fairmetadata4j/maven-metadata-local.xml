@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>nl.dtl</groupId>
+  <artifactId>fairmetadata4j</artifactId>
+  <versioning>
+    <release>0.1-beta</release>
+    <versions>
+      <version>0.1-beta</version>
+    </versions>
+    <lastUpdated>20190924144527</lastUpdated>
+  </versioning>
+</metadata>
