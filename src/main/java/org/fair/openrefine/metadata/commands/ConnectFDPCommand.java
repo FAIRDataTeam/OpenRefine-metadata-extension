@@ -22,27 +22,51 @@
  */
 package org.fair.openrefine.metadata.commands;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
+import com.google.refine.util.ParsingUtilities;
+
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import org.fair.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Writer;
 
 public class ConnectFDPCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String uri = request.getParameter("uri");
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
         logger.info("Contacting FAIR Data Point on URI: " + uri);
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(uri);
-            respond(response, "ok", fdpClient.getFairDataPointMetadata().getTitle().toString());
-            // TODO: return as JSON object and log
+            FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata();
+
+            logger.info("FAIR Data Point metadata retrieved: " + uri);
+            writer.writeStartObject();
+            writer.writeStringField("status", "ok");
+            writer.writeStringField("message", "connect-fdp-command/success");
+            writer.writeObjectField("fdpMetadata", fairDataPointMetadata);
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + uri + " (" + e.getMessage() + ")");
-            respond(response, "error", "Failed to contact FAIR Data Point: " + uri);
+            writer.writeStartObject();
+            writer.writeStringField("status", "error");
+            writer.writeStringField("message", "connect-fdp-command/error");
+            writer.writeStringField("exception", e.getMessage());
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
+        } finally {
+            w.flush();
+            w.close();
         }
     }
 }

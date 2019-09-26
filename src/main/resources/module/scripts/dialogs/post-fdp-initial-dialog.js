@@ -38,13 +38,13 @@ PostFDPInitialDialog.launch = function() {
             {
                 onDone(o) {
                     if (o.status === "ok") {
-                        elmts.result.text(o.message);
+                        elmts.result.text($.i18n(o.message));
                     } else {
-                        elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
+                        elmts.warningsArea.text($.i18n(o.message));
                     }
                 },
                 onError() {
-                    elmts.warningsArea.text($.i18n("post-fdp-initial-dialog/error"));
+                    elmts.warningsArea.text($.i18n("connect-fdp-command/error"));
                 }
             }
         );

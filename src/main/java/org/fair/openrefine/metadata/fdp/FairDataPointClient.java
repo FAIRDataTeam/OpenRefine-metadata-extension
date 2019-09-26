@@ -44,7 +44,7 @@ public class FairDataPointClient {
         this.baseURI = baseURI;
     }
 
-    public FDPMetadata getFairDataPointMetadata() throws IOException {
+    public FDPMetadata getFairDataPointMetadata() throws IOException, FairDataPointException {
         URL url = new URL(baseURI);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -59,9 +59,8 @@ public class FairDataPointClient {
 
             FDPMetadataParser metadataParser = new FDPMetadataParser();
             return metadataParser.parse(new ArrayList<>(collector.getStatements()), SimpleValueFactory.getInstance().createIRI(baseURI));
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
-        // TODO: handle communication errors
-        // TODO: handle not-FDP case (not returning turtle, not returning valid FDPMetadata)
-        return null;
     }
 }
