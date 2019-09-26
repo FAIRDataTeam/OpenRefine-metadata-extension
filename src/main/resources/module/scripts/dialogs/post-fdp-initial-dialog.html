@@ -2,20 +2,22 @@
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
         <div class="fdp-post-area">
+            <p bind="descriptionText"></p>
             <form id="fdp-post-form" onsubmit="return false;" bind="fdpPostForm" autocomplete="on">
-                <p bind="descriptionText"></p>
-                <p>
-                    <label bind="baseURILabel" for="baseURI"></label>
-                    <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
-                </p>
+                <label bind="baseURILabel" for="baseURI"></label>
+                <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
                 <div class="fdp-port-buttons">
                     <button class="button button-primary" bind="connectButton"></button>
                     <button class="button cancel-button" bind="cancelButton"></button>
                 </div>
             </form>
         </div>
-        <hr>
-        <div class="fdp-post-warnings-area" bind="warningsArea"></div>
-        <div class="result" bind="result"></div>
+        <div id="fdp-connection-error" class="hidden">
+            <div class="fdp-connect-warnings-area" bind="warningsArea"></div>
+        </div>
+        <div id="fdp-connected" class="hidden">
+            <div id="fdp-metadata" bind="fdpMetadata">
+            </div>
+        </div>
     </div>
 </div>

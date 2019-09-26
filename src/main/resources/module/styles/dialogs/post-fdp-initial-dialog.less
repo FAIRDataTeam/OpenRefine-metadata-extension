@@ -1,12 +1,43 @@
 @import-less url("../theme.less");
 
-pre.result {
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow: auto scroll;
-  max-height: 30ex;
-  margin: 1ex;
-}
-div.fdp-post-warnings-area {
+div.fdp-connect-warnings-area {
   color: red;
+  text-align: center;
+}
+div#fdp-connection-error,
+div#fdp-connected{
+  margin: 0.5em;
+  padding: 0.7em;
+  border-top: 1px solid #AAA;
+}
+
+form#fdp-post-form {
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+form#fdp-post-form > label {
+  font-weight: bold;
+}
+
+form#fdp-post-form > #baseURI {
+  flex-grow: 1;
+}
+
+form#fdp-post-form > * {
+  margin: 0.3em;
+}
+
+.hidden {
+  display: none;
+}
+
+#fdp-metadata p {
+  padding: 0.2em;
+}
+#fdp-metadata td,
+#fdp-metadata th {
+  padding: 0.2em;
 }

@@ -6,6 +6,7 @@
     "post-fdp-initial-dialog/button-cancel": "Cancel",
     "post-fdp-initial-dialog/label-uri": "FAIR Data Point base URI",
     "post-fdp-initial-dialog/description": "Fill in the base URI of your desired FAIR Data Point.",
+    "post-fdp-initial-dialog/connected-to-fdp": "You are now using FAIR Data Point:",
     "connect-fdp-command/error": "Cannot connect to entered FAIR Data Point.",
     "connect-fdp-command/success": "Successfully connected to FAIR Data Point."
 }
