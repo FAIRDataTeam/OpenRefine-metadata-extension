@@ -22,45 +22,51 @@
  */
 package org.fair.openrefine.metadata.commands;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
+import com.google.refine.util.ParsingUtilities;
+
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import org.fair.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.Writer;
 
 public class ConnectFDPCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String uri = request.getParameter("uri");
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
         logger.info("Contacting FAIR Data Point on URI: " + uri);
         try {
-            URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "text/turtle");
+            FairDataPointClient fdpClient = new FairDataPointClient(uri);
+            FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata();
 
-            if (conn.getResponseCode() != 200) {
-                respond(response, "error", "HTTP error code: " + conn.getResponseCode());
-            } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                StringBuilder x = new StringBuilder();
-                String currentLine;
-
-                while ((currentLine = in.readLine()) != null)
-                    x.append(currentLine).append('\n');
-
-                in.close();
-                respond(response, "ok", x.toString());
-            }
-        } catch (IOException e) {
-            respond(response, "error", "Failed to contact FAIR Data Point: " + uri);
+            logger.info("FAIR Data Point metadata retrieved: " + uri);
+            writer.writeStartObject();
+            writer.writeStringField("status", "ok");
+            writer.writeStringField("message", "connect-fdp-command/success");
+            writer.writeObjectField("fdpMetadata", fairDataPointMetadata);
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            logger.error("Error while contacting FAIR Data Point: " + uri + " (" + e.getMessage() + ")");
+            writer.writeStartObject();
+            writer.writeStringField("status", "error");
+            writer.writeStringField("message", "connect-fdp-command/error");
+            writer.writeStringField("exception", e.getMessage());
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
+        } finally {
+            w.flush();
+            w.close();
         }
     }
 }
