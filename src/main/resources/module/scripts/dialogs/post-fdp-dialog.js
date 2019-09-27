@@ -1,8 +1,8 @@
 /* global $, DOM, DialogSystem, Refine */
-var PostFDPInitialDialog = {};
+var PostFdpDialog = {};
 
-PostFDPInitialDialog.launch = function() {
-    this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-initial-dialog.html"));
+PostFdpDialog.launch = function() {
+    this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
     this._elmts = DOM.bind(this.frame);
 
     this._level = DialogSystem.showDialog(this.frame);
@@ -10,11 +10,11 @@ PostFDPInitialDialog.launch = function() {
     var self = this;
     var elmts = this._elmts;
 
-    elmts.dialogTitle.text($.i18n("post-fdp-initial-dialog/title"));
-    elmts.closeButton.text($.i18n("post-fdp-initial-dialog/button-close"));
-    elmts.baseURI.attr("title", $.i18n("post-fdp-initial-dialog/description"));
-    elmts.connectButton.text($.i18n("post-fdp-initial-dialog/button-connect"));
-    elmts.baseURILabel.text($.i18n("post-fdp-initial-dialog/label-uri"));
+    elmts.dialogTitle.text($.i18n("post-fdp-dialog/title"));
+    elmts.closeButton.text($.i18n("post-fdp-dialog/button-close"));
+    elmts.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
+    elmts.connectButton.text($.i18n("post-fdp-dialog/button-connect"));
+    elmts.baseURILabel.text($.i18n("post-fdp-dialog/label-uri"));
 
     elmts.baseURI.focus();
     elmts.baseURI[0].setSelectionRange(0, elmts.baseURI.val().length);
@@ -46,7 +46,7 @@ PostFDPInitialDialog.launch = function() {
             .append("<tr><th>Description</th><td>" + description + "</td></tr>");
 
         elmts.fdpMetadata
-            .append("<p>" + $.i18n("post-fdp-initial-dialog/connected-to-fdp") + "<p>")
+            .append("<p>" + $.i18n("post-fdp-dialog/connected-to-fdp") + "<p>")
             .append(table);
     };
 

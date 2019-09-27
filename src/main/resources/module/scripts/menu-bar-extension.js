@@ -1,4 +1,4 @@
-/* global $, lang, ExtensionBar, PostFDPInitialDialog */
+/* global $, lang, ExtensionBar, PostFdpDialog */
 
 // Load the localization file
 var dictionary = {};
@@ -27,7 +27,7 @@ $(function(){
                     {
                         id: "metadata/post-fdp",
                         label: $.i18n("menu-bar-extension/post-fdp"),
-                        click: PostFDPInitialDialog.launch
+                        click: PostFdpDialog.launch
                     }
                 ]
         }
