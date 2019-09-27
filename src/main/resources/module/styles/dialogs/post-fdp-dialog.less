@@ -1,0 +1,63 @@
+@import-less url("../theme.less");
+
+div.metadata-dialog {
+  width: 800px;
+  max-width: 100%;
+  max-height: 100%;
+  height: 400px;
+  display: flex;
+  flex-flow: column;
+}
+div.metadata-dialog > div.dialog-header {
+  display: flex;
+  align-items: center;
+}
+div.metadata-dialog > div.dialog-header > div.dialog-title {
+  flex-grow: 1;
+}
+div.metadata-dialog > div.dialog-body {
+  overflow: auto;
+  flex-grow : 1;
+}
+
+div.fdp-connect-warnings-area {
+  color: red;
+  text-align: center;
+}
+div#fdp-connection-error,
+div#fdp-connected{
+  margin: 0.5em;
+  padding: 0.7em;
+  border-top: 1px solid #AAA;
+}
+
+form#fdp-post-form {
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+form#fdp-post-form > label {
+  font-weight: bold;
+}
+
+form#fdp-post-form > #baseURI {
+  flex-grow: 1;
+}
+
+form#fdp-post-form > * {
+  margin: 0.3em;
+}
+
+.hidden {
+  display: none;
+}
+
+#fdp-metadata p {
+  padding: 0.2em;
+}
+#fdp-metadata td,
+#fdp-metadata th {
+  padding: 0.2em;
+}
