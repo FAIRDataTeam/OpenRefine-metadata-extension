@@ -1,5 +1,25 @@
 @import-less url("../theme.less");
 
+div.metadata-dialog {
+  width: 800px;
+  max-width: 100%;
+  max-height: 100%;
+  height: 400px;
+  display: flex;
+  flex-flow: column;
+}
+div.metadata-dialog > div.dialog-header {
+  display: flex;
+  align-items: center;
+}
+div.metadata-dialog > div.dialog-header > div.dialog-title {
+  flex-grow: 1;
+}
+div.metadata-dialog > div.dialog-body {
+  overflow: auto;
+  flex-grow : 1;
+}
+
 div.fdp-connect-warnings-area {
   color: red;
   text-align: center;

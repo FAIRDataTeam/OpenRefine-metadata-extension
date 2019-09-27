@@ -1,5 +1,8 @@
-<div class="dialog-frame" style="width: 800px;">
-    <div class="dialog-header" bind="dialogHeader"></div>
+<div class="dialog-frame metadata-dialog" style="width: 800px;">
+    <div class="dialog-header">
+        <div class="dialog-title"  bind="dialogTitle"></div>
+        <button class="button close-button" bind="closeButton"></button>
+    </div>
     <div class="dialog-body" bind="dialogBody">
         <div class="fdp-post-area">
             <p bind="descriptionText"></p>
@@ -8,14 +11,13 @@
                 <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
                 <div class="fdp-port-buttons">
                     <button class="button button-primary" bind="connectButton"></button>
-                    <button class="button cancel-button" bind="cancelButton"></button>
                 </div>
             </form>
         </div>
-        <div id="fdp-connection-error" class="hidden">
+        <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden">
             <div class="fdp-connect-warnings-area" bind="warningsArea"></div>
         </div>
-        <div id="fdp-connected" class="hidden">
+        <div id="fdp-connected" bind="fdpConnected" class="hidden">
             <div id="fdp-metadata" bind="fdpMetadata">
             </div>
         </div>
