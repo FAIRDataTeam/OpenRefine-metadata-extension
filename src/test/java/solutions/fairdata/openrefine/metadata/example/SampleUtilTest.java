@@ -20,12 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fair.openrefine.metadata.example;
+package solutions.fairdata.openrefine.metadata.example;
 
-public class SampleUtil {
-    // Just an example file
+import org.junit.jupiter.api.Test;
 
-    static public int sampleMethod() {
-        return 42;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+public class SampleUtilTest {
+    // Just an example test file
+
+    @Test
+    public void testSampleMethod() {
+        assertEquals(42, SampleUtil.sampleMethod());
     }
 }

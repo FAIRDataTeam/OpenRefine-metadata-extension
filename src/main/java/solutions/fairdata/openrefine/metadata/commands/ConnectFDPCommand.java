@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fair.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata.commands;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import org.fair.openrefine.metadata.fdp.FairDataPointClient;
+import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

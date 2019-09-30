@@ -1,9 +1,9 @@
 /*
  * Main JS file for FAIR Metadata extension of OpenRefine
  */
-/* global importPackage, module, org, Packages, ConnectFDPCommand, ClientSideResourceManager */
+/* global importPackage, module, solutions, Packages, ConnectFDPCommand, ClientSideResourceManager */
 /* eslint-disable no-unused-vars */
-importPackage(org.fair.openrefine.metadata.commands);
+importPackage(solutions.fairdata.openrefine.metadata.commands);
 
 function init() {
     var RefineServlet = Packages.com.google.refine.RefineServlet;
