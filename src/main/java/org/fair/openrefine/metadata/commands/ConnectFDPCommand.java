@@ -44,7 +44,7 @@ public class ConnectFDPCommand extends Command {
 
         logger.info("Contacting FAIR Data Point on URI: " + uri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(uri);
+            FairDataPointClient fdpClient = new FairDataPointClient(uri, logger);
             FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata();
 
             logger.info("FAIR Data Point metadata retrieved: " + uri);
