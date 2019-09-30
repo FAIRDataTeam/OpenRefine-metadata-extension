@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fair.openrefine.metadata.fdp;
+package solutions.fairdata.openrefine.metadata.fdp;
 
 public class FairDataPointException extends Exception {
 
