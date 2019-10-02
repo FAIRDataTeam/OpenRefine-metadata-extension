@@ -60,26 +60,24 @@ PostFdpDialog.launch = function() {
         elmts.fdpConnected.addClass("hidden");
         elmts.fdpConnectionError.addClass("hidden");
 
-        Refine.postProcess(
-            "metadata",
+        MetadataHelpers.ajax(
             "connect-fdp",
-            {},
+            "GET",
             { uri: fdpURI },
-            {},
-            {
-                onDone(o) {
-                    if (o.status === "ok") {
-                        elmts.fdpConnected.removeClass("hidden");
-                        showFDPMetadata(o.fdpMetadata);
-                    } else {
-                        elmts.fdpConnectionError.removeClass("hidden");
-                        elmts.warningsArea.text($.i18n(o.message));
-                    }
-                },
-                onError() {
-                    elmts.warningsArea.text($.i18n("connect-fdp-command/error"));
+            (o) => {
+                if (o.status === "ok") {
+                    elmts.fdpConnected.removeClass("hidden");
+                    showFDPMetadata(o.fdpMetadata);
+                } else {
+                    elmts.fdpConnectionError.removeClass("hidden");
+                    elmts.warningsArea.text($.i18n(o.message));
                 }
+            },
+            (o) => {
+                elmts.warningsArea.text($.i18n("connect-fdp-command/error"));
             }
         );
+
     });
+
 };

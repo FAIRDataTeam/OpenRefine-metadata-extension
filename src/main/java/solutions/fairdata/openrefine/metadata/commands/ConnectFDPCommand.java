@@ -37,7 +37,7 @@ import java.io.Writer;
 public class ConnectFDPCommand extends Command {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String uri = request.getParameter("uri");
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
