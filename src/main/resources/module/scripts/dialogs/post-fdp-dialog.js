@@ -1,7 +1,8 @@
-/* global $, DOM, DialogSystem, Refine */
+/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
 var PostFdpDialog = {};
 
 PostFdpDialog.launch = function() {
+    // TODO: refactor this long spaghetti
     this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
     this._elmts = DOM.bind(this.frame);
 
@@ -23,51 +24,41 @@ PostFdpDialog.launch = function() {
         DialogSystem.dismissUntil(self._level - 1);
     };
 
-    const fdpMakeURL = (uriObject) => {
-        return uriObject.namespace + uriObject.localName;
-    };
-
-    const showFDPMetadata = (fdpMetadata) => {
-        let title = $("<a>")
-            .attr("href", fdpMakeURL(fdpMetadata.uri))
-            .attr("target", "_blank")
-            .text(fdpMetadata.title.label)
-            .get(0).outerHTML;
-        let publisher = $("<a>")
-            .attr("href", fdpMakeURL(fdpMetadata.publisher.uri))
-            .attr("target", "_blank")
-            .text(fdpMetadata.publisher.name.label)
-            .get(0).outerHTML;
-        let description = fdpMetadata.description.label;
-
-        let table = $("<table>")
-            .append("<tr><th>Title</th><td>" + title + "</td></tr>")
-            .append("<tr><th>Publisher</th><td>" + publisher + "</td></tr>")
-            .append("<tr><th>Description</th><td>" + description + "</td></tr>");
-
-        elmts.fdpMetadata
-            .append("<p>" + $.i18n("post-fdp-dialog/connected-to-fdp") + "<p>")
-            .append(table);
-    };
-
     elmts.closeButton.click(function() {
         dismiss();
     });
 
     elmts.connectButton.click(function() {
-        var fdpURI = elmts.baseURI.val();
         elmts.warningsArea.text("");
         elmts.fdpConnected.addClass("hidden");
         elmts.fdpConnectionError.addClass("hidden");
 
         MetadataHelpers.ajax(
-            "connect-fdp",
+            "fdp-metadata",
             "GET",
-            { uri: fdpURI },
+            { fdpUri: elmts.baseURI.val() },
             (o) => {
                 if (o.status === "ok") {
                     elmts.fdpConnected.removeClass("hidden");
-                    showFDPMetadata(o.fdpMetadata);
+                    MetadataHelpers.showFDPMetadata(elmts.fdpMetadata, o.fdpMetadata);
+                } else {
+                    elmts.fdpConnectionError.removeClass("hidden");
+                    elmts.warningsArea.text($.i18n(o.message));
+                }
+            },
+            (o) => {
+                elmts.warningsArea.text($.i18n("connect-fdp-command/error"));
+            }
+        );
+
+        MetadataHelpers.ajax(
+            "catalogs-metadata",
+            "GET",
+            { fdpUri: elmts.baseURI.val() },
+            (o) => {
+                if (o.status === "ok") {
+                    elmts.fdpConnected.removeClass("hidden");
+                    // TODO: show possible catalogs
                 } else {
                     elmts.fdpConnectionError.removeClass("hidden");
                     elmts.warningsArea.text($.i18n(o.message));

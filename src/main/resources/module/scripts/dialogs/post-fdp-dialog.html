@@ -20,6 +20,28 @@
         <div id="fdp-connected" bind="fdpConnected" class="hidden">
             <div id="fdp-metadata" bind="fdpMetadata">
             </div>
+            <div id="metadata-layers">
+                <div class="metadata-layer" id="catalog-layer">
+                    <label class="layer-title" for="fdp-catalog" id="fdp-catalog-label">Catalog</label>
+                    <div class="layer-form">
+                        <select id="fdp-catalog"></select>
+                        <button class="button button-primary" bind="addCatalogButton">+ Add catalog</button>
+                    </div>
+                </div>
+                <div class="metadata-layer" id="dataset-layer">
+                    <label class="layer-title" for="fdp-dataset" id="fdp-dataset-label">Dataset</label>
+                    <div class="layer-form">
+                        <select id="fdp-dataset"></select>
+                        <button class="button button-primary" bind="addDatasetButton">+ Add dataset</button>
+                    </div>
+                </div>
+                <div class="metadata-layer" id="distribution-layer">
+                    <label class="layer-title" id="fdp-distribution-label">Distribution</label>
+                    <div class="layer-form">
+                        <button class="button button-primary" bind="addDistributionButton">+ Add distribution</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

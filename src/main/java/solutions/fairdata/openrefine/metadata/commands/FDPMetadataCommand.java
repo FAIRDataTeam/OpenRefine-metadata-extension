@@ -34,20 +34,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
-public class ConnectFDPCommand extends Command {
+public class FDPMetadataCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String uri = request.getParameter("uri");
+        String fdpUri = request.getParameter("fdpUri");
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
-        logger.info("Contacting FAIR Data Point on URI: " + uri);
+        logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(uri, logger);
-            FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata();
+            FairDataPointClient fdpClient = new FairDataPointClient(logger);
+            FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata(fdpUri);
 
-            logger.info("FAIR Data Point metadata retrieved: " + uri);
+            logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
             writer.writeStartObject();
             writer.writeStringField("status", "ok");
             writer.writeStringField("message", "connect-fdp-command/success");
@@ -56,7 +56,7 @@ public class ConnectFDPCommand extends Command {
             writer.flush();
             writer.close();
         } catch (Exception e) {
-            logger.error("Error while contacting FAIR Data Point: " + uri + " (" + e.getMessage() + ")");
+            logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
             writer.writeStartObject();
             writer.writeStringField("status", "error");
             writer.writeStringField("message", "connect-fdp-command/error");

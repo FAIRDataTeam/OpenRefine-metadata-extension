@@ -8,7 +8,9 @@ function init() {
     var RefineServlet = Packages.com.google.refine.RefineServlet;
 
     // Commands
-    RefineServlet.registerCommand(module, "connect-fdp", new Packages.solutions.fairdata.openrefine.metadata.commands.ConnectFDPCommand());
+    RefineServlet.registerCommand(module, "fdp-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.FDPMetadataCommand());
+    RefineServlet.registerCommand(module, "catalogs-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.CatalogsMetadataCommand());
+    RefineServlet.registerCommand(module, "datasets-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DatasetsMetadataCommand());
 
     // Resources
     ClientSideResourceManager.addPaths(
