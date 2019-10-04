@@ -165,7 +165,7 @@ PostFdpDialog.showMetadataSelect = (select, metadatas) => {
                 .text(metadata.title.label)
         );
     });
-}
+};
 
 PostFdpDialog.showCatalogs = (dialog, catalogsMetadata) => {
     PostFdpDialog.showMetadataSelect(dialog._elmts.catalogSelect, catalogsMetadata);
