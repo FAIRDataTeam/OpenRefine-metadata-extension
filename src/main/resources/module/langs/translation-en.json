@@ -6,7 +6,14 @@
     "post-fdp-dialog/button-close": "Close",
     "post-fdp-dialog/label-uri": "FAIR Data Point base URI",
     "post-fdp-dialog/description": "Fill in the base URI of your desired FAIR Data Point.",
-    "post-fdp-dialog/connected-to-fdp": "You are now using FAIR Data Point:",
+    "post-fdp-dialog/connected-to-fdp": "You are now using FAIR Data Point",
+    "post-fdp-dialog/published-by": "published by",
+    "post-fdp-dialog/layers/catalog": "Catalog",
+    "post-fdp-dialog/layers/catalog-add": "+ Add catalog",
+    "post-fdp-dialog/layers/dataset": "Dataset",
+    "post-fdp-dialog/layers/dataset-add": "+ Add dataset",
+    "post-fdp-dialog/layers/distribution": "Distribution",
+    "post-fdp-dialog/layers/distribution-add": "+ Add distribution",
     "connect-fdp-command/error": "Cannot connect to entered FAIR Data Point.",
     "connect-fdp-command/success": "Successfully connected to FAIR Data Point."
 }

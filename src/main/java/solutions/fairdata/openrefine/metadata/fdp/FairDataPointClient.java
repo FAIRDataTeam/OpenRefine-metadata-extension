@@ -25,7 +25,6 @@ package solutions.fairdata.openrefine.metadata.fdp;
 
 import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.MetadataParser;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;

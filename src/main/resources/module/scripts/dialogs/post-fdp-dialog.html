@@ -1,6 +1,6 @@
 <div class="dialog-frame metadata-dialog" style="width: 800px;">
     <div class="dialog-header">
-        <div class="dialog-title"  bind="dialogTitle"></div>
+        <div class="dialog-title" bind="dialogTitle"></div>
         <button class="button close-button" bind="closeButton"></button>
     </div>
     <div class="dialog-body" bind="dialogBody">
@@ -14,31 +14,30 @@
                 </div>
             </form>
         </div>
-        <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden">
-            <div class="fdp-connect-warnings-area" bind="warningsArea"></div>
+        <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden default-hidden">
+            <div class="fdp-connect-warnings-area default-clear" bind="warningsArea"></div>
         </div>
-        <div id="fdp-connected" bind="fdpConnected" class="hidden">
-            <div id="fdp-metadata" bind="fdpMetadata">
-            </div>
+        <div id="fdp-connected" bind="fdpConnected" class="hidden default-hidden">
+            <div id="fdp-metadata" class="default-clear" bind="fdpMetadata"></div>
             <div id="metadata-layers">
-                <div class="metadata-layer" id="catalog-layer">
-                    <label class="layer-title" for="fdp-catalog" id="fdp-catalog-label">Catalog</label>
+                <div class="metadata-layer hidden default-hidden" id="catalog-layer" bind="catalogLayer">
+                    <label class="layer-title" for="fdp-catalog" id="fdp-catalog-label" bind="catalogLabel"></label>
                     <div class="layer-form">
-                        <select id="fdp-catalog"></select>
-                        <button class="button button-primary" bind="addCatalogButton">+ Add catalog</button>
+                        <select id="fdp-catalog" bind="catalogSelect"></select>
+                        <button class="button button-primary" bind="catalogAddButton"></button>
                     </div>
                 </div>
-                <div class="metadata-layer" id="dataset-layer">
-                    <label class="layer-title" for="fdp-dataset" id="fdp-dataset-label">Dataset</label>
+                <div class="metadata-layer hidden default-hidden" id="dataset-layer" bind="datasetLayer">
+                    <label class="layer-title" for="fdp-dataset" id="fdp-dataset-label" bind="datasetLabel"></label>
                     <div class="layer-form">
-                        <select id="fdp-dataset"></select>
-                        <button class="button button-primary" bind="addDatasetButton">+ Add dataset</button>
+                        <select id="fdp-dataset" bind="datasetSelect"></select>
+                        <button class="button button-primary" bind="datasetAddButton"></button>
                     </div>
                 </div>
-                <div class="metadata-layer" id="distribution-layer">
-                    <label class="layer-title" id="fdp-distribution-label">Distribution</label>
+                <div class="metadata-layer hidden default-hidden" id="distribution-layer" bind="distributionLayer">
+                    <label class="layer-title" id="fdp-distribution-label" bind="distributionLabel"></label>
                     <div class="layer-form">
-                        <button class="button button-primary" bind="addDistributionButton">+ Add distribution</button>
+                        <button class="button button-primary" bind="distributionAddButton"></button>
                     </div>
                 </div>
             </div>

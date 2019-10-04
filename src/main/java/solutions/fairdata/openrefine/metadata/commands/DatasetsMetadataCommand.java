@@ -57,7 +57,7 @@ public class DatasetsMetadataCommand extends Command {
             writer.writeStartObject();
             writer.writeStringField("status", "ok");
             writer.writeStringField("message", "connect-fdp-command/success");
-            writer.writeObjectField("catalogsMetadata", datasetsMetadata);
+            writer.writeObjectField("datasetsMetadata", datasetsMetadata);
             writer.writeEndObject();
             writer.flush();
             writer.close();
