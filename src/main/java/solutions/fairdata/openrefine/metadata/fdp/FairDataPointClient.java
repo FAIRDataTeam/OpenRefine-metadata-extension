@@ -23,7 +23,12 @@
 package solutions.fairdata.openrefine.metadata.fdp;
 
 
+import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
+import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.eclipse.rdf4j.rio.turtle.TurtleParser;
@@ -51,31 +56,68 @@ public class FairDataPointClient {
 
     private static final String USER_AGENT = "OpenRefine/metadata";
 
-    private final String baseURI;
     private final Logger logger;
 
-    public FairDataPointClient(String baseURI, Logger logger) {
-        this.baseURI = baseURI;
+    public FairDataPointClient(Logger logger) {
         this.logger = logger;
     }
 
-    public FDPMetadata getFairDataPointMetadata() throws IOException, FairDataPointException {
-        HttpURLConnection conn = request(baseURI, "GET", "text/turtle", true);
+    public FDPMetadata getFairDataPointMetadata(String fdpURI) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(fdpURI, "GET", "text/turtle", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
-            TurtleParser parser = new TurtleParser();
-            StatementCollector collector = new StatementCollector();
-            parser.setRDFHandler(collector);
-
-            parser.parse(new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)), actualURI);
-
             FDPMetadataParser metadataParser = new FDPMetadataParser();
-            return metadataParser.parse(new ArrayList<>(collector.getStatements()), SimpleValueFactory.getInstance().createIRI(actualURI));
+            return metadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
+    }
+
+    public CatalogMetadata getCatalogMetadata(String catalogURI) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(catalogURI, "GET", "text/turtle", true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String actualURI = conn.getURL().toString();
+
+            CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
+            return catalogMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    public DatasetMetadata getDatasetMetadata(String datasetURI) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(datasetURI, "GET", "text/turtle", true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String actualURI = conn.getURL().toString();
+
+            DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser();
+            return datasetMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    private ArrayList<Statement> parseStatements(HttpURLConnection conn, String uri) throws IOException {
+
+        TurtleParser parser = new TurtleParser();
+        StatementCollector collector = new StatementCollector();
+        parser.setRDFHandler(collector);
+
+        parser.parse(new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)), uri);
+        return new ArrayList<>(collector.getStatements());
     }
 
     private HttpURLConnection createConnection(String url, String method, String accept) throws IOException {
