@@ -22,12 +22,13 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import org.eclipse.rdf4j.model.IRI;
+import solutions.fairdata.openrefine.metadata.commands.response.DatasetsMetadataResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class DatasetsMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String catalogUri = request.getParameter("catalogUri");
         Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        ObjectMapper objectMapper = new ObjectMapper();
 
         logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
         try {
@@ -54,22 +55,10 @@ public class DatasetsMetadataCommand extends Command {
             }
 
             logger.info("Datasets metadata retrieved from catalog: " + catalogUri);
-            writer.writeStartObject();
-            writer.writeStringField("status", "ok");
-            writer.writeStringField("message", "connect-fdp-command/success");
-            writer.writeObjectField("datasetsMetadata", datasetsMetadata);
-            writer.writeEndObject();
-            writer.flush();
-            writer.close();
+            objectMapper.writeValue(w, new DatasetsMetadataResponse("ok", datasetsMetadata));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + catalogUri + " (" + e.getMessage() + ")");
-            writer.writeStartObject();
-            writer.writeStringField("status", "error");
-            writer.writeStringField("message", "connect-fdp-command/error");
-            writer.writeStringField("exception", e.getMessage());
-            writer.writeEndObject();
-            writer.flush();
-            writer.close();
+            objectMapper.writeValue(w, new ErrorResponse("error", "connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();
