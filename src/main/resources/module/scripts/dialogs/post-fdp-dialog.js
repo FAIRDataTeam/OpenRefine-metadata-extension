@@ -1,7 +1,7 @@
-/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
+/* global $, DOM, DialogSystem, MetadataHelpers */
 var PostFdpDialog = {};
 
-PostFdpDialog.launch = () => {
+PostFdpDialog.launch = function() {
     this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
     this._elmts = DOM.bind(this.frame);
 
@@ -32,6 +32,7 @@ PostFdpDialog.launch = () => {
 
     elmts.catalogSelect.on("change", () => {
         const catalogUri = elmts.catalogSelect.val();
+        console.log(dialog._elmts);
 
         PostFdpDialog.resetDatasetLayer(dialog);
         PostFdpDialog.resetDistributionLayer(dialog);
@@ -43,7 +44,11 @@ PostFdpDialog.launch = () => {
         dialog._elmts.distributionLayer.removeClass("hidden");
     });
 
-    // TODO: handle "add" buttons
+    elmts.catalogAddButton.click(() => {
+        MetadataFormDialog.launch("catalog", (newCatalog) => {
+            // TODO: process new catalog
+        });
+    });
 };
 
 PostFdpDialog.initBasicTexts = (dialog) => {
