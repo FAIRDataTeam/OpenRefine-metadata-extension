@@ -1,9 +1,19 @@
-/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
+/* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs */
 var PostFdpDialog = {};
 
-PostFdpDialog.launch = () => {
+PostFdpDialog.launch = function() {
     this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
     this._elmts = DOM.bind(this.frame);
+    this.metadata = {
+        "catalogs": [],
+        "datasets": [],
+        "distributions": []
+    };
+    this.customMetadata = {
+        "catalogs": [],
+        "datasets": [],
+        "distributions": []
+    };
 
     this._level = DialogSystem.showDialog(this.frame);
 
@@ -35,7 +45,12 @@ PostFdpDialog.launch = () => {
 
         PostFdpDialog.resetDatasetLayer(dialog);
         PostFdpDialog.resetDistributionLayer(dialog);
-        PostFdpDialog.ajaxDatasets(dialog, catalogUri);
+
+        if(catalogUri.startsWith("custom")) {
+            PostFdpDialog.showDatasets(dialog);
+        } else {
+            PostFdpDialog.ajaxDatasets(dialog, catalogUri);
+        }
     });
 
     elmts.datasetSelect.on("change", () => {
@@ -43,7 +58,17 @@ PostFdpDialog.launch = () => {
         dialog._elmts.distributionLayer.removeClass("hidden");
     });
 
-    // TODO: handle "add" buttons
+    elmts.catalogAddButton.click(() => {
+        MetadataFormDialog.launch("catalog", MetadataSpecs.catalog, (newCatalog) => {
+            const index = dialog.customMetadata.catalogs.length;
+            newCatalog.id = `customCatalog-${index}`;
+            dialog.customMetadata.catalogs.push(newCatalog);
+
+            PostFdpDialog.showCatalogs(dialog);
+            dialog.frame.find(`#${newCatalog.id}`).prop("selected", true);
+            elmts.catalogSelect.trigger("change");
+        });
+    });
 };
 
 PostFdpDialog.initBasicTexts = (dialog) => {
@@ -73,16 +98,19 @@ PostFdpDialog.resetSelect = (select, name) => {
 };
 
 PostFdpDialog.resetCatalogLayer = (dialog) => {
+    dialog.metadata.catalogs = [];
     PostFdpDialog.resetSelect(dialog._elmts.catalogSelect, "catalog");
     dialog._elmts.catalogLayer.addClass("hidden");
 };
 
 PostFdpDialog.resetDatasetLayer = (dialog) => {
+    dialog.metadata.datasets = [];
     PostFdpDialog.resetSelect(dialog._elmts.datasetSelect, "dataset");
     dialog._elmts.datasetLayer.addClass("hidden");
 };
 
 PostFdpDialog.resetDistributionLayer = (dialog) => {
+    dialog.metadata.distributions = [];
     dialog._elmts.distributionLayer.addClass("hidden");
 };
 
@@ -123,7 +151,8 @@ PostFdpDialog.ajaxCatalogs = (dialog, fdpUri) => {
     PostFdpDialog.ajaxGeneric(dialog, "catalogs-metadata", "GET", { fdpUri },
         (result) => {
             dialog._elmts.catalogLayer.removeClass("hidden");
-            PostFdpDialog.showCatalogs(dialog, result.catalogsMetadata);
+            dialog.metadata.catalogs = result.catalogsMetadata;
+            PostFdpDialog.showCatalogs(dialog);
         }
     );
 };
@@ -132,7 +161,8 @@ PostFdpDialog.ajaxDatasets = (dialog, catalogUri) => {
     PostFdpDialog.ajaxGeneric(dialog, "datasets-metadata", "GET", { catalogUri },
         (result) => {
             dialog._elmts.fdpConnected.removeClass("hidden");
-            PostFdpDialog.showDatasets(dialog, result.datasetsMetadata);
+            dialog.metadata.datasets = result.datasetsMetadata;
+            PostFdpDialog.showDatasets(dialog);
         }
     );
 };
@@ -157,22 +187,43 @@ PostFdpDialog.showFDPMetadata = (dialog, fdpMetadata) => {
     );
 };
 
-PostFdpDialog.showMetadataSelect = (select, metadatas) => {
+PostFdpDialog.showMetadataSelect = (select, metadatas, customMetadatas) => {
     metadatas.forEach((metadata) => {
         select.append(
             $("<option>")
+                .addClass("from-fdp")
                 .attr("value", MetadataHelpers.fdpMakeURL(metadata.uri))
                 .text(metadata.title.label)
         );
     });
+    customMetadatas.forEach((metadata) => {
+        select.append(
+            $("<option>")
+                .addClass("custom")
+                .attr("id", metadata.id)
+                .attr("value", metadata.id)
+                .text(metadata.title)
+                .append($("<span>").text(" " + $.i18n("metadata/custom-flag")))
+        );
+    });
 };
 
-PostFdpDialog.showCatalogs = (dialog, catalogsMetadata) => {
-    PostFdpDialog.showMetadataSelect(dialog._elmts.catalogSelect, catalogsMetadata);
+PostFdpDialog.showCatalogs = (dialog) => {
+    PostFdpDialog.resetSelect(dialog._elmts.catalogSelect, "catalog");
+    PostFdpDialog.showMetadataSelect(
+        dialog._elmts.catalogSelect,
+        dialog.metadata.catalogs,
+        dialog.customMetadata.catalogs
+    );
     dialog._elmts.catalogLayer.removeClass("hidden");
 };
 
-PostFdpDialog.showDatasets = (dialog, datasetsMetadata) => {
-    PostFdpDialog.showMetadataSelect(dialog._elmts.datasetSelect, datasetsMetadata);
+PostFdpDialog.showDatasets = (dialog) => {
+    PostFdpDialog.resetSelect(dialog._elmts.datasetSelect, "dataset");
+    PostFdpDialog.showMetadataSelect(
+        dialog._elmts.datasetSelect,
+        dialog.metadata.datasets,
+        dialog.customMetadata.datasets
+    );
     dialog._elmts.datasetLayer.removeClass("hidden");
 };
