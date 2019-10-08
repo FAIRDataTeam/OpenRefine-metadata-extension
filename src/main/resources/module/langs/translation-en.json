@@ -18,6 +18,7 @@
   "connect-fdp-command/success": "Successfully connected to FAIR Data Point.",
   "metadata/optional-show": "Show optional fields",
   "metadata/optional-hide": "Hide optional fields",
+  "metadata/custom-flag": "[custom]",
   "metadata/catalog/submit": "Add catalog",
   "metadata/catalog/dialog-title": "Add new catalog to FAIR Data Point",
   "metadata/catalog/title/name": "Title",
