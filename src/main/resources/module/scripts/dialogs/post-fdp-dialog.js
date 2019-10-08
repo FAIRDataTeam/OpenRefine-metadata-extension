@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, MetadataHelpers */
+/* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs */
 var PostFdpDialog = {};
 
 PostFdpDialog.launch = function() {
@@ -59,7 +59,7 @@ PostFdpDialog.launch = function() {
     });
 
     elmts.catalogAddButton.click(() => {
-        MetadataFormDialog.launch("catalog", (newCatalog) => {
+        MetadataFormDialog.launch("catalog", MetadataSpecs.catalog, (newCatalog) => {
             const index = dialog.customMetadata.catalogs.length;
             newCatalog.id = `customCatalog-${index}`;
             dialog.customMetadata.catalogs.push(newCatalog);

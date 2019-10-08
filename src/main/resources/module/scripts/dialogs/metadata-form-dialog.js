@@ -1,7 +1,7 @@
-/* global $, DOM, DialogSystem, Refine, MetadataHelpers, MetadataSpecs */
+/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
 let MetadataFormDialog = {};
 
-MetadataFormDialog.launch = function(type, callback) {
+MetadataFormDialog.launch = function(type, specs, callback) {
     this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
     this._elmts = DOM.bind(this.frame);
 
@@ -11,8 +11,7 @@ MetadataFormDialog.launch = function(type, callback) {
     let elmts = this._elmts;
 
     MetadataFormDialog.initBasicTexts(dialog, type);
-
-    MetadataFormDialog.createForm(dialog, MetadataSpecs[type], callback);
+    MetadataFormDialog.createForm(dialog, specs, callback);
 
     // Bind actions
     elmts.closeButton.click(MetadataFormDialog.dismissFunc(dialog));
