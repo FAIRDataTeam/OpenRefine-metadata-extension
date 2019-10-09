@@ -52,7 +52,7 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
         return $(field.type === "text" ? "<textarea>" : "<input>")
             .attr("id", field.id)
             .attr("name", field.id)
-            .attr("type", field.type === "iri" || field.type === "url" ? "url" : "text")
+            .attr("type", field.type === "iri" ? "url" : "text")
             .prop("required", field.required);
         // TODO: multiple? (need more info)
     };

@@ -66,5 +66,21 @@
   "metadata/dataset/keyword/name": "Keyword",
   "metadata/dataset/keyword/description": "A keyword or tag describing the dataset.",
   "metadata/dataset/landingPage/name": "Landing page",
-  "metadata/dataset/landingPage/description": "A Web page that can be navigated to in a Web browser to gain access to the dataset, its distributions and/or additional information."
+  "metadata/dataset/landingPage/description": "A Web page that can be navigated to in a Web browser to gain access to the dataset, its distributions and/or additional information.",
+  "metadata/distribution/submit": "Add distribution",
+  "metadata/distribution/dialog-title": "Add new distribution to dataset",
+  "metadata/distribution/title/name": "Title",
+  "metadata/distribution/title/description": "A name given to the Distribution. Roughly, specifies the ‘format’ or concrete representation of the dataset (see Media Type below) and how it can be accessed. A dataset may have multiple distributions.",
+  "metadata/distribution/license/name": "License",
+  "metadata/distribution/license/description": "This links to the license document under which the distribution is made available.",
+  "metadata/distribution/version/name": "Version",
+  "metadata/distribution/version/description": "The version number for this resource.",
+  "metadata/distribution/rights/name": "Rights",
+  "metadata/distribution/rights/description": "Information about rights held in and over the distribution.",
+  "metadata/distribution/description/name": "Description",
+  "metadata/distribution/description/description": "Free-text account of the distribution.",
+  "metadata/distribution/format/name": "Format",
+  "metadata/distribution/format/description": "The file format of the distribution.",
+  "metadata/distribution/bytesize/name": "Byte size",
+  "metadata/distribution/bytesize/description": "The size of a distribution in bytes."
 }
