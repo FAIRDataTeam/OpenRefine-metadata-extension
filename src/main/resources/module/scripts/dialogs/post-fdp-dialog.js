@@ -248,7 +248,7 @@ PostFdpDialog.showDatasets = (dialog) => {
     PostFdpDialog.showMetadataSelect(
         dialog._elmts.datasetSelect,
         dialog.metadata.datasets,
-        dialog.customMetadata.datasets.filter(d => d.refCatalog === actCatalog)
+        dialog.customMetadata.datasets.filter((d) => d.refCatalog === actCatalog)
     );
     dialog._elmts.datasetLayer.removeClass("hidden");
 };
@@ -256,7 +256,7 @@ PostFdpDialog.showDatasets = (dialog) => {
 PostFdpDialog.showDistributions = (dialog) => {
     dialog._elmts.distributionsList.empty();
     const actDataset = dialog._elmts.datasetSelect.val();
-    const distribution = dialog.customMetadata.distributions[actDataset];
+    const distribution = dialog.customMetadata.distributions[`${actDataset}`];
     if (distribution) {
         const item = $("<li>")
             .addClass("custom")
