@@ -1,24 +1,46 @@
 <div class="dialog-frame metadata-dialog" style="width: 800px;">
     <div class="dialog-header">
-        <div class="dialog-title"  bind="dialogTitle"></div>
-        <button class="button close-button" bind="closeButton"></button>
+        <div class="dialog-title" data-i18n="post-fdp-dialog/title"></div>
+        <button class="button close-button" bind="closeButton" data-i18n="post-fdp-dialog/button-close"></button>
     </div>
     <div class="dialog-body" bind="dialogBody">
         <div class="fdp-post-area">
             <p bind="descriptionText"></p>
             <form id="fdp-post-form" onsubmit="return false;" bind="fdpPostForm" autocomplete="on">
-                <label bind="baseURILabel" for="baseURI"></label>
+                <label for="baseURI" data-i18n="post-fdp-dialog/label-uri"></label>
                 <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
                 <div class="fdp-port-buttons">
-                    <button class="button button-primary" bind="connectButton"></button>
+                    <button class="button button-primary" bind="connectButton" data-i18n="post-fdp-dialog/button-connect"></button>
                 </div>
             </form>
         </div>
-        <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden">
-            <div class="fdp-connect-warnings-area" bind="warningsArea"></div>
+        <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden default-hidden">
+            <div class="fdp-connect-warnings-area default-clear" bind="warningsArea"></div>
         </div>
-        <div id="fdp-connected" bind="fdpConnected" class="hidden">
-            <div id="fdp-metadata" bind="fdpMetadata">
+        <div id="fdp-connected" bind="fdpConnected" class="hidden default-hidden">
+            <div id="fdp-metadata" class="default-clear" bind="fdpMetadata"></div>
+            <div id="metadata-layers">
+                <div class="metadata-layer hidden default-hidden" id="catalog-layer" bind="catalogLayer">
+                    <label class="layer-title" for="fdp-catalog" id="fdp-catalog-label" data-i18n="post-fdp-dialog/layers/catalog"></label>
+                    <div class="layer-form">
+                        <select id="fdp-catalog" bind="catalogSelect"></select>
+                        <button class="button button-primary" bind="catalogAddButton" data-i18n="post-fdp-dialog/layers/catalog-add"></button>
+                    </div>
+                </div>
+                <div class="metadata-layer hidden default-hidden" id="dataset-layer" bind="datasetLayer">
+                    <label class="layer-title" for="fdp-dataset" id="fdp-dataset-label" data-i18n="post-fdp-dialog/layers/dataset"></label>
+                    <div class="layer-form">
+                        <select id="fdp-dataset" bind="datasetSelect"></select>
+                        <button class="button button-primary" bind="datasetAddButton" data-i18n="post-fdp-dialog/layers/dataset-add"></button>
+                    </div>
+                </div>
+                <div class="metadata-layer hidden default-hidden" id="distribution-layer" bind="distributionLayer">
+                    <label class="layer-title" id="fdp-distribution-label" data-i18n="post-fdp-dialog/layers/distribution"></label>
+                    <div class="layer-form">
+                        <ul class="distributions-list" bind="distributionsList"></ul>
+                        <button class="button button-primary" bind="distributionAddButton" data-i18n="post-fdp-dialog/layers/distribution-add"></button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
