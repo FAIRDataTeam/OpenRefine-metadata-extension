@@ -53,23 +53,10 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
             .attr("id", field.id)
             .attr("name", field.id)
             .attr("type", field.type === "iri" ? "url" : "text")
+            .attr("placeholder", field.type === "iri" ? "http://" : "")
+            .attr("title", $.i18n(`metadata/${specs.id}/${field.id}/description`))
             .prop("required", field.required);
-        // TODO: multiple? (need more info)
-    };
-
-    const makeTooltip = (field, input, parent) => {
-        const tooltipId = `tooltip-${field.id}`;
-        input.focus(() => {
-            parent.find(`#${tooltipId}`).removeClass("hidden");
-        });
-        input.focusout(() => {
-            parent.find(`#${tooltipId}`).addClass("hidden");
-        });
-        return $("<div>")
-            .attr("id", tooltipId)
-            .addClass("tooltip").addClass("hidden")
-            .text($.i18n(`metadata/${specs.id}/${field.id}/description`));
-
+        // TODO: multiple in the future
     };
 
     const makeFormGroup = (field) => {
@@ -84,7 +71,6 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
 
         fieldDiv.append(makeLabel(field));
         fieldDiv.append(input);
-        fieldDiv.append(makeTooltip(field, input, fieldDiv));
 
         if ("nested" in field) {
             let nestedDiv = $("<div>")
