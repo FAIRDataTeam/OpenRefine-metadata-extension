@@ -49,14 +49,54 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
     };
 
     const makeInput = (field) => {
-        return $(field.type === "text" ? "<textarea>" : "<input>")
+        const input = $(field.type === "text" ? "<textarea>" : "<input>")
             .attr("id", field.id)
             .attr("name", field.id)
             .attr("type", field.type === "iri" ? "url" : "text")
             .attr("placeholder", field.type === "iri" ? "http://" : "")
             .attr("title", $.i18n(`metadata/${specs.id}/${field.id}/description`))
             .prop("required", field.required);
-        // TODO: multiple in the future
+
+        if (field.multiple) {
+            input.removeAttr("id");
+            input.addClass(`multiple-${field.id}`);
+            const wrapper = $("<div>")
+                .addClass("multiple-field")
+                .attr("id", field.id);
+
+            let counter = 0;
+            const createRow = function(input) {
+                const inputCopy = input.clone();
+                inputCopy.attr("name", `${field.id}[${counter}]`);
+                counter++;
+
+                const deleteButton = $("<button>")
+                    .attr("type", "button ")
+                    .addClass("button button-multiple-delete")
+                    .text("-")
+                    .click(function(e){
+                        e.preventDefault();
+                        $(this).parent().remove();
+                    });
+                const addButton = $("<button>")
+                    .attr("type", "button ")
+                    .addClass("button button-multiple-add")
+                    .text("+")
+                    .click(function(e){
+                        e.preventDefault();
+                        $(this).parent().parent().append(createRow(input));
+                    });
+                return $("<div>")
+                    .addClass("multiple-row")
+                    .append(inputCopy)
+                    .append(deleteButton)
+                    .append(addButton);
+            };
+            wrapper.append(createRow(input));
+            return wrapper;
+        } else {
+            return input;
+        }
     };
 
     const makeFormGroup = (field) => {
@@ -98,7 +138,15 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
         e.preventDefault();
         let result = {};
         specs.fields.forEach((field) => {
-            result[field.id] = dialog._elmts.metadataForm.find(`#${field.id}`).val();
+            if (field.multiple) {
+                result[field.id] = dialog._elmts.metadataForm
+                    .find(`.multiple-${field.id}`).map(function() {
+                        return $(this).val();
+                    }).get();
+            } else {
+                result[field.id] = dialog._elmts.metadataForm
+                    .find(`#${field.id}`).val();
+            }
         });
         callback(result);
         MetadataFormDialog.dismissFunc(dialog)();
