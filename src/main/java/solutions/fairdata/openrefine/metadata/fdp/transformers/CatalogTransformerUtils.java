@@ -26,7 +26,7 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 
 
-public class CatalogTransformer extends MetadataTransformer {
+public class CatalogTransformerUtils extends MetadataTransformerUtils {
 
     public static CatalogDTO metadata2DTO(CatalogMetadata catalogMetadata) {
         CatalogDTO catalogDTO = new CatalogDTO();

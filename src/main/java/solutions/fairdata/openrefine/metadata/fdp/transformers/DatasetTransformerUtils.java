@@ -26,7 +26,7 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 
 
-public class DatasetTransformer extends MetadataTransformer {
+public class DatasetTransformerUtils extends MetadataTransformerUtils {
 
     public static DatasetDTO metadata2DTO(DatasetMetadata datasetMetadata) {
         DatasetDTO datasetDTO = new DatasetDTO();

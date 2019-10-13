@@ -46,9 +46,9 @@ import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformer;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformer;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformer;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
 
 public class FairDataPointClient {
 
@@ -79,7 +79,7 @@ public class FairDataPointClient {
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
-            return FDPMetadataTransformer.metadata2DTO(fdpMetadata);
+            return FDPMetadataTransformerUtils.metadata2DTO(fdpMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -96,7 +96,7 @@ public class FairDataPointClient {
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
-            return CatalogTransformer.metadata2DTO(catalogMetadata);
+            return CatalogTransformerUtils.metadata2DTO(catalogMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -113,7 +113,7 @@ public class FairDataPointClient {
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
-            return DatasetTransformer.metadata2DTO(datasetMetadata);
+            return DatasetTransformerUtils.metadata2DTO(datasetMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
