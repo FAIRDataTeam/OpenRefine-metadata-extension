@@ -20,35 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
 
-import java.util.ArrayList;
+public class FDPMetadataTransformer extends MetadataTransformer {
 
-public class CatalogsMetadataResponse {
+    public static FDPMetadataDTO metadata2DTO(FDPMetadata fdpMetadata) {
+        FDPMetadataDTO fdpMetadataDTO = new FDPMetadataDTO();
 
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
+        genericDtoFromMetadata(fdpMetadataDTO, fdpMetadata);
 
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
-    }
+        fdpMetadataDTO.setCatalogs(irisToStrings(fdpMetadata.getCatalogs()));
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
-    }
-
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+        return fdpMetadataDTO;
     }
 }

@@ -48,7 +48,3 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
         }
     }, 500);
 };
-
-MetadataHelpers.fdpMakeURL = (uriObject) => {
-    return uriObject.namespace + uriObject.localName;
-};

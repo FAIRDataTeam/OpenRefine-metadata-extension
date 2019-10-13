@@ -175,7 +175,7 @@ PostFdpDialog.ajaxCatalogs = (dialog, fdpUri) => {
     PostFdpDialog.ajaxGeneric(dialog, "catalogs-metadata", "GET", { fdpUri },
         (result) => {
             dialog._elmts.catalogLayer.removeClass("hidden");
-            dialog.metadata.catalogs = result.catalogsMetadata;
+            dialog.metadata.catalogs = result.catalogs;
             PostFdpDialog.showCatalogs(dialog);
         }
     );
@@ -185,7 +185,7 @@ PostFdpDialog.ajaxDatasets = (dialog, catalogUri) => {
     PostFdpDialog.ajaxGeneric(dialog, "datasets-metadata", "GET", { catalogUri },
         (result) => {
             dialog._elmts.fdpConnected.removeClass("hidden");
-            dialog.metadata.datasets = result.datasetsMetadata;
+            dialog.metadata.datasets = result.datasets;
             PostFdpDialog.showDatasets(dialog);
         }
     );
@@ -193,14 +193,14 @@ PostFdpDialog.ajaxDatasets = (dialog, catalogUri) => {
 
 PostFdpDialog.showFDPMetadata = (dialog, fdpMetadata) => {
     let title = $("<a>")
-        .attr("href", MetadataHelpers.fdpMakeURL(fdpMetadata.uri))
+        .attr("href", fdpMetadata.iri)
         .attr("target", "_blank")
-        .text(fdpMetadata.title.label)
+        .text(fdpMetadata.title)
         .get(0).outerHTML;
     let publisher = $("<a>")
-        .attr("href", MetadataHelpers.fdpMakeURL(fdpMetadata.publisher.uri))
+        .attr("href", fdpMetadata.publisher)
         .attr("target", "_blank")
-        .text(fdpMetadata.publisher.name.label)
+        .text(fdpMetadata.publisherName)
         .get(0).outerHTML;
 
     dialog._elmts.fdpMetadata.append($("<p>")
@@ -216,8 +216,8 @@ PostFdpDialog.showMetadataSelect = (select, metadatas, customMetadatas) => {
         select.append(
             $("<option>")
                 .addClass("from-fdp")
-                .attr("value", MetadataHelpers.fdpMakeURL(metadata.uri))
-                .text(metadata.title.label)
+                .attr("value", metadata.iri)
+                .text(metadata.title)
         );
     });
     customMetadatas.forEach((metadata) => {

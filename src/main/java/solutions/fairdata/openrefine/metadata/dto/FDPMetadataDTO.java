@@ -20,35 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.dto;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import java.util.List;
 
-import java.util.ArrayList;
+public class FDPMetadataDTO extends MetadataDTO {
 
-public class CatalogsMetadataResponse {
+    private List<String> catalogs;
 
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
-
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ArrayList<CatalogDTO> getCatalogs() {
+    public List<String> getCatalogs() {
         return catalogs;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
+    public void setCatalogs(List<String> catalogs) {
         this.catalogs = catalogs;
     }
 }

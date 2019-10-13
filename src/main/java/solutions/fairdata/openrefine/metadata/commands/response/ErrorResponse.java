@@ -28,8 +28,8 @@ public class ErrorResponse {
     private String message;
     private String exception;
 
-    public ErrorResponse(String status, String message, String exception) {
-        this.status = status;
+    public ErrorResponse(String message, String exception) {
+        this.status = "error";
         this.message = message;
         this.exception = exception;
     }

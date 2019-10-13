@@ -22,18 +22,18 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 
 import java.util.ArrayList;
 
 public class DatasetsMetadataResponse {
 
     private String status;
-    private ArrayList<DatasetMetadata> datasetsMetadata;
+    private ArrayList<DatasetDTO> datasets;
 
-    public DatasetsMetadataResponse(String status, ArrayList<DatasetMetadata> datasetsMetadata) {
-        this.status = status;
-        this.datasetsMetadata = datasetsMetadata;
+    public DatasetsMetadataResponse(ArrayList<DatasetDTO> datasets) {
+        this.status = "ok";
+        this.datasets = datasets;
     }
 
     public String getStatus() {
@@ -44,11 +44,11 @@ public class DatasetsMetadataResponse {
         this.status = status;
     }
 
-    public ArrayList<DatasetMetadata> getDatasetsMetadata() {
-        return datasetsMetadata;
+    public ArrayList<DatasetDTO> getDatasets() {
+        return datasets;
     }
 
-    public void setDatasetsMetadata(ArrayList<DatasetMetadata> datasetsMetadata) {
-        this.datasetsMetadata = datasetsMetadata;
+    public void setDatasets(ArrayList<DatasetDTO> datasets) {
+        this.datasets = datasets;
     }
 }

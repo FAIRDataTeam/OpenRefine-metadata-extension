@@ -123,7 +123,7 @@ MetadataSpecs.dataset = {
         },
         {
             "id": "keyword",
-            "type": "iri",
+            "type": "string",
             "required": false,
             "multiple": true,
         },

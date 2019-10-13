@@ -43,6 +43,12 @@ import java.util.HashSet;
 
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import org.slf4j.Logger;
+import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformer;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformer;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformer;
 
 public class FairDataPointClient {
 
@@ -62,56 +68,58 @@ public class FairDataPointClient {
         this.logger = logger;
     }
 
-    public FDPMetadata getFairDataPointMetadata(String fdpURI) throws IOException, FairDataPointException {
+    public FDPMetadataDTO getFairDataPointMetadata(String fdpURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpURI, "GET", "text/turtle", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
             FDPMetadataParser metadataParser = new FDPMetadataParser();
-            return metadataParser.parse(
+            FDPMetadata fdpMetadata = metadataParser.parse(
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
+            return FDPMetadataTransformer.metadata2DTO(fdpMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
 
-    public CatalogMetadata getCatalogMetadata(String catalogURI) throws IOException, FairDataPointException {
+    public CatalogDTO getCatalogMetadata(String catalogURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(catalogURI, "GET", "text/turtle", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
             CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
-            return catalogMetadataParser.parse(
+            CatalogMetadata catalogMetadata = catalogMetadataParser.parse(
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
+            return CatalogTransformer.metadata2DTO(catalogMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
 
-    public DatasetMetadata getDatasetMetadata(String datasetURI) throws IOException, FairDataPointException {
+    public DatasetDTO getDatasetMetadata(String datasetURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(datasetURI, "GET", "text/turtle", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
             DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser();
-            return datasetMetadataParser.parse(
+            DatasetMetadata datasetMetadata = datasetMetadataParser.parse(
                     parseStatements(conn, actualURI),
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
+            return DatasetTransformer.metadata2DTO(datasetMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
 
     private ArrayList<Statement> parseStatements(HttpURLConnection conn, String uri) throws IOException {
-
         TurtleParser parser = new TurtleParser();
         StatementCollector collector = new StatementCollector();
         parser.setRDFHandler(collector);

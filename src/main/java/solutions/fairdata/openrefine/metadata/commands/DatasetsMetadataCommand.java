@@ -24,11 +24,10 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import org.eclipse.rdf4j.model.IRI;
 import solutions.fairdata.openrefine.metadata.commands.response.DatasetsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
+import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,17 +47,17 @@ public class DatasetsMetadataCommand extends Command {
         logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(logger);
-            CatalogMetadata catalogMetadata = fdpClient.getCatalogMetadata(catalogUri);
-            ArrayList<DatasetMetadata> datasetsMetadata = new ArrayList<>();
-            for (IRI iri : catalogMetadata.getDatasets()) {
-                datasetsMetadata.add(fdpClient.getDatasetMetadata(iri.getNamespace() + iri.getLocalName()));
+            CatalogDTO catalogDTO = fdpClient.getCatalogMetadata(catalogUri);
+            ArrayList<DatasetDTO> datasetDTOs = new ArrayList<>();
+            for (String datasetURI : catalogDTO.getDatasets()) {
+                datasetDTOs.add(fdpClient.getDatasetMetadata(datasetURI));
             }
 
             logger.info("Datasets metadata retrieved from catalog: " + catalogUri);
-            objectMapper.writeValue(w, new DatasetsMetadataResponse("ok", datasetsMetadata));
+            objectMapper.writeValue(w, new DatasetsMetadataResponse(datasetDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + catalogUri + " (" + e.getMessage() + ")");
-            objectMapper.writeValue(w, new ErrorResponse("error", "connect-fdp-command/error", e.getMessage()));
+            objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();

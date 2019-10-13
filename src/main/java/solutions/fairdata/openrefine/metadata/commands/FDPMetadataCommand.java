@@ -25,9 +25,9 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
 
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.FDPMetadataResponse;
+import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,13 +46,13 @@ public class FDPMetadataCommand extends Command {
         logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(logger);
-            FDPMetadata fairDataPointMetadata = fdpClient.getFairDataPointMetadata(fdpUri);
+            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(fdpUri);
 
             logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
-            objectMapper.writeValue(w, new FDPMetadataResponse("ok", "connect-fdp-command/success", fairDataPointMetadata));
+            objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
-            objectMapper.writeValue(w, new ErrorResponse("error", "connect-fdp-command/error", e.getMessage()));
+            objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();
