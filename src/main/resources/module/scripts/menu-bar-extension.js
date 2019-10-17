@@ -22,14 +22,14 @@ $(function(){
     ExtensionBar.MenuItems.push(
         {
             "id":"metadata",
-                "label": $.i18n("menu-bar-extension/menu-label"),
-                "submenu" : [
-                    {
-                        id: "metadata/post-fdp",
-                        label: $.i18n("menu-bar-extension/post-fdp"),
-                        click: PostFdpDialog.launch
-                    }
-                ]
+            "label": $.i18n("menu-bar-extension/menu-label"),
+            "submenu" : [
+                {
+                    id: "metadata/post-fdp",
+                    label: $.i18n("menu-bar-extension/post-fdp"),
+                    click: PostFdpDialog.createAndLaunch
+                }
+            ]
         }
     );
 });

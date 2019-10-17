@@ -1,266 +1,292 @@
 /* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs */
-var PostFdpDialog = {};
 
-PostFdpDialog.launch = function() {
-    this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
-    this._elmts = DOM.bind(this.frame);
-    this.metadata = {
-        "fdp": null,
-        "catalogs": new Map(),
-        "datasets": new Map(),
-        "distributions": new Map()
+class PostFdpDialog {
+
+    constructor() {
+        this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
+        this.elements = DOM.bind(this.frame);
+        this.level = null;
+
+        this.metadata = {
+            fdp: null,
+            catalogs: new Map(),
+            datasets: new Map(),
+            distributions: new Map()
+        };
+        this.newlyCreatedIRIs = new Set();
+
+        this.initBasicTexts();
+        this.resetDefault();
+
+        this.focusBaseURI();
+        this.bindActions();
+    }
+
+    launch() {
+        this.level = DialogSystem.showDialog(this.frame);
+    }
+
+    dismiss() {
+        DialogSystem.dismissUntil(this.level - 1);
+        this.level = null;
     };
-    this.newlyCreatedIRIs = new Set();
 
-    this._level = DialogSystem.showDialog(this.frame);
+    focusBaseURI() {
+        // Focus value of FDP URI input for easy overwrite
+        this.elements.baseURI.focus();
+        this.elements.baseURI[0].setSelectionRange(0, this.elements.baseURI.val().length);
+    }
 
-    let dialog = this;
-    let elmts = this._elmts;
+    bindActions() {
+        const self = this;
+        const elmts = this.elements;
 
-    PostFdpDialog.initBasicTexts(dialog);
-    PostFdpDialog.resetDefault(dialog);
-    PostFdpDialog.resetCatalogLayer(dialog);
-    PostFdpDialog.resetDatasetLayer(dialog);
-    PostFdpDialog.resetDistributionLayer(dialog);
+        elmts.closeButton.click(() => { self.dismiss() });
 
-    // Focus value of FDP URI input for easy overwrite
-    elmts.baseURI.focus();
-    elmts.baseURI[0].setSelectionRange(0, elmts.baseURI.val().length);
+        elmts.connectButton.click(() => {
+            const fdpUri = elmts.baseURI.val();
 
-    // Bind actions
-    elmts.closeButton.click(PostFdpDialog.dismissFunc(dialog));
+            self.resetDefault();
+            self.ajaxFDPMetadata(fdpUri);
+        });
 
-    elmts.connectButton.click(() => {
-        const fdpUri = dialog._elmts.baseURI.val();
+        elmts.catalogSelect.on("change", () => {
+            const catalogUri = elmts.catalogSelect.val();
 
-        PostFdpDialog.resetDefault(dialog);
-        PostFdpDialog.ajaxFDPMetadata(dialog, fdpUri);
-    });
+            self.resetDatasetLayer();
+            self.ajaxDatasets(catalogUri);
+        });
 
-    elmts.catalogSelect.on("change", () => {
-        const catalogUri = elmts.catalogSelect.val();
+        elmts.datasetSelect.on("change", () => {
+            const datasetUri = elmts.datasetSelect.val();
 
-        PostFdpDialog.resetDatasetLayer(dialog);
+            self.resetDistributionLayer();
+            self.ajaxDistributions(datasetUri);
+        });
 
-        PostFdpDialog.ajaxDatasets(dialog, catalogUri);
-    });
+        elmts.catalogAddButton.click(() => {
+            const fdpUri = elmts.baseURI.val();
+            MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
+                (newCatalog) => {
+                    self.resetCatalogLayer();
+                    self.ajaxCatalogs(fdpUri);
+                }
+            );
+        });
 
-    elmts.datasetSelect.on("change", () => {
-        const datasetUri = elmts.datasetSelect.val();
+        elmts.datasetAddButton.click(() => {
+            const catalogUri = elmts.catalogSelect.val();
+            MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
+                (newDataset) => {
+                    self.resetDatasetLayer();
+                    self.ajaxDatasets(catalogUri);
+                }
+            );
+        });
 
-        PostFdpDialog.resetDistributionLayer(dialog);
+        elmts.distributionAddButton.click(() => {
+            const datasetUri = elmts.datasetSelect.val();
+            MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
+                (newDistribution) => {
+                    self.resetDistributionLayer();
+                    self.ajaxDistributions(datasetUri);
+                }
+            );
+        });
+    }
 
-        PostFdpDialog.ajaxDistributions(dialog, datasetUri);
-    });
+    initBasicTexts() {
+        this.frame.i18n();
+        this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
+    };
 
-    elmts.catalogAddButton.click(() => {
-        MetadataFormDialog.launch("catalog", MetadataSpecs.catalog,
-            (newCatalog) => {
-                PostFdpDialog.resetCatalogLayer(dialog);
-                PostFdpDialog.ajaxCatalogs(dialog, fdpUri);
+    // resetting
+    resetDefault() {
+        this.elements.dialogBody.find(".default-clear").empty();
+        this.elements.dialogBody.find(".default-hidden").addClass("hidden");
+        this.resetCatalogLayer();
+    };
+
+    resetCatalogLayer() {
+        this.metadata.catalogs.clear();
+        this.constructor.resetSelect(this.elements.catalogSelect, "catalog");
+        this.elements.catalogLayer.addClass("hidden");
+
+        this.resetDatasetLayer();
+        this.resetDistributionLayer();
+    };
+
+    resetDatasetLayer() {
+        this.metadata.datasets.clear();
+        this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
+        this.elements.datasetLayer.addClass("hidden");
+
+        this.resetDistributionLayer();
+    };
+
+    resetDistributionLayer() {
+        this.metadata.distributions.clear();
+        this.elements.distributionsList.empty();
+        this.elements.distributionLayer.addClass("hidden");
+    };
+
+    // ajax
+    ajaxGeneric(command, method, data, callback) {
+        const self = this;
+        MetadataHelpers.ajax(command, method, data,
+            (result) => {
+                if (result.status === "ok") {
+                    callback(result);
+                } else {
+                    self.elements.fdpConnected.addClass("hidden");
+                    self.elements.fdpConnectionError.removeClass("hidden");
+                    self.elements.warningsArea.text($.i18n(result.message));
+                }
+            },
+            () => {
+                self.elements.fdpConnected.addClass("hidden");
+                self.elements.fdpConnectionError.removeClass("hidden");
+                self.elements.warningsArea.text($.i18n("connect-fdp-command/error"));
             }
         );
-    });
+    };
 
-    elmts.datasetAddButton.click(() => {
-        MetadataFormDialog.launch("dataset", MetadataSpecs.dataset,
-            (newDataset) => {
-                PostFdpDialog.resetDatasetLayer(dialog);
-                PostFdpDialog.ajaxDatasets(dialog, catalogUri);
+    ajaxFDPMetadata(fdpUri) {
+        const self = this;
+        this.ajaxGeneric("fdp-metadata", "GET", { fdpUri },
+            (result) => {
+                self.elements.fdpConnected.removeClass("hidden");
+                self.metadata.fdp = result.fdpMetadata;
+                self.showFDPMetadata();
+
+                self.resetCatalogLayer();
+                self.ajaxCatalogs(fdpUri);
             }
         );
-    });
+    };
 
-    elmts.distributionAddButton.click(() => {
-        MetadataFormDialog.launch("distribution", MetadataSpecs.distribution,
-            (newDistribution) => {
-                PostFdpDialog.resetDistributionLayer(dialog);
-                PostFdpDialog.ajaxDistributions(dialog, catalogUri);
+    ajaxCatalogs(fdpUri) {
+        const self = this;
+        this.ajaxGeneric("catalogs-metadata", "GET", { fdpUri },
+            (result) => {
+                self.metadata.catalogs.clear();
+                result.catalogs.forEach((catalog) => {
+                    self.metadata.catalogs.set(catalog.iri, catalog);
+                });
+                self.showCatalogs();
             }
         );
-    });
-};
+    };
 
-PostFdpDialog.initBasicTexts = (dialog) => {
-    dialog.frame.i18n();
-    dialog._elmts.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
-};
-
-PostFdpDialog.dismissFunc = (dialog) => {
-    return () => { DialogSystem.dismissUntil(dialog._level - 1); };
-};
-
-PostFdpDialog.resetDefault = (dialog) => {
-    dialog._elmts.dialogBody.find(".default-clear").empty();
-    dialog._elmts.dialogBody.find(".default-hidden").addClass("hidden");
-};
-
-PostFdpDialog.createSelectOption = (name) => {
-    return $("<option>")
-        .prop("disabled", true)
-        .prop("selected", true)
-        .text(`-- select a ${name} --`);
-};
-
-PostFdpDialog.resetSelect = (select, name) => {
-    select.empty();
-    select.append(PostFdpDialog.createSelectOption(name));
-};
-
-PostFdpDialog.resetCatalogLayer = (dialog) => {
-    dialog.metadata.catalogs.clear();
-    PostFdpDialog.resetSelect(dialog._elmts.catalogSelect, "catalog");
-    dialog._elmts.catalogLayer.addClass("hidden");
-
-    PostFdpDialog.resetDatasetLayer(dialog);
-    PostFdpDialog.resetDistributionLayer(dialog);
-};
-
-PostFdpDialog.resetDatasetLayer = (dialog) => {
-    dialog.metadata.datasets.clear();
-    PostFdpDialog.resetSelect(dialog._elmts.datasetSelect, "dataset");
-    dialog._elmts.datasetLayer.addClass("hidden");
-
-    PostFdpDialog.resetDistributionLayer(dialog);
-};
-
-PostFdpDialog.resetDistributionLayer = (dialog) => {
-    dialog.metadata.distributions.clear();
-    dialog._elmts.distributionsList.empty();
-    dialog._elmts.distributionLayer.addClass("hidden");
-};
-
-PostFdpDialog.ajaxGeneric = (dialog, command, method, data, callback) => {
-    MetadataHelpers.ajax(command, method, data,
-        (result) => {
-            if (result.status === "ok") {
-                callback(result);
-            } else {
-                dialog._elmts.fdpConnected.addClass("hidden");
-                dialog._elmts.fdpConnectionError.removeClass("hidden");
-                dialog._elmts.warningsArea.text($.i18n(result.message));
+    ajaxDatasets(catalogUri) {
+        const self = this;
+        this.ajaxGeneric("datasets-metadata", "GET", { catalogUri },
+            (result) => {
+                self.metadata.datasets.clear();
+                result.datasets.forEach((dataset) => {
+                    self.metadata.datasets.set(dataset.iri, dataset);
+                });
+                self.showDatasets();
             }
-        },
-        () => {
-            dialog._elmts.fdpConnected.addClass("hidden");
-            dialog._elmts.fdpConnectionError.removeClass("hidden");
-            dialog._elmts.warningsArea.text($.i18n("connect-fdp-command/error"));
-        }
-    );
-};
-
-PostFdpDialog.ajaxFDPMetadata = (dialog, fdpUri) => {
-    PostFdpDialog.ajaxGeneric(dialog, "fdp-metadata", "GET", { fdpUri },
-        (result) => {
-            dialog._elmts.fdpConnected.removeClass("hidden");
-            dialog.metadata.fdp = result.fdpMetadata;
-            PostFdpDialog.showFDPMetadata(dialog);
-
-            PostFdpDialog.resetCatalogLayer(dialog);
-            PostFdpDialog.ajaxCatalogs(dialog, fdpUri);
-        }
-    );
-};
-
-PostFdpDialog.ajaxCatalogs = (dialog, fdpUri) => {
-    PostFdpDialog.ajaxGeneric(dialog, "catalogs-metadata", "GET", { fdpUri },
-        (result) => {
-            dialog.metadata.catalogs.clear();
-            result.catalogs.forEach((catalog) => {
-                dialog.metadata.catalogs.set(catalog.iri, catalog);
-            });
-            PostFdpDialog.showCatalogs(dialog);
-        }
-    );
-};
-
-PostFdpDialog.ajaxDatasets = (dialog, catalogUri) => {
-    PostFdpDialog.ajaxGeneric(dialog, "datasets-metadata", "GET", { catalogUri },
-        (result) => {
-            dialog.metadata.datasets.clear();
-            result.datasets.forEach((dataset) => {
-                dialog.metadata.datasets.set(dataset.iri, dataset);
-            });
-            PostFdpDialog.showDatasets(dialog);
-        }
-    );
-};
-
-PostFdpDialog.ajaxDistributions = (dialog, datasetUri) => {
-    PostFdpDialog.ajaxGeneric(dialog, "distributions-metadata", "GET", { datasetUri },
-        (result) => {
-            dialog.metadata.distributions.clear();
-            result.distributions.forEach((distribution) => {
-                dialog.metadata.distributions.set(distribution.iri, distribution);
-            });
-            PostFdpDialog.showDistributions(dialog);
-        }
-    );
-};
-
-PostFdpDialog.showFDPMetadata = (dialog) => {
-    const fdpMetadata = dialog.metadata.fdp;
-    let title = $("<a>")
-        .attr("href", fdpMetadata.iri)
-        .attr("target", "_blank")
-        .text(fdpMetadata.title)
-        .get(0).outerHTML;
-    let publisher = $("<a>")
-        .attr("href", fdpMetadata.publisher)
-        .attr("target", "_blank")
-        .text(fdpMetadata.publisherName)
-        .get(0).outerHTML;
-
-    dialog._elmts.fdpMetadata.append($("<p>")
-        .append($.i18n("post-fdp-dialog/connected-to-fdp"))
-        .append(" \"" + title + "\" ")
-        .append($.i18n("post-fdp-dialog/published-by"))
-        .append(" " + publisher + ".")
-    );
-};
-
-PostFdpDialog.showMetadataSelect = (dialog, select, metadatas) => {
-    metadatas.forEach((metadata) => {
-        const isNew = dialog.newlyCreatedIRIs.has(metadata.iri);
-        select.append(
-            $("<option>")
-                .addClass("from-fdp")
-                .addClass(isNew ? "new" : "original")
-                .attr("value", metadata.iri)
-                .text(metadata.title)
         );
-    });
-};
+    };
 
-PostFdpDialog.showCatalogs = (dialog) => {
-    PostFdpDialog.resetSelect(dialog._elmts.catalogSelect, "catalog");
-    PostFdpDialog.showMetadataSelect(
-        dialog,
-        dialog._elmts.catalogSelect,
-        dialog.metadata.catalogs
-    );
-    dialog._elmts.catalogLayer.removeClass("hidden");
-};
+    ajaxDistributions(datasetUri) {
+        const self = this;
+        this.ajaxGeneric("distributions-metadata", "GET", { datasetUri },
+            (result) => {
+                self.metadata.distributions.clear();
+                result.distributions.forEach((distribution) => {
+                    self.metadata.distributions.set(distribution.iri, distribution);
+                });
+                self.showDistributions();
+            }
+        );
+    };
 
-PostFdpDialog.showDatasets = (dialog) => {
-    PostFdpDialog.resetSelect(dialog._elmts.datasetSelect, "dataset");
-    const actCatalog = dialog._elmts.catalogSelect.val();
-    PostFdpDialog.showMetadataSelect(
-        dialog,
-        dialog._elmts.datasetSelect,
-        dialog.metadata.datasets
-    );
-    dialog._elmts.datasetLayer.removeClass("hidden");
-};
+    // show parts
+    showFDPMetadata() {
+        const fdpMetadata = this.metadata.fdp;
+        this.elements.fdpMetadata.empty();
+        let title = $("<a>")
+            .attr("href", fdpMetadata.iri)
+            .attr("target", "_blank")
+            .text(fdpMetadata.title)
+            .get(0).outerHTML;
+        let publisher = $("<a>")
+            .attr("href", fdpMetadata.publisher)
+            .attr("target", "_blank")
+            .text(fdpMetadata.publisherName)
+            .get(0).outerHTML;
 
-PostFdpDialog.showDistributions = (dialog) => {
-    dialog._elmts.distributionsList.empty();
-    dialog.metadata.distributions.forEach((distribution) => {
-        const item = $("<li>")
-            .addClass("distribution-item")
-            .attr("id", distribution.id)
-            .text(`${distribution.title} (version: ${distribution.version})`);
-        dialog._elmts.distributionsList.append(item);
-    });
-    dialog._elmts.distributionLayer.removeClass("hidden");
-};
+        this.elements.fdpMetadata.append($("<p>")
+            .append($.i18n("post-fdp-dialog/connected-to-fdp"))
+            .append(" \"" + title + "\" ")
+            .append($.i18n("post-fdp-dialog/published-by"))
+            .append(" " + publisher + ".")
+        );
+    };
+
+    showMetadataSelect(select, metadatas) {
+        metadatas.forEach((metadata) => {
+            const isNew = this.newlyCreatedIRIs.has(metadata.iri);
+            select.append(
+                $("<option>")
+                    .addClass("from-fdp")
+                    .addClass(isNew ? "new" : "original")
+                    .attr("value", metadata.iri)
+                    .text(metadata.title)
+            );
+        });
+    };
+
+    showCatalogs() {
+        this.constructor.resetSelect(this.elements.catalogSelect, "catalog");
+        this.showMetadataSelect(
+            this.elements.catalogSelect,
+            this.metadata.catalogs
+        );
+        this.elements.catalogLayer.removeClass("hidden");
+    };
+
+    showDatasets() {
+        this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
+        const actCatalog = this.elements.catalogSelect.val();
+        this.showMetadataSelect(
+            this.elements.datasetSelect,
+            this.metadata.datasets
+        );
+        this.elements.datasetLayer.removeClass("hidden");
+    };
+
+    showDistributions() {
+        this.elements.distributionsList.empty();
+        this.metadata.distributions.forEach((distribution) => {
+            const item = $("<li>")
+                .addClass("distribution-item")
+                .attr("id", distribution.id)
+                .text(`${distribution.title} (version: ${distribution.version})`);
+            this.elements.distributionsList.append(item);
+        });
+        this.elements.distributionLayer.removeClass("hidden");
+    };
+
+    // generic helpers
+    static createSelectOption(name) {
+        return $("<option>")
+            .prop("disabled", true)
+            .prop("selected", true)
+            .text(`-- select a ${name} --`);
+    };
+
+    static resetSelect(select, name) {
+        select.empty();
+        select.append(this.createSelectOption(name));
+    };
+
+    // launcher
+    static createAndLaunch() {
+        const dialog = new PostFdpDialog();
+        dialog.launch();
+    }
+}
