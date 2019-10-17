@@ -25,8 +25,10 @@ package solutions.fairdata.openrefine.metadata.fdp;
 
 import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
+import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -45,9 +47,11 @@ import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
 
 public class FairDataPointClient {
@@ -114,6 +118,23 @@ public class FairDataPointClient {
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
             return DatasetTransformerUtils.metadata2DTO(datasetMetadata);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    public DistributionDTO getDistributionMetadata(String distributionURI) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(distributionURI, "GET", "text/turtle", true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String actualURI = conn.getURL().toString();
+
+            DistributionMetadataParser distributionMetadataParser = new DistributionMetadataParser();
+            DistributionMetadata distributionMetadata = distributionMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+            return DistributionTransformerUtils.metadata2DTO(distributionMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }

@@ -1,7 +1,7 @@
 /* global $, DOM, DialogSystem, Refine, MetadataHelpers */
 let MetadataFormDialog = {};
 
-MetadataFormDialog.launch = function(type, specs, callback) {
+MetadataFormDialog.launch = function(type, specs, callbackFn) {
     this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
     this._elmts = DOM.bind(this.frame);
 
@@ -11,7 +11,7 @@ MetadataFormDialog.launch = function(type, specs, callback) {
     let elmts = this._elmts;
 
     MetadataFormDialog.initBasicTexts(dialog, type);
-    MetadataFormDialog.createForm(dialog, specs, callback);
+    MetadataFormDialog.createForm(dialog, specs, callbackFn);
 
     // Bind actions
     elmts.closeButton.click(MetadataFormDialog.dismissFunc(dialog));
@@ -40,7 +40,7 @@ MetadataFormDialog.dismissFunc = (dialog) => {
     return () => { DialogSystem.dismissUntil(dialog._level - 1); };
 };
 
-MetadataFormDialog.createForm = (dialog, specs, callback) => {
+MetadataFormDialog.createForm = (dialog, specs, callbackFn) => {
 
     const makeLabel = (field) => {
         return $("<label>")
@@ -148,7 +148,11 @@ MetadataFormDialog.createForm = (dialog, specs, callback) => {
                     .find(`#${field.id}`).val();
             }
         });
-        callback(result);
+
+        // TODO: POST to FDP
+        // TODO: if valid, retrieve the new one (including the URI and retrieve is as result)
+        // TODO: if not valid, show problems
+        callbackFn(result);
         MetadataFormDialog.dismissFunc(dialog)();
     });
 };

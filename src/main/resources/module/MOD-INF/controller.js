@@ -11,6 +11,7 @@ function init() {
     RefineServlet.registerCommand(module, "fdp-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.FDPMetadataCommand());
     RefineServlet.registerCommand(module, "catalogs-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.CatalogsMetadataCommand());
     RefineServlet.registerCommand(module, "datasets-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DatasetsMetadataCommand());
+    RefineServlet.registerCommand(module, "distributions-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DistributionsMetadataCommand());
 
     // Resources
     ClientSideResourceManager.addPaths(
