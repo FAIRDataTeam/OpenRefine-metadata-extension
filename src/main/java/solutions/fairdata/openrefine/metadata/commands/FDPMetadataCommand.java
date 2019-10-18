@@ -41,7 +41,6 @@ public class FDPMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String fdpUri = request.getParameter("fdpUri");
         Writer w = response.getWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {
@@ -49,10 +48,10 @@ public class FDPMetadataCommand extends Command {
             FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(fdpUri);
 
             logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
-            objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
+            CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
-            objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();

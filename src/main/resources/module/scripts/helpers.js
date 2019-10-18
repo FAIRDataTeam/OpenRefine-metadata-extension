@@ -31,6 +31,7 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
         url: commandUrl,
         type: method,
         data: body,
+        contentType: "application/json; charset=utf-8",
         dataType: "json",
         success(data) {
             makeDone();

@@ -8,6 +8,7 @@ function init() {
     var RefineServlet = Packages.com.google.refine.RefineServlet;
 
     // Commands
+    RefineServlet.registerCommand(module, "fdp-auth", new Packages.solutions.fairdata.openrefine.metadata.commands.AuthCommand());
     RefineServlet.registerCommand(module, "fdp-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.FDPMetadataCommand());
     RefineServlet.registerCommand(module, "catalogs-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.CatalogsMetadataCommand());
     RefineServlet.registerCommand(module, "datasets-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DatasetsMetadataCommand());

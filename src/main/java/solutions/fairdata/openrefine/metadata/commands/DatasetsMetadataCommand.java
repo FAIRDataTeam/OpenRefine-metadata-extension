@@ -42,7 +42,6 @@ public class DatasetsMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String catalogUri = request.getParameter("catalogUri");
         Writer w = response.getWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
         try {
@@ -54,10 +53,10 @@ public class DatasetsMetadataCommand extends Command {
             }
 
             logger.info("Datasets metadata retrieved from catalog: " + catalogUri);
-            objectMapper.writeValue(w, new DatasetsMetadataResponse(datasetDTOs));
+            CommandUtils.objectMapper.writeValue(w, new DatasetsMetadataResponse(datasetDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + catalogUri + " (" + e.getMessage() + ")");
-            objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();

@@ -23,6 +23,7 @@
 package solutions.fairdata.openrefine.metadata.fdp;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
@@ -45,16 +46,16 @@ import java.util.HashSet;
 
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import org.slf4j.Logger;
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
-import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
-import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.commands.response.CatalogsMetadataResponse;
+import solutions.fairdata.openrefine.metadata.dto.*;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
 
 public class FairDataPointClient {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final HashSet<Integer> REDIRECTS = new HashSet<>(Arrays.asList(
             HttpURLConnection.HTTP_MOVED_PERM,
@@ -67,9 +68,28 @@ public class FairDataPointClient {
     private static final String USER_AGENT = "OpenRefine/metadata";
 
     private final Logger logger;
+    private final String token;
 
     public FairDataPointClient(Logger logger) {
+        this(null, logger);
+    }
+
+    public FairDataPointClient(String token, Logger logger) {
+        this.token = token;
         this.logger = logger;
+    }
+
+    public TokenDTO postAuthentication(String fdpURI, AuthDTO auth) throws IOException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpURI + "/tokens", "POST", "application/json");
+        conn.addRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setDoOutput(true);
+        objectMapper.writeValue(conn.getOutputStream(), auth);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return objectMapper.readValue(conn.getInputStream(), TokenDTO.class);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
     }
 
     public FDPMetadataDTO getFairDataPointMetadata(String fdpURI) throws IOException, FairDataPointException {
@@ -154,9 +174,11 @@ public class FairDataPointClient {
         conn.setRequestMethod(method);
         conn.addRequestProperty("Accept", accept);
         conn.addRequestProperty("User-Agent", USER_AGENT);
+        if (token != null) {
+            conn.addRequestProperty("Authorization", "Bearer " + token);
+        }
         return conn;
     }
-
     private HttpURLConnection request(String url, String method, String accept, boolean followRedirects) throws IOException {
         HttpURLConnection conn = createConnection(url, method, accept);
 

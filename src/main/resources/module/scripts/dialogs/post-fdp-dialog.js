@@ -6,6 +6,7 @@ class PostFdpDialog {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
+        this.token = null;
 
         this.metadata = {
             fdp: null,
@@ -45,9 +46,11 @@ class PostFdpDialog {
 
         elmts.connectButton.click(() => {
             const fdpUri = elmts.baseURI.val();
+            const username = elmts.username.val();
+            const password = elmts.password.val();
 
             self.resetDefault();
-            self.ajaxFDPMetadata(fdpUri);
+            self.ajaxConnectFDP(fdpUri, username, password);
         });
 
         elmts.catalogSelect.on("change", () => {
@@ -131,6 +134,23 @@ class PostFdpDialog {
     }
 
     // ajax
+    ajaxConnectFDP(fdpUri, username, password, callback) {
+        const self = this;
+        const authRequest = JSON.stringify({
+            fdpUri,
+            authDTO: {
+                username,
+                password
+            }
+        });
+        this.ajaxGeneric("fdp-auth", "POST", authRequest,
+            (result) => {
+                self.token = result.token;
+                self.ajaxFDPMetadata(fdpUri);
+            }
+        );
+    }
+
     ajaxGeneric(command, method, data, callback) {
         const self = this;
         MetadataHelpers.ajax(command, method, data,

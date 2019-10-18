@@ -38,16 +38,47 @@ form#fdp-post-form {
   max-width: 700px;
 }
 
-form#fdp-post-form > label {
+form#fdp-post-form div#uri-group label {
   font-weight: bold;
 }
 
-form#fdp-post-form > #baseURI {
+form#fdp-post-form div#fdp-group {
   flex-grow: 1;
 }
 
-form#fdp-post-form > * {
-  margin: 0.3em;
+form#fdp-post-form div#uri-group {
+  margin-bottom: 0.5em;
+}
+
+form#fdp-post-form div#uri-group {
+  display: flex;
+  align-items: center;
+}
+
+form#fdp-post-form div#uri-group input {
+  flex-grow: 1;
+  margin-left: 0.5em;
+}
+
+form#fdp-post-form div.fdp-form-buttons {
+  margin-left: 0.5em;
+}
+
+form#fdp-post-form div#credentials-group {
+  display: flex;
+  align-items: center;
+}
+form#fdp-post-form div#credentials-group > div {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+form#fdp-post-form div#credentials-group > div:first-child {
+  margin-right: 1em;
+}
+form#fdp-post-form div#credentials-group > div > input {
+  flex-grow: 1;
+  margin-left: 0.5em;
 }
 
 .hidden {

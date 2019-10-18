@@ -33,7 +33,7 @@ class MetadataFormDialog {
         const self = this;
         const elmts = this.elements;
 
-        elmts.closeButton.click(() => { self.dismiss() });
+        elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.optionalShowButton.click(() => {
             this.frame.find(".optional").each(function() {

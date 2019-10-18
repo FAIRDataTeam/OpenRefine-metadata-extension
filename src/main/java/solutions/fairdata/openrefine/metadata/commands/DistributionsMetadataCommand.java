@@ -42,7 +42,6 @@ public class DistributionsMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String datasetUri = request.getParameter("datasetUri");
         Writer w = response.getWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         logger.info("Retrieving Distributions metadata from dataset URI: " + datasetUri);
         try {
@@ -54,10 +53,10 @@ public class DistributionsMetadataCommand extends Command {
             }
 
             logger.info("Distributions metadata retrieved from dataset: " + datasetUri);
-            objectMapper.writeValue(w, new DistributionsMetadataResponse(distributionDTOs));
+            CommandUtils.objectMapper.writeValue(w, new DistributionsMetadataResponse(distributionDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + datasetUri + " (" + e.getMessage() + ")");
-            objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
             w.close();

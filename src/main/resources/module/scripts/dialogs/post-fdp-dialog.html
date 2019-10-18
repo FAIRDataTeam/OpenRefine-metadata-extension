@@ -7,12 +7,27 @@
         <div class="fdp-post-area">
             <p bind="descriptionText"></p>
             <form id="fdp-post-form" onsubmit="return false;" bind="fdpPostForm" autocomplete="on">
-                <label for="baseURI" data-i18n="post-fdp-dialog/label-uri"></label>
-                <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
-                <div class="fdp-port-buttons">
+                <div id="fdp-group">
+                    <div id="uri-group">
+                        <label for="baseURI" data-i18n="post-fdp-dialog/label-uri"></label>
+                        <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://" />
+                    </div>
+                    <div id="credentials-group">
+                        <div id="username-group">
+                            <label for="username" data-i18n="post-fdp-dialog/label-username"></label>
+                            <input type="text" name="username" id="username" bind="username" value="" />
+                        </div>
+                        <div id="password-group">
+                            <label for="password" data-i18n="post-fdp-dialog/label-password"></label>
+                            <input type="password" name="password" id="password" bind="password" value="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="fdp-form-buttons">
                     <button class="button button-primary" bind="connectButton" data-i18n="post-fdp-dialog/button-connect"></button>
                 </div>
             </form>
+
         </div>
         <div id="fdp-connection-error" bind="fdpConnectionError" class="hidden default-hidden">
             <div class="fdp-connect-warnings-area default-clear" bind="warningsArea"></div>
