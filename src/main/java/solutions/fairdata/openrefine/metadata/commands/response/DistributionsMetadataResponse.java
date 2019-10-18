@@ -22,7 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
 
 import java.util.ArrayList;

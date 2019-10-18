@@ -29,7 +29,7 @@ class PostFdpDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
-    };
+    }
 
     focusBaseURI() {
         // Focus value of FDP URI input for easy overwrite
@@ -41,7 +41,7 @@ class PostFdpDialog {
         const self = this;
         const elmts = this.elements;
 
-        elmts.closeButton.click(() => { self.dismiss() });
+        elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.connectButton.click(() => {
             const fdpUri = elmts.baseURI.val();
@@ -98,14 +98,14 @@ class PostFdpDialog {
     initBasicTexts() {
         this.frame.i18n();
         this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
-    };
+    }
 
     // resetting
     resetDefault() {
         this.elements.dialogBody.find(".default-clear").empty();
         this.elements.dialogBody.find(".default-hidden").addClass("hidden");
         this.resetCatalogLayer();
-    };
+    }
 
     resetCatalogLayer() {
         this.metadata.catalogs.clear();
@@ -114,7 +114,7 @@ class PostFdpDialog {
 
         this.resetDatasetLayer();
         this.resetDistributionLayer();
-    };
+    }
 
     resetDatasetLayer() {
         this.metadata.datasets.clear();
@@ -122,13 +122,13 @@ class PostFdpDialog {
         this.elements.datasetLayer.addClass("hidden");
 
         this.resetDistributionLayer();
-    };
+    }
 
     resetDistributionLayer() {
         this.metadata.distributions.clear();
         this.elements.distributionsList.empty();
         this.elements.distributionLayer.addClass("hidden");
-    };
+    }
 
     // ajax
     ajaxGeneric(command, method, data, callback) {
@@ -149,7 +149,7 @@ class PostFdpDialog {
                 self.elements.warningsArea.text($.i18n("connect-fdp-command/error"));
             }
         );
-    };
+    }
 
     ajaxFDPMetadata(fdpUri) {
         const self = this;
@@ -163,7 +163,7 @@ class PostFdpDialog {
                 self.ajaxCatalogs(fdpUri);
             }
         );
-    };
+    }
 
     ajaxCatalogs(fdpUri) {
         const self = this;
@@ -176,7 +176,7 @@ class PostFdpDialog {
                 self.showCatalogs();
             }
         );
-    };
+    }
 
     ajaxDatasets(catalogUri) {
         const self = this;
@@ -189,7 +189,7 @@ class PostFdpDialog {
                 self.showDatasets();
             }
         );
-    };
+    }
 
     ajaxDistributions(datasetUri) {
         const self = this;
@@ -202,7 +202,7 @@ class PostFdpDialog {
                 self.showDistributions();
             }
         );
-    };
+    }
 
     // show parts
     showFDPMetadata() {
@@ -225,7 +225,7 @@ class PostFdpDialog {
             .append($.i18n("post-fdp-dialog/published-by"))
             .append(" " + publisher + ".")
         );
-    };
+    }
 
     showMetadataSelect(select, metadatas) {
         metadatas.forEach((metadata) => {
@@ -238,7 +238,7 @@ class PostFdpDialog {
                     .text(metadata.title)
             );
         });
-    };
+    }
 
     showCatalogs() {
         this.constructor.resetSelect(this.elements.catalogSelect, "catalog");
@@ -247,7 +247,7 @@ class PostFdpDialog {
             this.metadata.catalogs
         );
         this.elements.catalogLayer.removeClass("hidden");
-    };
+    }
 
     showDatasets() {
         this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
@@ -257,7 +257,7 @@ class PostFdpDialog {
             this.metadata.datasets
         );
         this.elements.datasetLayer.removeClass("hidden");
-    };
+    }
 
     showDistributions() {
         this.elements.distributionsList.empty();
@@ -269,7 +269,7 @@ class PostFdpDialog {
             this.elements.distributionsList.append(item);
         });
         this.elements.distributionLayer.removeClass("hidden");
-    };
+    }
 
     // generic helpers
     static createSelectOption(name) {
@@ -277,12 +277,12 @@ class PostFdpDialog {
             .prop("disabled", true)
             .prop("selected", true)
             .text(`-- select a ${name} --`);
-    };
+    }
 
     static resetSelect(select, name) {
         select.empty();
         select.append(this.createSelectOption(name));
-    };
+    }
 
     // launcher
     static createAndLaunch() {
