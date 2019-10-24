@@ -32,6 +32,7 @@ public class DatasetDTO extends MetadataDTO {
     private List<String> keywords;
     private String landingPage;
     private List<String> distributions;
+    private String parentCatalog;
 
     public String getLanguage() {
         return language;
@@ -79,5 +80,13 @@ public class DatasetDTO extends MetadataDTO {
 
     public void setDistributions(List<String> distributions) {
         this.distributions = distributions;
+    }
+
+    public String getParentCatalog() {
+        return parentCatalog;
+    }
+
+    public void setParentCatalog(String parentCatalog) {
+        this.parentCatalog = parentCatalog;
     }
 }

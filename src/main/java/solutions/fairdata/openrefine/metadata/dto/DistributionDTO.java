@@ -26,6 +26,10 @@ public class DistributionDTO extends MetadataDTO {
 
     private String format;
     private String bytesize;
+    private String mediaType;
+    private String downloadUrl;
+    private String accessUrl;
+    private String parentDataset;
 
     public String getFormat() {
         return format;
@@ -41,5 +45,37 @@ public class DistributionDTO extends MetadataDTO {
 
     public void setBytesize(String bytesize) {
         this.bytesize = bytesize;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getAccessUrl() {
+        return accessUrl;
+    }
+
+    public void setAccessUrl(String accessUrl) {
+        this.accessUrl = accessUrl;
+    }
+
+    public String getParentDataset() {
+        return parentDataset;
+    }
+
+    public void setParentDataset(String parentDataset) {
+        this.parentDataset = parentDataset;
     }
 }

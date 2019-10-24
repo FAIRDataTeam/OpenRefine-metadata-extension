@@ -85,5 +85,11 @@
   "metadata/distribution/format/name": "Format",
   "metadata/distribution/format/description": "The file format of the distribution.",
   "metadata/distribution/bytesize/name": "Byte size",
-  "metadata/distribution/bytesize/description": "The size of a distribution in bytes."
+  "metadata/distribution/bytesize/description": "The size of a distribution in bytes.",
+  "metadata/distribution/mediaType/name": "Media type",
+  "metadata/distribution/mediaType/description": "The media type of the distribution as defined by IANA.",
+  "metadata/distribution/accessUrl/name": "Access URL",
+  "metadata/distribution/accessUrl/description": "A landing page, feed, SPARQL endpoint or other type of resource that gives access to the distribution of the dataset.",
+  "metadata/distribution/downloadUrl/name": "Download URL",
+  "metadata/distribution/downloadUrl/description": "A file that contains the distribution of the dataset in a given format."
 }

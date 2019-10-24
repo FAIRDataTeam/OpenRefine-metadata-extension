@@ -30,6 +30,7 @@ public class CatalogDTO extends MetadataDTO {
     private String homepage;
     private List<String> themeTaxonomies;
     private List<String> datasets;
+    private String parentFDP;
 
     public String getLanguage() {
         return language;
@@ -61,5 +62,13 @@ public class CatalogDTO extends MetadataDTO {
 
     public void setDatasets(List<String> datasets) {
         this.datasets = datasets;
+    }
+
+    public String getParentFDP() {
+        return parentFDP;
+    }
+
+    public void setParentFDP(String parentFDP) {
+        this.parentFDP = parentFDP;
     }
 }

@@ -38,13 +38,13 @@ public class CatalogTransformerUtils extends MetadataTransformerUtils {
         catalogDTO.setThemeTaxonomies(irisToStrings(catalogMetadata.getThemeTaxonomys()));
 
         catalogDTO.setDatasets(irisToStrings(catalogMetadata.getDatasets()));
+        catalogDTO.setParentFDP(iriToString(catalogMetadata.getParentURI()));
 
         return catalogDTO;
     }
 
     public static CatalogMetadata dto2Metadata(CatalogDTO catalogDTO) {
         CatalogMetadata catalogMetadata = new CatalogMetadata();
-
         genericMetadataFromDto(catalogMetadata, catalogDTO);
 
         catalogMetadata.setLanguage(stringToIri(catalogDTO.getLanguage()));
@@ -52,6 +52,7 @@ public class CatalogTransformerUtils extends MetadataTransformerUtils {
         catalogMetadata.setThemeTaxonomys(stringsToIris(catalogDTO.getThemeTaxonomies()));
 
         catalogMetadata.setDatasets(stringsToIris(catalogDTO.getDatasets()));
+        catalogMetadata.setParentURI(stringToIri(catalogDTO.getParentFDP()));
 
         return catalogMetadata;
     }

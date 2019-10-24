@@ -20,13 +20,25 @@ form.metadata-form div.metadata-form-group > label {
   display: block;
 }
 
-form.metadata-form div.metadata-form-group.required > label {
+form.metadata-form div.metadata-form-group.required > label,
+form.metadata-form div.metadata-form-group.required > div.xor-switches label {
   font-weight: bold;
 }
 
 form.metadata-form div.metadata-form-group > input,
-form.metadata-form div.metadata-form-group > textarea {
+form.metadata-form div.metadata-form-group > textarea,
+form.metadata-form div.metadata-form-group > div.xor-fields > input,
+form.metadata-form div.metadata-form-group > div.xor-fields > textarea {
   width: 100%;
+}
+
+form.metadata-form div.metadata-form-group > div.xor-switches {
+  display: flex;
+  margin-bottom: 0.3em;
+}
+
+form.metadata-form div.metadata-form-group > div.xor-switches > div.xor-switch {
+  margin-right: 0.5em;
 }
 
 form.metadata-form div.multiple-field > div.multiple-row {

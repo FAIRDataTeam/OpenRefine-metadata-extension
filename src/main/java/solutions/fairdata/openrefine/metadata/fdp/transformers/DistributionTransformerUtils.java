@@ -35,6 +35,11 @@ public class DistributionTransformerUtils extends MetadataTransformerUtils {
 
         distributionDTO.setFormat(literalToString(distributionMetadata.getFormat()));
         distributionDTO.setBytesize(literalToString(distributionMetadata.getByteSize()));
+        distributionDTO.setMediaType(literalToString(distributionMetadata.getMediaType()));
+        distributionDTO.setAccessUrl(iriToString(distributionMetadata.getAccessURL()));
+        distributionDTO.setDownloadUrl(iriToString(distributionMetadata.getDownloadURL()));
+
+        distributionDTO.setParentDataset(iriToString(distributionMetadata.getParentURI()));
 
         return distributionDTO;
     }
@@ -46,6 +51,11 @@ public class DistributionTransformerUtils extends MetadataTransformerUtils {
 
         distributionMetadata.setFormat(stringToLiteral(distributionDTO.getFormat()));
         distributionMetadata.setByteSize(stringToLiteral(distributionDTO.getBytesize()));
+        distributionMetadata.setMediaType(stringToLiteral(distributionDTO.getMediaType()));
+        distributionMetadata.setAccessURL(stringToIri(distributionDTO.getAccessUrl()));
+        distributionMetadata.setDownloadURL(stringToIri(distributionDTO.getDownloadUrl()));
+
+        distributionMetadata.setParentURI(stringToIri(distributionDTO.getParentDataset()));
 
         return distributionMetadata;
     }

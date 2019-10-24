@@ -71,8 +71,12 @@ class PostFdpDialog {
             const fdpUri = elmts.baseURI.val();
             MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
                 (newCatalog) => {
+                    //console.log(newCatalog);
                     self.resetCatalogLayer();
                     self.ajaxCatalogs(fdpUri);
+                },
+                {
+                    parentFDP: fdpUri
                 }
             );
         });
@@ -81,8 +85,12 @@ class PostFdpDialog {
             const catalogUri = elmts.catalogSelect.val();
             MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
                 (newDataset) => {
+                    //console.log(newDataset);
                     self.resetDatasetLayer();
                     self.ajaxDatasets(catalogUri);
+                },
+                {
+                    parentCatalog: catalogUri
                 }
             );
         });
@@ -91,8 +99,12 @@ class PostFdpDialog {
             const datasetUri = elmts.datasetSelect.val();
             MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
                 (newDistribution) => {
+                    //console.log(newDistribution);
                     self.resetDistributionLayer();
                     self.ajaxDistributions(datasetUri);
+                },
+                {
+                    parentDataset: datasetUri
                 }
             );
         });

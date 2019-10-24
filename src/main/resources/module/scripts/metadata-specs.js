@@ -59,6 +59,12 @@ MetadataSpecs.catalog = {
             "type": "iri",
             "required": true,
         },
+        {
+            "id": "parentFDP",
+            "type": "iri",
+            "required": true,
+            "hidden": true
+        },
     ]
 };
 
@@ -132,6 +138,12 @@ MetadataSpecs.dataset = {
             "type": "iri",
             "required": false,
         },
+        {
+            "id": "parentCatalog",
+            "type": "iri",
+            "required": true,
+            "hidden": true
+        },
     ]
 };
 
@@ -172,6 +184,32 @@ MetadataSpecs.distribution = {
             "id": "bytesize",
             "type": "string",
             "required": false,
+        },
+        {
+            "id": "mediaType",
+            "type": "string",
+            "required": true
+        },
+        {
+            "id": "targetUrl",
+            "type": "xor",
+            "required": true,
+            "xor": [
+                {
+                    "id": "downloadUrl",
+                    "type": "iri"
+                },
+                {
+                    "id": "accessUrl",
+                    "type": "iri"
+                },
+            ]
+        },
+        {
+            "id": "parentDataset",
+            "type": "iri",
+            "required": true,
+            "hidden": true
         },
     ]
 };

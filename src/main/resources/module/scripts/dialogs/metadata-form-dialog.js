@@ -1,7 +1,7 @@
 /* global $, DOM, DialogSystem, Refine, MetadataHelpers */
 
 class MetadataFormDialog {
-    constructor(type, specs, callbackFn) {
+    constructor(type, specs, callbackFn, prefill) {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
@@ -10,8 +10,11 @@ class MetadataFormDialog {
         this.specs = specs;
         this.callbackFn = callbackFn;
 
+        const prefillObj = prefill || {};
+
         this.initBasicTexts();
         this.createForm();
+        this.fillForm(prefillObj);
         this.bindActions();
     }
 
@@ -52,6 +55,11 @@ class MetadataFormDialog {
         });
     }
 
+    getValue(field) {
+        const value = this.elements.metadataForm.find(`#${field.id}`).val();
+        return value === "" ? null : value;
+    }
+
     createForm() {
         const elmts = this.elements;
 
@@ -73,9 +81,13 @@ class MetadataFormDialog {
                     result[field.id] = elmts.metadataForm
                         .find(`.multiple-${field.id}`).map(function() {
                             return $(this).val();
-                        }).get();
+                        }).get().filter((e) => e !== "");
+                } else if(field.type === "xor") {
+                    field.options.forEach((option) => {
+                        result[option.id] = this.getValue(option);
+                    });
                 } else {
-                    result[field.id] = elmts.metadataForm.find(`#${field.id}`).val();
+                    result[field.id] = this.getValue(field);
                 }
             });
 
@@ -87,7 +99,34 @@ class MetadataFormDialog {
         });
     }
 
+    fillForm(obj) {
+        const elmts = this.elements;
+        Object.keys(obj).forEach((fieldId) => {
+            const field = elmts.metadataForm.find(`#${fieldId}`);
+            if (field) {
+                field.val(obj[fieldId]);
+            }
+        });
+    }
+
     // helpers
+    makeInputField(field) {
+        const input = $(field.type === "text" ? "<textarea>" : "<input>")
+            .attr("id", field.id)
+            .attr("name", field.id)
+            .attr("type", "text")
+            .attr("placeholder", field.type === "iri" ? "http://" : "")
+            .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
+            .prop("required", field.required);
+
+        if (field.hidden) {
+            input.attr("type", "hidden");
+        } else if (field.type === "iri") {
+            input.attr("type", "uri");
+        }
+        return input;
+    }
+
     makeLabel(field) {
         return $("<label>")
             .attr("for", field.id)
@@ -95,13 +134,7 @@ class MetadataFormDialog {
     }
 
     makeInput(field) {
-        const input = $(field.type === "text" ? "<textarea>" : "<input>")
-            .attr("id", field.id)
-            .attr("name", field.id)
-            .attr("type", field.type === "iri" ? "url" : "text")
-            .attr("placeholder", field.type === "iri" ? "http://" : "")
-            .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
-            .prop("required", field.required);
+        const input = this.makeInputField(field);
 
         if (field.multiple) {
             input.removeAttr("id");
@@ -140,21 +173,102 @@ class MetadataFormDialog {
             };
             wrapper.append(createRow(input));
             return wrapper;
+        }
+
+        return input;
+    }
+
+    makeInitFieldDiv(field) {
+        return $("<div>")
+            .attr("id", `form-group-${field.id}`)
+            .addClass("metadata-form-group");
+    }
+
+    makeOptionalFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .addClass("optional")
+            .addClass("hidden")
+            .append(this.makeLabel(field))
+            .append(this.makeInput(field));
+    }
+
+    makeRequiredFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .addClass("required")
+            .append(this.makeLabel(field))
+            .append(this.makeInput(field));
+    }
+
+    makeHiddenFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .append(this.makeInput(field));
+    }
+
+    makeFieldDiv(field) {
+        if (field.hidden) {
+            return this.makeHiddenFieldDiv(field);
+        } else if (field.required) {
+            return this.makeRequiredFieldDiv(field);
         } else {
-            return input;
+            return this.makeOptionalFieldDiv(field);
         }
     }
 
+    makeXorFormGroup(field) {
+        let fieldDiv = this.makeInitFieldDiv(field);
+        if (field.required) {
+            fieldDiv.addClass("required");
+        } else {
+            fieldDiv.addClass("optional").addClass("hidden");
+        }
+        const xorFields = $("<div>").addClass("xor-fields");
+        const xorSwitches = $("<div>").addClass("xor-switches");
+        field.options.forEach((option) => {
+            const switchId = `${field.id}-${option.id}`;
+            const inputField = this.makeInputField(option)
+                .addClass("hidden")
+                .addClass(`field-${field.id}`);
+            const xorSwitch = $("<div>")
+                .addClass("xor-switch")
+                .append(
+                    $("<input>")
+                        .attr("type", "radio")
+                        .attr("name", `${field.id}`)
+                        .attr("id", switchId)
+                        .val(option.id)
+                        .prop("required", field.required)
+                ).append(
+                    $("<label>")
+                        .attr("for", switchId)
+                        .text($.i18n(`metadata/${this.specs.id}/${option.id}/name`))
+                );
+            xorSwitch.on("change", () => {
+                if(!$(`#${switchId}`).is(":checked")) return;
+                $(`.field-${field.id}`).each(function() {
+                    $(this)
+                        .addClass("hidden")
+                        .val("")
+                        .prop("required", false);
+
+                });
+                $(`#${option.id}`)
+                    .removeClass("hidden")
+                    .prop("required", field.required);
+            });
+            xorSwitches.append(xorSwitch);
+            xorFields.append(inputField);
+        });
+        fieldDiv.append(xorSwitches);
+        fieldDiv.append(xorFields);
+        return fieldDiv;
+    }
+
     makeFormGroup(field) {
-        let fieldDiv = $("<div>")
-            .attr("id", `form-group-${field.id}`)
-            .addClass("metadata-form-group")
-            .addClass(field.required ? "required" : "optional");
+        if (field.type === "xor") {
+            return this.makeXorFormGroup(field);
+        }
 
-        if (!field.required) { fieldDiv.addClass("hidden"); }
-
-        fieldDiv.append(this.makeLabel(field));
-        fieldDiv.append(this.makeInput(field));
+        let fieldDiv = this.makeFieldDiv(field);
 
         if ("nested" in field) {
             let nestedDiv = $("<div>")
@@ -169,8 +283,8 @@ class MetadataFormDialog {
     }
 
     // launcher
-    static createAndLaunch(type, specs, callbackFn) {
-        const dialog = new MetadataFormDialog(type, specs, callbackFn);
+    static createAndLaunch(type, specs, callbackFn, prefill) {
+        const dialog = new MetadataFormDialog(type, specs, callbackFn, prefill);
         dialog.launch();
     }
 }

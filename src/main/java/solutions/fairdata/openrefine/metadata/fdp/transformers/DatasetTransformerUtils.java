@@ -43,6 +43,7 @@ public class DatasetTransformerUtils extends MetadataTransformerUtils {
         datasetDTO.setLandingPage(iriToString(datasetMetadata.getLandingPage()));
 
         datasetDTO.setDistributions(irisToStrings(datasetMetadata.getDistributions()));
+        datasetDTO.setParentCatalog(iriToString(datasetMetadata.getParentURI()));
 
         return datasetDTO;
     }
@@ -59,6 +60,9 @@ public class DatasetTransformerUtils extends MetadataTransformerUtils {
         datasetMetadata.setContactPoint(stringToIri(datasetDTO.getContactPoint()));
         datasetMetadata.setKeywords(stringsToLiterals(datasetDTO.getKeywords()));
         datasetMetadata.setLandingPage(stringToIri(datasetDTO.getLandingPage()));
+
+        datasetMetadata.setDistributions(stringsToIris(datasetDTO.getDistributions()));
+        datasetMetadata.setParentURI(stringToIri(datasetDTO.getParentCatalog()));
 
         return datasetMetadata;
     }
