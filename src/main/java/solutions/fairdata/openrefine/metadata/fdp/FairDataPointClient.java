@@ -24,15 +24,12 @@ package solutions.fairdata.openrefine.metadata.fdp;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.*;
+import nl.dtl.fairmetadata4j.model.*;
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.eclipse.rdf4j.rio.turtle.TurtleParser;
 
@@ -40,18 +37,11 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import org.slf4j.Logger;
-import solutions.fairdata.openrefine.metadata.commands.response.CatalogsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.dto.*;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.*;
 
 public class FairDataPointClient {
 
@@ -121,6 +111,39 @@ public class FairDataPointClient {
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
             return CatalogTransformerUtils.metadata2DTO(catalogMetadata);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    public CatalogDTO postCatalog(String fdpURI, CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpURI + "/fdp/catalog", "POST", "text/turtle");
+        conn.addRequestProperty("Content-Type", "text/turtle");
+        conn.setDoOutput(true);
+
+        // Generate random IRI, FDP will replace it with really unique
+        String uri = fdpURI + "/fdp/catalog/" + UUID.randomUUID();
+        catalogDTO.setIri(uri);
+
+        CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
+        CatalogMetadata catalogMetadata = CatalogTransformerUtils.dto2Metadata(catalogDTO);
+        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        MetadataTransformerUtils.setTimestamps(catalogMetadata);
+        String metadata = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        bw.write(metadata);
+        bw.flush();
+        bw.close();
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            String actualURI = conn.getHeaderField("Location");
+
+            CatalogMetadata returnCatalogMetadata = catalogMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+            return CatalogTransformerUtils.metadata2DTO(returnCatalogMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }

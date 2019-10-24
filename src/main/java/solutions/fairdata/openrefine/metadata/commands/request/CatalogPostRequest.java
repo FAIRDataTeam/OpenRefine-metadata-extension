@@ -20,11 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata.commands.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 
-public class CommandUtils {
+public class CatalogPostRequest {
 
-    public static final ObjectMapper objectMapper = new ObjectMapper();
+    private String fdpUri;
+    private String token;
+    private CatalogDTO catalogDTO;
+
+    public CatalogPostRequest() {
+    }
+
+    public CatalogPostRequest(String fdpUri, String token, CatalogDTO catalogDTO) {
+        this.fdpUri = fdpUri;
+        this.token = token;
+        this.catalogDTO = catalogDTO;
+    }
+
+    public String getFdpUri() {
+        return fdpUri;
+    }
+
+    public void setFdpUri(String fdpUri) {
+        this.fdpUri = fdpUri;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public CatalogDTO getCatalogDTO() {
+        return catalogDTO;
+    }
+
+    public void setCatalogDTO(CatalogDTO catalogDTO) {
+        this.catalogDTO = catalogDTO;
+    }
 }

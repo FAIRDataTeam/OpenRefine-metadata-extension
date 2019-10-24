@@ -23,23 +23,27 @@
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
 import nl.dtl.fairmetadata4j.model.Agent;
+import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import solutions.fairdata.openrefine.metadata.dto.MetadataDTO;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetadataTransformerUtils {
+
+    private static SimpleValueFactory literalFactory = SimpleValueFactory.getInstance();
 
     public static String iriToString(IRI iri) {
         return iri == null ? null : iri.toString();
     }
 
     public static IRI stringToIri(String iri) {
-        return iri == null ? null : SimpleValueFactory.getInstance().createIRI(iri);
+        return iri == null ? null : literalFactory.createIRI(iri);
     }
 
     public static String literalToString(Literal literal) {
@@ -47,23 +51,23 @@ public class MetadataTransformerUtils {
     }
 
     public static Literal stringToLiteral(String value) {
-        return value == null ? null : SimpleValueFactory.getInstance().createLiteral(value);
+        return value == null ? null : literalFactory.createLiteral(value);
     }
 
     public static List<String> irisToStrings(List<IRI> iris) {
-        return iris.stream().map(MetadataTransformerUtils::iriToString).collect(Collectors.toList());
+        return iris == null ? null : iris.stream().map(MetadataTransformerUtils::iriToString).collect(Collectors.toList());
     }
 
     public static List<IRI> stringsToIris(List<String> strings) {
-        return strings.stream().map(MetadataTransformerUtils::stringToIri).collect(Collectors.toList());
+        return strings == null ? null : strings.stream().map(MetadataTransformerUtils::stringToIri).collect(Collectors.toList());
     }
 
     public static List<String> literalsToStrings(List<Literal> literals) {
-        return literals.stream().map(MetadataTransformerUtils::literalToString).collect(Collectors.toList());
+        return literals == null ? null : literals.stream().map(MetadataTransformerUtils::literalToString).collect(Collectors.toList());
     }
 
     public static List<Literal> stringsToLiterals(List<String> strings) {
-        return strings.stream().map(MetadataTransformerUtils::stringToLiteral).collect(Collectors.toList());
+        return strings == null ? null : strings.stream().map(MetadataTransformerUtils::stringToLiteral).collect(Collectors.toList());
     }
 
     public static Agent createAgent(String iri, String name) {
@@ -95,5 +99,21 @@ public class MetadataTransformerUtils {
         metadata.setRights(stringToIri(dto.getRights()));
 
         metadata.setPublisher(createAgent(dto.getPublisher(), dto.getPublisherName()));
+    }
+
+    public static Identifier createIdenfier(String uri) {
+        Identifier identifier = new Identifier();
+        identifier.setIdentifier(stringToLiteral(uri));
+        identifier.setUri(stringToIri(uri));
+        return identifier;
+    }
+
+    public static void setTimestamps(Metadata metadata) {
+        setTimestamps(metadata, new Date());
+    }
+
+    public static void setTimestamps(Metadata metadata, Date date) {
+        metadata.setModified(literalFactory.createLiteral(date));
+        metadata.setIssued(literalFactory.createLiteral(date));
     }
 }

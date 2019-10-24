@@ -37,7 +37,7 @@ MetadataSpecs.catalog = {
             "id": "language",
             "type": "iri",
             "required": false,
-            "multiple": true,
+            //"multiple": true,
         },
         {
             "id": "license",
@@ -55,9 +55,10 @@ MetadataSpecs.catalog = {
             "required": false,
         },
         {
-            "id": "themeTaxonomy",
+            "id": "themeTaxonomies",
             "type": "iri",
             "required": true,
+            "multiple": true,
         },
         {
             "id": "parentFDP",
@@ -104,7 +105,7 @@ MetadataSpecs.dataset = {
             "id": "language",
             "type": "iri",
             "required": false,
-            "multiple": true,
+            //"multiple": true,
         },
         {
             "id": "license",

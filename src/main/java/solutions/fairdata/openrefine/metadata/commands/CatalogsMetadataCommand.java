@@ -22,12 +22,15 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.commands.request.CatalogPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.AuthResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.CatalogPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.CatalogsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +59,27 @@ public class CatalogsMetadataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new CatalogsMetadataResponse(catalogDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CatalogPostRequest catalogPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), CatalogPostRequest.class);
+        Writer w = response.getWriter();
+
+        try {
+            FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getToken(), logger);
+            CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getFdpUri(), catalogPostRequest.getCatalogDTO());
+
+            CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error while creating catalog in FAIR Data Point: " + catalogPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            // TODO: post error
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();

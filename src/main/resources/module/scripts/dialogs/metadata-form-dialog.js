@@ -91,12 +91,12 @@ class MetadataFormDialog {
                 }
             });
 
-            // TODO: POST to FDP
-            // TODO: if valid, retrieve the new one (including the URI and retrieve is as result)
-            // TODO: if not valid, show problems
-            this.callbackFn(result);
-            this.dismiss();
+            this.callbackFn(result, this);
         });
+    }
+
+    displayErrors(errors) {
+        // TODO
     }
 
     fillForm(obj) {

@@ -69,11 +69,28 @@ class PostFdpDialog {
 
         elmts.catalogAddButton.click(() => {
             const fdpUri = elmts.baseURI.val();
+            const token = this.token;
             MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
-                (newCatalog) => {
-                    //console.log(newCatalog);
-                    self.resetCatalogLayer();
-                    self.ajaxCatalogs(fdpUri);
+                (newCatalog, formDialog) => {
+                    const self = this;
+                    const catalogPostRequest = JSON.stringify({
+                        fdpUri,
+                        token,
+                        catalogDTO: newCatalog
+                    });
+                    this.ajaxGeneric("catalogs-metadata", "POST", catalogPostRequest,
+                        (result) => {
+                            // TODO: callback handling result
+                            //console.log(result);
+                            if (results.status === "ok") {
+                                self.resetCatalogLayer();
+                                self.ajaxCatalogs(fdpUri);
+                                formDialog.dismiss();
+                            } else {
+                                console.log("Error occured while POSTing catalog");
+                            }
+                        }
+                    );
                 },
                 {
                     parentFDP: fdpUri
