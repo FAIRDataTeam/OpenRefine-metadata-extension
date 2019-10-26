@@ -118,7 +118,7 @@ MetadataSpecs.dataset = {
             "required": false,
         },
         {
-            "id": "theme",
+            "id": "themes",
             "type": "iri",
             "required": true,
             "multiple": true,
@@ -129,7 +129,7 @@ MetadataSpecs.dataset = {
             "required": false,
         },
         {
-            "id": "keyword",
+            "id": "keywords",
             "type": "string",
             "required": false,
             "multiple": true,

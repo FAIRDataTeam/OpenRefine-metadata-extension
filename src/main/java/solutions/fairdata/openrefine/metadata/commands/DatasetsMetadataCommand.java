@@ -22,8 +22,9 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.commands.request.DatasetPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.DatasetPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.DatasetsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
@@ -40,12 +41,13 @@ public class DatasetsMetadataCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String fdpUri = request.getParameter("fdpUri");
         String catalogUri = request.getParameter("catalogUri");
         Writer w = response.getWriter();
 
         logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(logger);
+            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             CatalogDTO catalogDTO = fdpClient.getCatalogMetadata(catalogUri);
             ArrayList<DatasetDTO> datasetDTOs = new ArrayList<>();
             for (String datasetURI : catalogDTO.getDatasets()) {
@@ -56,6 +58,27 @@ public class DatasetsMetadataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new DatasetsMetadataResponse(datasetDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + catalogUri + " (" + e.getMessage() + ")");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        DatasetPostRequest datasetPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DatasetPostRequest.class);
+        Writer w = response.getWriter();
+
+        try {
+            FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), logger);
+            DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDatasetDTO());
+
+            CommandUtils.objectMapper.writeValue(w, new DatasetPostResponse(datasetDTO));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error while creating catalog in FAIR Data Point: " + datasetPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            // TODO: post error
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();

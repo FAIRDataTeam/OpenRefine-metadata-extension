@@ -22,7 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.response.DistributionsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -40,12 +39,13 @@ public class DistributionsMetadataCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String fdpUri = request.getParameter("fdpUri");
         String datasetUri = request.getParameter("datasetUri");
         Writer w = response.getWriter();
 
         logger.info("Retrieving Distributions metadata from dataset URI: " + datasetUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(logger);
+            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             DatasetDTO datasetDTO = fdpClient.getDatasetMetadata(datasetUri);
             ArrayList<DistributionDTO> distributionDTOs = new ArrayList<>();
             for (String distributionURI : datasetDTO.getDistributions()) {

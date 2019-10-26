@@ -59,18 +59,22 @@ public class FairDataPointClient {
 
     private final Logger logger;
     private final String token;
+    private final String fdpBaseURI;
 
-    public FairDataPointClient(Logger logger) {
-        this(null, logger);
+    public FairDataPointClient(String fdpBaseURI, Logger logger) {
+        this(fdpBaseURI, null, logger);
     }
 
-    public FairDataPointClient(String token, Logger logger) {
+    public FairDataPointClient(String fdpBaseURI, String token, Logger logger) {
+        this.fdpBaseURI = fdpBaseURI;
         this.token = token;
         this.logger = logger;
     }
 
-    public TokenDTO postAuthentication(String fdpURI, AuthDTO auth) throws IOException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpURI + "/tokens", "POST", "application/json");
+    // AUTH TOKEN
+
+    public TokenDTO postAuthentication(AuthDTO auth) throws IOException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpBaseURI + "/tokens", "POST", "application/json");
         conn.addRequestProperty("Content-Type", "application/json; utf-8");
         conn.setDoOutput(true);
         objectMapper.writeValue(conn.getOutputStream(), auth);
@@ -82,8 +86,10 @@ public class FairDataPointClient {
         }
     }
 
-    public FDPMetadataDTO getFairDataPointMetadata(String fdpURI) throws IOException, FairDataPointException {
-        HttpURLConnection conn = request(fdpURI, "GET", "text/turtle", true);
+    // GET (single)
+
+    public FDPMetadataDTO getFairDataPointMetadata() throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(fdpBaseURI, "GET", "text/turtle", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
@@ -111,39 +117,6 @@ public class FairDataPointClient {
                     SimpleValueFactory.getInstance().createIRI(actualURI)
             );
             return CatalogTransformerUtils.metadata2DTO(catalogMetadata);
-        } else {
-            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
-        }
-    }
-
-    public CatalogDTO postCatalog(String fdpURI, CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpURI + "/fdp/catalog", "POST", "text/turtle");
-        conn.addRequestProperty("Content-Type", "text/turtle");
-        conn.setDoOutput(true);
-
-        // Generate random IRI, FDP will replace it with really unique
-        String uri = fdpURI + "/fdp/catalog/" + UUID.randomUUID();
-        catalogDTO.setIri(uri);
-
-        CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
-        CatalogMetadata catalogMetadata = CatalogTransformerUtils.dto2Metadata(catalogDTO);
-        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
-        MetadataTransformerUtils.setTimestamps(catalogMetadata);
-        String metadata = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
-
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
-        bw.write(metadata);
-        bw.flush();
-        bw.close();
-
-        if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
-            String actualURI = conn.getHeaderField("Location");
-
-            CatalogMetadata returnCatalogMetadata = catalogMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return CatalogTransformerUtils.metadata2DTO(returnCatalogMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -182,6 +155,109 @@ public class FairDataPointClient {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
+
+    // POST
+
+    public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/catalog", "POST", "text/turtle");
+        conn.addRequestProperty("Content-Type", "text/turtle");
+        conn.setDoOutput(true);
+
+        // Generate random IRI, FDP will replace it with really unique
+        String uri = fdpBaseURI + "/fdp/catalog/" + UUID.randomUUID();
+        catalogDTO.setIri(uri);
+
+        CatalogMetadata catalogMetadata = CatalogTransformerUtils.dto2Metadata(catalogDTO);
+        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        MetadataTransformerUtils.setTimestamps(catalogMetadata);
+        String metadata = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        bw.write(metadata);
+        bw.flush();
+        bw.close();
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            String actualURI = conn.getHeaderField("Location");
+            CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
+
+            CatalogMetadata returnCatalogMetadata = catalogMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+            return CatalogTransformerUtils.metadata2DTO(returnCatalogMetadata);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, MetadataException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/dataset", "POST", "text/turtle");
+        conn.addRequestProperty("Content-Type", "text/turtle");
+        conn.setDoOutput(true);
+
+        // Generate random IRI, FDP will replace it with really unique
+        String uri = fdpBaseURI + "/fdp/dataset/" + UUID.randomUUID();
+        datasetDTO.setIri(uri);
+
+        DatasetMetadata datasetMetadata = DatasetTransformerUtils.dto2Metadata(datasetDTO);
+        datasetMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        MetadataTransformerUtils.setTimestamps(datasetMetadata);
+        String metadata = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE);
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        bw.write(metadata);
+        bw.flush();
+        bw.close();
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            String actualURI = conn.getHeaderField("Location");
+            DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser();
+
+            DatasetMetadata returnDatasetMetadata = datasetMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+            return DatasetTransformerUtils.metadata2DTO(returnDatasetMetadata);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    public DistributionDTO postDistribution(DistributionDTO distributionDTO) throws IOException, MetadataException, FairDataPointException {
+        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/distribution", "POST", "text/turtle");
+        conn.addRequestProperty("Content-Type", "text/turtle");
+        conn.setDoOutput(true);
+
+        // Generate random IRI, FDP will replace it with really unique
+        String uri = fdpBaseURI + "/fdp/distribution/" + UUID.randomUUID();
+        distributionDTO.setIri(uri);
+
+        DistributionMetadata distributionMetadata = DistributionTransformerUtils.dto2Metadata(distributionDTO);
+        distributionMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        MetadataTransformerUtils.setTimestamps(distributionMetadata);
+        String metadata = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE);
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        bw.write(metadata);
+        bw.flush();
+        bw.close();
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            String actualURI = conn.getHeaderField("Location");
+            DistributionMetadataParser distributionMetadataParser = new DistributionMetadataParser();
+
+            DistributionMetadata returnDistributionMetadata = distributionMetadataParser.parse(
+                    parseStatements(conn, actualURI),
+                    SimpleValueFactory.getInstance().createIRI(actualURI)
+            );
+            return DistributionTransformerUtils.metadata2DTO(returnDistributionMetadata);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    // HELPERS
 
     private ArrayList<Statement> parseStatements(HttpURLConnection conn, String uri) throws IOException {
         TurtleParser parser = new TurtleParser();

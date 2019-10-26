@@ -22,7 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.commands.Command;
 
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -44,8 +43,8 @@ public class FDPMetadataCommand extends Command {
 
         logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(logger);
-            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(fdpUri);
+            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
+            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
 
             logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
             CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));

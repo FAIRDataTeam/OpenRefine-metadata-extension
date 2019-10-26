@@ -24,13 +24,11 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.request.CatalogPostRequest;
-import solutions.fairdata.openrefine.metadata.commands.response.AuthResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.CatalogPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.CatalogsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
-import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,8 +46,8 @@ public class CatalogsMetadataCommand extends Command {
 
         logger.info("Retrieving Catalogs metadata from FDP URI: " + fdpUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(logger);
-            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(fdpUri);
+            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
+            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
             ArrayList<CatalogDTO> catalogDTOs = new ArrayList<>();
             for (String catalogURI : fdpMetadataDTO.getCatalogs()) {
                 catalogDTOs.add(fdpClient.getCatalogMetadata(catalogURI));
@@ -72,8 +70,8 @@ public class CatalogsMetadataCommand extends Command {
         Writer w = response.getWriter();
 
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getToken(), logger);
-            CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getFdpUri(), catalogPostRequest.getCatalogDTO());
+            FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getFdpUri(), catalogPostRequest.getToken(), logger);
+            CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getCatalogDTO());
 
             CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
         } catch (Exception e) {

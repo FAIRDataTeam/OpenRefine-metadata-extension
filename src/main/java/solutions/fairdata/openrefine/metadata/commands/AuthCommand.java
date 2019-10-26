@@ -42,8 +42,8 @@ public class AuthCommand extends Command {
         Writer w = response.getWriter();
 
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(logger);
-            TokenDTO tokenDTO = fdpClient.postAuthentication(authRequest.getFdpUri(), authRequest.getAuthDTO());
+            FairDataPointClient fdpClient = new FairDataPointClient(authRequest.getFdpUri(), logger);
+            TokenDTO tokenDTO = fdpClient.postAuthentication(authRequest.getAuthDTO());
 
             CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken()));
         } catch (Exception e) {
