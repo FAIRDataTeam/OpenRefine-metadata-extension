@@ -101,7 +101,7 @@ public class MetadataTransformerUtils {
         metadata.setPublisher(createAgent(dto.getPublisher(), dto.getPublisherName()));
     }
 
-    public static Identifier createIdenfier(String uri) {
+    public static Identifier createIdentifier(String uri) {
         Identifier identifier = new Identifier();
         identifier.setIdentifier(stringToLiteral(uri));
         identifier.setUri(stringToIri(uri));

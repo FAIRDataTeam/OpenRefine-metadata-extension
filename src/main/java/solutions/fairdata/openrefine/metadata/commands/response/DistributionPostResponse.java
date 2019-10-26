@@ -20,46 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request;
+package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
 
-public class DatasetPostRequest {
+public class DistributionPostResponse {
 
-    private String fdpUri;
-    private String token;
-    private DatasetDTO dataset;
+    private String status;
+    private DistributionDTO distribution;
 
-    public DatasetPostRequest() {
+    public DistributionPostResponse(DistributionDTO distribution) {
+        this.status = "ok";
+        this.distribution = distribution;
     }
 
-    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.dataset = dataset;
+    public String getStatus() {
+        return status;
     }
 
-    public String getFdpUri() {
-        return fdpUri;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
+    public DistributionDTO getDistribution() {
+        return distribution;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public DatasetDTO getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(DatasetDTO dataset) {
-        this.dataset = dataset;
+    public void setDistribution(DistributionDTO distribution) {
+        this.distribution = distribution;
     }
 }

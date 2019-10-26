@@ -73,21 +73,18 @@ class PostFdpDialog {
             const fdpUri = elmts.baseURI.val();
             const token = this.token;
             MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
-                (newCatalog, formDialog) => {
+                (catalog, formDialog) => {
                     const self = this;
                     const catalogPostRequest = JSON.stringify({
-                        fdpUri,
-                        token,
-                        catalogDTO: newCatalog
+                        fdpUri, token, catalog
                     });
                     this.ajaxGeneric("catalogs-metadata", "POST", catalogPostRequest,
                         (result) => {
-                            console.log(result);
                             if (result.status === "ok") {
                                 this.newlyCreatedIRIs.add(result.catalog.iri);
                                 self.resetCatalogLayer();
                                 self.ajaxCatalogs(fdpUri, [
-                                    () => { elmts.catalogSelect.val(result.catalog.iri).trigger('change'); }
+                                    () => { elmts.catalogSelect.val(result.catalog.iri).trigger("change"); }
                                 ]);
                                 formDialog.dismiss();
                             } else {
@@ -107,21 +104,18 @@ class PostFdpDialog {
             const catalogUri = elmts.catalogSelect.val();
             const token = this.token;
             MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
-                (newDataset, formDialog) => {
+                (dataset, formDialog) => {
                     const self = this;
                     const datasetPostRequest = JSON.stringify({
-                        fdpUri,
-                        token,
-                        datasetDTO: newDataset
+                        fdpUri, token, dataset
                     });
                     this.ajaxGeneric("datasets-metadata", "POST", datasetPostRequest,
                         (result) => {
-                            console.log(result);
                             if (result.status === "ok") {
                                 this.newlyCreatedIRIs.add(result.dataset.iri);
                                 self.resetDatasetLayer();
                                 self.ajaxDatasets(fdpUri, catalogUri, [
-                                    () => { elmts.datasetSelect.val(result.dataset.iri).trigger('change'); }
+                                    () => { elmts.datasetSelect.val(result.dataset.iri).trigger("change"); }
                                 ]);
                                 formDialog.dismiss();
                             } else {
@@ -139,11 +133,25 @@ class PostFdpDialog {
         elmts.distributionAddButton.click(() => {
             const fdpUri = elmts.baseURI.val();
             const datasetUri = elmts.datasetSelect.val();
+            const token = this.token;
             MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
-                (newDistribution) => {
-                    //console.log(newDistribution);
-                    self.resetDistributionLayer();
-                    self.ajaxDistributions(fdpUri, datasetUri);
+                (distribution, formDialog) => {
+                    const self = this;
+                    const distributionPostRequest = JSON.stringify({
+                        fdpUri, token, distribution
+                    });
+                    this.ajaxGeneric("distributions-metadata", "POST", distributionPostRequest,
+                        (result) => {
+                            if (result.status === "ok") {
+                                this.newlyCreatedIRIs.add(result.distribution.iri);
+                                self.resetDistributionLayer();
+                                self.ajaxDistributions(fdpUri, datasetUri);
+                                formDialog.dismiss();
+                            } else {
+                                console.log("Error occured while POSTing dataset");
+                            }
+                        }
+                    );
                 },
                 {
                     parentDataset: datasetUri
@@ -343,10 +351,15 @@ class PostFdpDialog {
     showDistributions() {
         this.elements.distributionsList.empty();
         this.metadata.distributions.forEach((distribution) => {
+            const isNew = this.newlyCreatedIRIs.has(distribution.iri);
+            let text = `${distribution.title} (version: ${distribution.version})`;
+            if (isNew) {
+                text = `${text} [new]`;
+            }
             const item = $("<li>")
                 .addClass("distribution-item")
                 .attr("id", distribution.id)
-                .text(`${distribution.title} (version: ${distribution.version})`);
+                .text(text);
             this.elements.distributionsList.append(item);
         });
         this.elements.distributionLayer.removeClass("hidden");

@@ -21,7 +21,7 @@ MetadataSpecs.catalog = {
             "nested": {
                 "fields": [
                     {
-                        "id": "publisher-name",
+                        "id": "publisherName",
                         "type": "string",
                         "required": true,
                     },
@@ -89,7 +89,7 @@ MetadataSpecs.dataset = {
             "nested": {
                 "fields": [
                     {
-                        "id": "publisher-name",
+                        "id": "publisherName",
                         "type": "string",
                         "required": true,
                     },
@@ -167,6 +167,20 @@ MetadataSpecs.distribution = {
             "required": true,
         },
         {
+            "id": "publisher",
+            "type": "iri",
+            "required": true,
+            "nested": {
+                "fields": [
+                    {
+                        "id": "publisherName",
+                        "type": "string",
+                        "required": true,
+                    },
+                ]
+            }
+        },
+        {
             "id": "rights",
             "type": "iri",
             "required": false,
@@ -195,7 +209,7 @@ MetadataSpecs.distribution = {
             "id": "targetUrl",
             "type": "xor",
             "required": true,
-            "xor": [
+            "options": [
                 {
                     "id": "downloadUrl",
                     "type": "iri"

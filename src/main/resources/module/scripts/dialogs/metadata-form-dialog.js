@@ -76,21 +76,26 @@ class MetadataFormDialog {
         elmts.metadataForm.submit((e) => {
             e.preventDefault();
             let result = {};
-            this.specs.fields.forEach((field) => {
-                if (field.multiple) {
-                    result[field.id] = elmts.metadataForm
-                        .find(`.multiple-${field.id}`).map(function() {
-                            return $(this).val();
-                        }).get().filter((e) => e !== "");
-                } else if(field.type === "xor") {
-                    field.options.forEach((option) => {
-                        result[option.id] = this.getValue(option);
-                    });
-                } else {
-                    result[field.id] = this.getValue(field);
-                }
-            });
-
+            const gatherResults = (fields) => {
+                fields.forEach((field) => {
+                    if (field.multiple) {
+                        result[field.id] = elmts.metadataForm
+                            .find(`.multiple-${field.id}`).map(function() {
+                                return $(this).val();
+                            }).get().filter((e) => e !== "");
+                    } else if(field.type === "xor") {
+                        field.options.forEach((option) => {
+                            result[option.id] = this.getValue(option);
+                        });
+                    } else {
+                        result[field.id] = this.getValue(field);
+                    }
+                    if (field.nested) {
+                        gatherResults(field.nested.fields);
+                    }
+                });
+            };
+            gatherResults(this.specs.fields);
             this.callbackFn(result, this);
         });
     }

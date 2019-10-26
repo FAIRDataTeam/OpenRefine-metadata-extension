@@ -22,21 +22,21 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.request;
 
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
 
-public class DatasetPostRequest {
+public class DistributionPostRequest {
 
     private String fdpUri;
     private String token;
-    private DatasetDTO dataset;
+    private DistributionDTO distribution;
 
-    public DatasetPostRequest() {
+    public DistributionPostRequest() {
     }
 
-    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
+    public DistributionPostRequest(String fdpUri, String token, DistributionDTO distribution) {
         this.fdpUri = fdpUri;
         this.token = token;
-        this.dataset = dataset;
+        this.distribution = distribution;
     }
 
     public String getFdpUri() {
@@ -55,11 +55,11 @@ public class DatasetPostRequest {
         this.token = token;
     }
 
-    public DatasetDTO getDataset() {
-        return dataset;
+    public DistributionDTO getDistribution() {
+        return distribution;
     }
 
-    public void setDataset(DatasetDTO dataset) {
-        this.dataset = dataset;
+    public void setDistribution(DistributionDTO distribution) {
+        this.distribution = distribution;
     }
 }

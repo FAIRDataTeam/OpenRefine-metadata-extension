@@ -168,7 +168,7 @@ public class FairDataPointClient {
         catalogDTO.setIri(uri);
 
         CatalogMetadata catalogMetadata = CatalogTransformerUtils.dto2Metadata(catalogDTO);
-        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
         MetadataTransformerUtils.setTimestamps(catalogMetadata);
         String metadata = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
 
@@ -201,7 +201,7 @@ public class FairDataPointClient {
         datasetDTO.setIri(uri);
 
         DatasetMetadata datasetMetadata = DatasetTransformerUtils.dto2Metadata(datasetDTO);
-        datasetMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        datasetMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
         MetadataTransformerUtils.setTimestamps(datasetMetadata);
         String metadata = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE);
 
@@ -234,7 +234,7 @@ public class FairDataPointClient {
         distributionDTO.setIri(uri);
 
         DistributionMetadata distributionMetadata = DistributionTransformerUtils.dto2Metadata(distributionDTO);
-        distributionMetadata.setIdentifier(MetadataTransformerUtils.createIdenfier(uri));
+        distributionMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
         MetadataTransformerUtils.setTimestamps(distributionMetadata);
         String metadata = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE);
 

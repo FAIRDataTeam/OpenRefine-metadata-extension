@@ -23,6 +23,8 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.commands.request.DistributionPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.DistributionPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.DistributionsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
@@ -56,6 +58,27 @@ public class DistributionsMetadataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new DistributionsMetadataResponse(distributionDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + datasetUri + " (" + e.getMessage() + ")");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        DistributionPostRequest distributionPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DistributionPostRequest.class);
+        Writer w = response.getWriter();
+
+        try {
+            FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), logger);
+            DistributionDTO distributionDTO = fdpClient.postDistribution(distributionPostRequest.getDistribution());
+
+            CommandUtils.objectMapper.writeValue(w, new DistributionPostResponse(distributionDTO));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error while creating catalog in FAIR Data Point: " + distributionPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            // TODO: post error
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();

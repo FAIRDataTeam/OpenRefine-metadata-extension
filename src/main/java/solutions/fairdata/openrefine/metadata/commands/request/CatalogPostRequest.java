@@ -28,15 +28,15 @@ public class CatalogPostRequest {
 
     private String fdpUri;
     private String token;
-    private CatalogDTO catalogDTO;
+    private CatalogDTO catalog;
 
     public CatalogPostRequest() {
     }
 
-    public CatalogPostRequest(String fdpUri, String token, CatalogDTO catalogDTO) {
+    public CatalogPostRequest(String fdpUri, String token, CatalogDTO catalog) {
         this.fdpUri = fdpUri;
         this.token = token;
-        this.catalogDTO = catalogDTO;
+        this.catalog = catalog;
     }
 
     public String getFdpUri() {
@@ -55,11 +55,11 @@ public class CatalogPostRequest {
         this.token = token;
     }
 
-    public CatalogDTO getCatalogDTO() {
-        return catalogDTO;
+    public CatalogDTO getCatalog() {
+        return catalog;
     }
 
-    public void setCatalogDTO(CatalogDTO catalogDTO) {
-        this.catalogDTO = catalogDTO;
+    public void setCatalog(CatalogDTO catalog) {
+        this.catalog = catalog;
     }
 }

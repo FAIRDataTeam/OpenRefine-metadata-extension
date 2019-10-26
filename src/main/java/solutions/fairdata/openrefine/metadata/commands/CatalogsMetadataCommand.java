@@ -71,7 +71,7 @@ public class CatalogsMetadataCommand extends Command {
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getFdpUri(), catalogPostRequest.getToken(), logger);
-            CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getCatalogDTO());
+            CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getCatalog());
 
             CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
         } catch (Exception e) {

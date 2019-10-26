@@ -72,7 +72,7 @@ public class DatasetsMetadataCommand extends Command {
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), logger);
-            DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDatasetDTO());
+            DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDataset());
 
             CommandUtils.objectMapper.writeValue(w, new DatasetPostResponse(datasetDTO));
         } catch (Exception e) {
