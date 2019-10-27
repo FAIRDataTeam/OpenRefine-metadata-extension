@@ -1,6 +1,7 @@
 /* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs */
 
 class PostFdpDialog {
+    // TODO: refactor - separate Model and APIClient
 
     constructor() {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
@@ -78,7 +79,7 @@ class PostFdpDialog {
                     const catalogPostRequest = JSON.stringify({
                         fdpUri, token, catalog
                     });
-                    this.ajaxGeneric("catalogs-metadata", "POST", catalogPostRequest,
+                    MetadataHelpers.ajax("catalogs-metadata", "POST", catalogPostRequest,
                         (result) => {
                             if (result.status === "ok") {
                                 this.newlyCreatedIRIs.add(result.catalog.iri);
@@ -88,8 +89,11 @@ class PostFdpDialog {
                                 ]);
                                 formDialog.dismiss();
                             } else {
-                                console.log("Error occured while POSTing catalog");
+                                formDialog.displayError(result.exception);
                             }
+                        },
+                        () => {
+                            formDialog.displayError($.i18n("metadata-post/error-general"));
                         }
                     );
                 },

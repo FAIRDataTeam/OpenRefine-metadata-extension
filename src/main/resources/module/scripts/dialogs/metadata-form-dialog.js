@@ -75,6 +75,7 @@ class MetadataFormDialog {
 
         elmts.metadataForm.submit((e) => {
             e.preventDefault();
+            elmts.errorMessage.empty();
             let result = {};
             const gatherResults = (fields) => {
                 fields.forEach((field) => {
@@ -100,11 +101,13 @@ class MetadataFormDialog {
         });
     }
 
-    displayErrors(errors) {
-        // TODO
+    displayError(errorMessage) {
+        const entityName = $.i18n(`metadata/${this.specs.id}/name`);
+        this.elements.errorMessage.text($.i18n("metadata-post/error-fdp-template", entityName));
+        this.elements.errorMessage.append($("<span>").addClass("fdp-message").text(errorMessage));
     }
 
-    fillForm(obj) {
+    fillForm(obj) { // TODO: use Map and get with default
         const elmts = this.elements;
         Object.keys(obj).forEach((fieldId) => {
             const field = elmts.metadataForm.find(`#${fieldId}`);
@@ -138,7 +141,7 @@ class MetadataFormDialog {
             .text($.i18n(`metadata/${this.specs.id}/${field.id}/name`));
     }
 
-    makeInput(field) {
+    makeInput(field) { // TODO: refactor
         const input = this.makeInputField(field);
 
         if (field.multiple) {
@@ -248,7 +251,9 @@ class MetadataFormDialog {
                         .text($.i18n(`metadata/${this.specs.id}/${option.id}/name`))
                 );
             xorSwitch.on("change", () => {
-                if(!$(`#${switchId}`).is(":checked")) return;
+                if(!$(`#${switchId}`).is(":checked")) {
+                    return;
+                }
                 $(`.field-${field.id}`).each(function() {
                     $(this)
                         .addClass("hidden")

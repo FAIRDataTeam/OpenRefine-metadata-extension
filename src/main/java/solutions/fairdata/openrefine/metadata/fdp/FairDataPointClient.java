@@ -24,8 +24,15 @@ package solutions.fairdata.openrefine.metadata.fdp;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtl.fairmetadata4j.io.*;
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
+import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
+import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
+import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -33,15 +40,31 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.eclipse.rdf4j.rio.turtle.TurtleParser;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.UUID;
 
 import org.slf4j.Logger;
-import solutions.fairdata.openrefine.metadata.dto.*;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.*;
+import solutions.fairdata.openrefine.metadata.dto.AuthDTO;
+import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
+import solutions.fairdata.openrefine.metadata.fdp.transformers.MetadataTransformerUtils;
 
 public class FairDataPointClient {
 

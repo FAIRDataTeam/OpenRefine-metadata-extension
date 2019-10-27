@@ -76,9 +76,8 @@ public class DistributionsMetadataCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new DistributionPostResponse(distributionDTO));
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: handle various types of exceptions
             logger.error("Error while creating catalog in FAIR Data Point: " + distributionPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
-            // TODO: post error
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();

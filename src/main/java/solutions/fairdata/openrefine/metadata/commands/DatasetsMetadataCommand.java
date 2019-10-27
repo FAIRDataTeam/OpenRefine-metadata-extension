@@ -76,9 +76,8 @@ public class DatasetsMetadataCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new DatasetPostResponse(datasetDTO));
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: handle various types of exceptions
             logger.error("Error while creating catalog in FAIR Data Point: " + datasetPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
-            // TODO: post error
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
         } finally {
             w.flush();
