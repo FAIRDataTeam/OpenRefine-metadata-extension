@@ -47,9 +47,8 @@ public class AuthCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken()));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();

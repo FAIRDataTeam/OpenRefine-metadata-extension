@@ -101,18 +101,28 @@ class MetadataFormDialog {
         });
     }
 
-    displayError(errorMessage) {
-        const entityName = $.i18n(`metadata/${this.specs.id}/name`);
-        this.elements.errorMessage.text($.i18n("metadata-post/error-fdp-template", entityName));
-        this.elements.errorMessage.append($("<span>").addClass("fdp-message").text(errorMessage));
+    displayError(errorName, errorMessage) {
+        this.elements.errorMessage.empty();
+        let basicMsg = "";
+        let mainMsg = $.i18n("metadata-post/error-general");
+        if (errorName.endsWith("MetadataException")) {
+            basicMsg = $.i18n("metadata-post/error-fdp-template", $.i18n(`metadata/${this.specs.id}/name`));
+            mainMsg = errorMessage;
+        } else if (errorName.endsWith("FairDataPointException")) {
+            mainMsg = $.i18n("metadata-post/error-api",  $.i18n(`metadata/${this.specs.id}/name`));
+        } else if (errorName.endsWith("ConnectException")) {
+            mainMsg = $.i18n("metadata-post/error-communication",  $.i18n(`metadata/${this.specs.id}/name`));
+        }
+        this.elements.errorMessage.text(basicMsg);
+        this.elements.errorMessage.append($("<span>").addClass("fdp-message").text(mainMsg));
     }
 
-    fillForm(obj) { // TODO: use Map and get with default
+    fillForm(obj) {
         const elmts = this.elements;
-        Object.keys(obj).forEach((fieldId) => {
+        Object.entries(obj).forEach(([fieldId, value]) => {
             const field = elmts.metadataForm.find(`#${fieldId}`);
             if (field) {
-                field.val(obj[fieldId]);
+                field.val(value);
             }
         });
     }
@@ -141,49 +151,48 @@ class MetadataFormDialog {
             .text($.i18n(`metadata/${this.specs.id}/${field.id}/name`));
     }
 
-    makeInput(field) { // TODO: refactor
+    makeMultipleInput(input, field) {
+        input.removeAttr("id");
+        input.addClass(`multiple-${field.id}`);
+        const wrapper = $("<div>")
+            .addClass("multiple-field")
+            .attr("id", field.id);
+
+        let counter = 0;
+        const createRow = function(input) {
+            const inputCopy = input.clone();
+            inputCopy.attr("name", `${field.id}[${counter}]`);
+            counter++;
+
+            const deleteButton = $("<button>")
+                .attr("type", "button ")
+                .addClass("button button-multiple-delete")
+                .text("-")
+                .click(function(e){
+                    e.preventDefault();
+                    $(this).parent().remove();
+                });
+            const addButton = $("<button>")
+                .attr("type", "button ")
+                .addClass("button button-multiple-add")
+                .text("+")
+                .click(function(e){
+                    e.preventDefault();
+                    $(this).parent().parent().append(createRow(input));
+                });
+            return $("<div>")
+                .addClass("multiple-row")
+                .append(inputCopy)
+                .append(deleteButton)
+                .append(addButton);
+        };
+        wrapper.append(createRow(input));
+        return wrapper;
+    }
+
+    makeInput(field) {
         const input = this.makeInputField(field);
-
-        if (field.multiple) {
-            input.removeAttr("id");
-            input.addClass(`multiple-${field.id}`);
-            const wrapper = $("<div>")
-                .addClass("multiple-field")
-                .attr("id", field.id);
-
-            let counter = 0;
-            const createRow = function(input) {
-                const inputCopy = input.clone();
-                inputCopy.attr("name", `${field.id}[${counter}]`);
-                counter++;
-
-                const deleteButton = $("<button>")
-                    .attr("type", "button ")
-                    .addClass("button button-multiple-delete")
-                    .text("-")
-                    .click(function(e){
-                        e.preventDefault();
-                        $(this).parent().remove();
-                    });
-                const addButton = $("<button>")
-                    .attr("type", "button ")
-                    .addClass("button button-multiple-add")
-                    .text("+")
-                    .click(function(e){
-                        e.preventDefault();
-                        $(this).parent().parent().append(createRow(input));
-                    });
-                return $("<div>")
-                    .addClass("multiple-row")
-                    .append(inputCopy)
-                    .append(deleteButton)
-                    .append(addButton);
-            };
-            wrapper.append(createRow(input));
-            return wrapper;
-        }
-
-        return input;
+        return field.multiple ? this.makeMultipleInput(input, field) : input;
     }
 
     makeInitFieldDiv(field) {

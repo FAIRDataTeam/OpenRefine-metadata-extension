@@ -26,12 +26,14 @@ public class ErrorResponse {
 
     private String status;
     private String message;
+    private String exceptionName;
     private String exception;
 
-    public ErrorResponse(String message, String exception) {
+    public ErrorResponse(String message, Exception exception) {
         this.status = "error";
         this.message = message;
-        this.exception = exception;
+        this.exceptionName = exception.getClass().getName();
+        this.exception = exception.getMessage();
     }
 
     public String getStatus() {
@@ -48,6 +50,14 @@ public class ErrorResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getExceptionName() {
+        return exceptionName;
+    }
+
+    public void setExceptionName(String exceptionName) {
+        this.exceptionName = exceptionName;
     }
 
     public String getException() {

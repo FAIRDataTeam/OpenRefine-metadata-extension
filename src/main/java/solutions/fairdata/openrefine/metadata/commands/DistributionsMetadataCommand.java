@@ -58,7 +58,7 @@ public class DistributionsMetadataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new DistributionsMetadataResponse(distributionDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + datasetUri + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
@@ -76,9 +76,8 @@ public class DistributionsMetadataCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new DistributionPostResponse(distributionDTO));
         } catch (Exception e) {
-            // TODO: handle various types of exceptions
             logger.error("Error while creating catalog in FAIR Data Point: " + distributionPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();

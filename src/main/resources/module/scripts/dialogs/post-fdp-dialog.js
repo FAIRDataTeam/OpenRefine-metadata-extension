@@ -89,7 +89,7 @@ class PostFdpDialog {
                                 ]);
                                 formDialog.dismiss();
                             } else {
-                                formDialog.displayError(result.exception);
+                                formDialog.displayError(result.exceptionName, result.exception);
                             }
                         },
                         () => {
@@ -123,8 +123,11 @@ class PostFdpDialog {
                                 ]);
                                 formDialog.dismiss();
                             } else {
-                                console.log("Error occured while POSTing dataset");
+                                formDialog.displayError(result.exceptionName, result.exception);
                             }
+                        },
+                        () => {
+                            formDialog.displayError($.i18n("metadata-post/error-general"));
                         }
                     );
                 },
@@ -152,8 +155,11 @@ class PostFdpDialog {
                                 self.ajaxDistributions(fdpUri, datasetUri);
                                 formDialog.dismiss();
                             } else {
-                                console.log("Error occured while POSTing dataset");
+                                formDialog.displayError(result.exceptionName, result.exception);
                             }
+                        },
+                        () => {
+                            formDialog.displayError($.i18n("metadata-post/error-general"));
                         }
                     );
                 },

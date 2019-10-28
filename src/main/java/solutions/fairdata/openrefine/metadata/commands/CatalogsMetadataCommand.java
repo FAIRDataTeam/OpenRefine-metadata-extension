@@ -23,6 +23,7 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import nl.dtl.fairmetadata4j.io.MetadataException;
 import solutions.fairdata.openrefine.metadata.commands.request.CatalogPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.CatalogPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.CatalogsMetadataResponse;
@@ -30,6 +31,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
+import solutions.fairdata.openrefine.metadata.fdp.FairDataPointException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +59,7 @@ public class CatalogsMetadataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new CatalogsMetadataResponse(catalogDTOs));
         } catch (Exception e) {
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
@@ -75,9 +77,8 @@ public class CatalogsMetadataCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
         } catch (Exception e) {
-            // TODO: handle various types of exceptions
             logger.error("Error while creating catalog in FAIR Data Point: " + catalogPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e.getMessage()));
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
