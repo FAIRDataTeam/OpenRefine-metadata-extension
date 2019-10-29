@@ -4,7 +4,8 @@
         <button class="button close-button" bind="closeButton" data-i18n="post-fdp-dialog/button-close"></button>
     </div>
     <div class="dialog-body" bind="dialogBody">
-          <form bind="metadataForm" autocomplete="on" class="metadata-form"></form>
+        <div bind="errorMessage" id="error-message"></div>
+        <form bind="metadataForm" autocomplete="on" class="metadata-form"></form>
     </div>
     <div class="dialog-footer">
         <button class="button" bind="optionalShowButton" data-i18n="metadata/optional-show"></button>

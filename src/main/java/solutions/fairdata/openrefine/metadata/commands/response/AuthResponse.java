@@ -22,18 +22,14 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
-
-import java.util.ArrayList;
-
-public class CatalogsMetadataResponse {
+public class AuthResponse {
 
     private String status;
-    private ArrayList<CatalogDTO> catalogs;
+    private String token;
 
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
+    public AuthResponse(String token) {
         this.status = "ok";
-        this.catalogs = catalogs;
+        this.token = token;
     }
 
     public String getStatus() {
@@ -44,11 +40,11 @@ public class CatalogsMetadataResponse {
         this.status = status;
     }
 
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
+    public String getToken() {
+        return token;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

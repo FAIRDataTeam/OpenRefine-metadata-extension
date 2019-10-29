@@ -21,7 +21,7 @@ MetadataSpecs.catalog = {
             "nested": {
                 "fields": [
                     {
-                        "id": "publisher-name",
+                        "id": "publisherName",
                         "type": "string",
                         "required": true,
                     },
@@ -37,7 +37,7 @@ MetadataSpecs.catalog = {
             "id": "language",
             "type": "iri",
             "required": false,
-            "multiple": true,
+            //"multiple": true,
         },
         {
             "id": "license",
@@ -55,9 +55,16 @@ MetadataSpecs.catalog = {
             "required": false,
         },
         {
-            "id": "themeTaxonomy",
+            "id": "themeTaxonomies",
             "type": "iri",
             "required": true,
+            "multiple": true,
+        },
+        {
+            "id": "parentFDP",
+            "type": "iri",
+            "required": true,
+            "hidden": true
         },
     ]
 };
@@ -82,7 +89,7 @@ MetadataSpecs.dataset = {
             "nested": {
                 "fields": [
                     {
-                        "id": "publisher-name",
+                        "id": "publisherName",
                         "type": "string",
                         "required": true,
                     },
@@ -98,7 +105,7 @@ MetadataSpecs.dataset = {
             "id": "language",
             "type": "iri",
             "required": false,
-            "multiple": true,
+            //"multiple": true,
         },
         {
             "id": "license",
@@ -111,7 +118,7 @@ MetadataSpecs.dataset = {
             "required": false,
         },
         {
-            "id": "theme",
+            "id": "themes",
             "type": "iri",
             "required": true,
             "multiple": true,
@@ -122,8 +129,8 @@ MetadataSpecs.dataset = {
             "required": false,
         },
         {
-            "id": "keyword",
-            "type": "iri",
+            "id": "keywords",
+            "type": "string",
             "required": false,
             "multiple": true,
         },
@@ -131,6 +138,12 @@ MetadataSpecs.dataset = {
             "id": "landingPage",
             "type": "iri",
             "required": false,
+        },
+        {
+            "id": "parentCatalog",
+            "type": "iri",
+            "required": true,
+            "hidden": true
         },
     ]
 };
@@ -154,6 +167,20 @@ MetadataSpecs.distribution = {
             "required": true,
         },
         {
+            "id": "publisher",
+            "type": "iri",
+            "required": true,
+            "nested": {
+                "fields": [
+                    {
+                        "id": "publisherName",
+                        "type": "string",
+                        "required": true,
+                    },
+                ]
+            }
+        },
+        {
             "id": "rights",
             "type": "iri",
             "required": false,
@@ -172,6 +199,32 @@ MetadataSpecs.distribution = {
             "id": "bytesize",
             "type": "string",
             "required": false,
+        },
+        {
+            "id": "mediaType",
+            "type": "string",
+            "required": true
+        },
+        {
+            "id": "targetUrl",
+            "type": "xor",
+            "required": true,
+            "options": [
+                {
+                    "id": "downloadUrl",
+                    "type": "iri"
+                },
+                {
+                    "id": "accessUrl",
+                    "type": "iri"
+                },
+            ]
+        },
+        {
+            "id": "parentDataset",
+            "type": "iri",
+            "required": true,
+            "hidden": true
         },
     ]
 };

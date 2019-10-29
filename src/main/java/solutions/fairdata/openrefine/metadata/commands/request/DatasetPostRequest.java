@@ -20,35 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.request;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
 
-import java.util.ArrayList;
+public class DatasetPostRequest {
 
-public class CatalogsMetadataResponse {
+    private String fdpUri;
+    private String token;
+    private DatasetDTO dataset;
 
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
-
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
+    public DatasetPostRequest() {
     }
 
-    public String getStatus() {
-        return status;
+    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
+        this.fdpUri = fdpUri;
+        this.token = token;
+        this.dataset = dataset;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getFdpUri() {
+        return fdpUri;
     }
 
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
+    public void setFdpUri(String fdpUri) {
+        this.fdpUri = fdpUri;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public DatasetDTO getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(DatasetDTO dataset) {
+        this.dataset = dataset;
     }
 }

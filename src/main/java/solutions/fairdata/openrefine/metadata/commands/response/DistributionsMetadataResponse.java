@@ -22,18 +22,18 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
 
 import java.util.ArrayList;
 
-public class CatalogsMetadataResponse {
+public class DistributionsMetadataResponse {
 
     private String status;
-    private ArrayList<CatalogDTO> catalogs;
+    private ArrayList<DistributionDTO> distributions;
 
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
+    public DistributionsMetadataResponse(ArrayList<DistributionDTO> distributions) {
         this.status = "ok";
-        this.catalogs = catalogs;
+        this.distributions = distributions;
     }
 
     public String getStatus() {
@@ -44,11 +44,11 @@ public class CatalogsMetadataResponse {
         this.status = status;
     }
 
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
+    public ArrayList<DistributionDTO> getDistributions() {
+        return distributions;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+    public void setDistributions(ArrayList<DistributionDTO> distributions) {
+        this.distributions = distributions;
     }
 }

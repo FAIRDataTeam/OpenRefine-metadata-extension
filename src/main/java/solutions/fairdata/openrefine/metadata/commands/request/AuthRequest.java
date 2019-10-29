@@ -20,35 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.request;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.AuthDTO;
 
-import java.util.ArrayList;
+public class AuthRequest {
 
-public class CatalogsMetadataResponse {
+    private String fdpUri;
+    private AuthDTO authDTO;
 
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
-
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
+    public AuthRequest() {
     }
 
-    public String getStatus() {
-        return status;
+    public AuthRequest(String fdpUri, AuthDTO authDTO) {
+        this.fdpUri = fdpUri;
+        this.authDTO = authDTO;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getFdpUri() {
+        return fdpUri;
     }
 
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
+    public void setFdpUri(String fdpUri) {
+        this.fdpUri = fdpUri;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+    public AuthDTO getAuthDTO() {
+        return authDTO;
+    }
+
+    public void setAuthDTO(AuthDTO authDTO) {
+        this.authDTO = authDTO;
     }
 }

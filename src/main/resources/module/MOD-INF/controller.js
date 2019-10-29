@@ -8,20 +8,23 @@ function init() {
     var RefineServlet = Packages.com.google.refine.RefineServlet;
 
     // Commands
+    RefineServlet.registerCommand(module, "fdp-auth", new Packages.solutions.fairdata.openrefine.metadata.commands.AuthCommand());
     RefineServlet.registerCommand(module, "fdp-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.FDPMetadataCommand());
     RefineServlet.registerCommand(module, "catalogs-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.CatalogsMetadataCommand());
     RefineServlet.registerCommand(module, "datasets-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DatasetsMetadataCommand());
+    RefineServlet.registerCommand(module, "distributions-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DistributionsMetadataCommand());
 
     // Resources
     ClientSideResourceManager.addPaths(
         "project/scripts",
         module,
         [
+            "scripts/api-client.js",
             "scripts/helpers.js",
             "scripts/menu-bar-extension.js",
             "scripts/metadata-specs.js",
-            "scripts/dialogs/post-fdp-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
+            "scripts/dialogs/post-fdp-dialog.js",
         ]);
     ClientSideResourceManager.addPaths(
         "project/styles",

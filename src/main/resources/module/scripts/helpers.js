@@ -1,6 +1,5 @@
 /* global $, theProject, Refine, window, DialogSystem */
 
-
 let MetadataHelpers = {
     moduleName: "metadata"
 };
@@ -31,6 +30,7 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
         url: commandUrl,
         type: method,
         data: body,
+        contentType: "application/json; charset=utf-8",
         dataType: "json",
         success(data) {
             makeDone();
@@ -47,8 +47,4 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
             dismissBusy = DialogSystem.showBusy();
         }
     }, 500);
-};
-
-MetadataHelpers.fdpMakeURL = (uriObject) => {
-    return uriObject.namespace + uriObject.localName;
 };

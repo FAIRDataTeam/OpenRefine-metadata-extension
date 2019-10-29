@@ -1,106 +1,310 @@
 /* global $, DOM, DialogSystem, Refine, MetadataHelpers */
-let MetadataFormDialog = {};
 
-MetadataFormDialog.launch = function(type, specs, callback) {
-    this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
-    this._elmts = DOM.bind(this.frame);
+class MetadataFormDialog {
+    constructor(type, specs, callbackFn, prefill) {
+        this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
+        this.elements = DOM.bind(this.frame);
+        this.level = null;
 
-    this._level = DialogSystem.showDialog(this.frame);
+        this.type = type;
+        this.specs = specs;
+        this.callbackFn = callbackFn;
 
-    let dialog = this;
-    let elmts = this._elmts;
+        const prefillObj = prefill || {};
 
-    MetadataFormDialog.initBasicTexts(dialog, type);
-    MetadataFormDialog.createForm(dialog, specs, callback);
+        this.initBasicTexts();
+        this.createForm();
+        this.fillForm(prefillObj);
+        this.bindActions();
+    }
 
-    // Bind actions
-    elmts.closeButton.click(MetadataFormDialog.dismissFunc(dialog));
-    elmts.optionalShowButton.click(() => {
-        dialog.frame.find(".optional").each(function(){
-            $(this).removeClass("hidden");
+    launch() {
+        this.level = DialogSystem.showDialog(this.frame);
+    }
+
+    dismiss() {
+        DialogSystem.dismissUntil(this.level - 1);
+        this.level = null;
+    }
+
+    initBasicTexts() {
+        this.frame.i18n();
+        this.elements.dialogTitle.text($.i18n(`metadata/${this.type}/dialog-title`));
+    }
+
+    bindActions() {
+        const self = this;
+        const elmts = this.elements;
+
+        elmts.closeButton.click(() => { self.dismiss(); });
+
+        elmts.optionalShowButton.click(() => {
+            this.frame.find(".optional").each(function() {
+                $(this).removeClass("hidden");
+            });
+            elmts.optionalShowButton.addClass("hidden");
+            elmts.optionalHideButton.removeClass("hidden");
         });
-        elmts.optionalShowButton.addClass("hidden");
-        elmts.optionalHideButton.removeClass("hidden");
-    });
-    elmts.optionalHideButton.click(() => {
-        dialog.frame.find(".optional").each(function(){
-            $(this).addClass("hidden");
+
+        elmts.optionalHideButton.click(() => {
+            this.frame.find(".optional").each(function() {
+                $(this).addClass("hidden");
+            });
+            elmts.optionalShowButton.removeClass("hidden");
+            elmts.optionalHideButton.addClass("hidden");
         });
-        elmts.optionalShowButton.removeClass("hidden");
-        elmts.optionalHideButton.addClass("hidden");
-    });
-};
+    }
 
-MetadataFormDialog.initBasicTexts = (dialog, type) => {
-    dialog.frame.i18n();
-    dialog._elmts.dialogTitle.text($.i18n(`metadata/${type}/dialog-title`));
-};
+    getValue(field) {
+        const value = this.elements.metadataForm.find(`#${field.id}`).val();
+        return value === "" ? null : value;
+    }
 
-MetadataFormDialog.dismissFunc = (dialog) => {
-    return () => { DialogSystem.dismissUntil(dialog._level - 1); };
-};
+    createForm() {
+        const elmts = this.elements;
 
-MetadataFormDialog.createForm = (dialog, specs, callback) => {
+        this.specs.fields.forEach((field) => {
+            elmts.metadataForm.append(this.makeFormGroup(field));
+        });
 
-    const makeLabel = (field) => {
-        return $("<label>")
-            .attr("for", field.id)
-            .text($.i18n(`metadata/${specs.id}/${field.id}/name`));
-    };
+        const submitBtn = $("<button>")
+            .attr("type", "submit")
+            .addClass("button")
+            .text($.i18n(`metadata/${this.specs.id}/submit`));
+        elmts.metadataForm.append(submitBtn);
 
-    const makeInput = (field) => {
-        return $(field.type === "text" ? "<textarea>" : "<input>")
+        elmts.metadataForm.submit((e) => {
+            e.preventDefault();
+            elmts.errorMessage.empty();
+            let result = {};
+            const gatherResults = (fields) => {
+                fields.forEach((field) => {
+                    if (field.multiple) {
+                        result[field.id] = elmts.metadataForm
+                            .find(`.multiple-${field.id}`).map(function() {
+                                return $(this).val();
+                            }).get().filter((e) => e !== "");
+                    } else if(field.type === "xor") {
+                        field.options.forEach((option) => {
+                            result[option.id] = this.getValue(option);
+                        });
+                    } else {
+                        result[field.id] = this.getValue(field);
+                    }
+                    if (field.nested) {
+                        gatherResults(field.nested.fields);
+                    }
+                });
+            };
+            gatherResults(this.specs.fields);
+            this.callbackFn(result, this);
+        });
+    }
+
+    displayError(errorName, errorMessage) {
+        this.elements.errorMessage.empty();
+        let basicMsg = "";
+        let mainMsg = $.i18n("metadata-post/error-general");
+        if (errorName.endsWith("MetadataException")) {
+            basicMsg = $.i18n("metadata-post/error-fdp-template", $.i18n(`metadata/${this.specs.id}/name`));
+            mainMsg = errorMessage;
+        } else if (errorName.endsWith("FairDataPointException")) {
+            mainMsg = $.i18n("metadata-post/error-api",  $.i18n(`metadata/${this.specs.id}/name`));
+        } else if (errorName.endsWith("ConnectException")) {
+            mainMsg = $.i18n("metadata-post/error-communication",  $.i18n(`metadata/${this.specs.id}/name`));
+        }
+        this.elements.errorMessage.text(basicMsg);
+        this.elements.errorMessage.append($("<span>").addClass("fdp-message").text(mainMsg));
+    }
+
+    fillForm(obj) {
+        const elmts = this.elements;
+        Object.entries(obj).forEach(([fieldId, value]) => {
+            const field = elmts.metadataForm.find(`#${fieldId}`);
+            if (field) {
+                field.val(value);
+            }
+        });
+    }
+
+    // helpers
+    makeInputField(field) {
+        const input = $(field.type === "text" ? "<textarea>" : "<input>")
             .attr("id", field.id)
             .attr("name", field.id)
-            .attr("type", field.type === "iri" ? "url" : "text")
-            .attr("placeholder", field.type === "iri" ? "http://" : "")
-            .attr("title", $.i18n(`metadata/${specs.id}/${field.id}/description`))
+            .attr("type", "text")
+            .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
             .prop("required", field.required);
-        // TODO: multiple in the future
-    };
 
-    const makeFormGroup = (field) => {
-        let fieldDiv = $("<div>")
+        if (field.hidden) {
+            input.attr("type", "hidden");
+        } else if (field.type === "iri") {
+            input
+                .attr("type", "uri")
+                .attr("placeholder", "http://");
+        }
+        return input;
+    }
+
+    makeLabel(field) {
+        return $("<label>")
+            .attr("for", field.id)
+            .text($.i18n(`metadata/${this.specs.id}/${field.id}/name`));
+    }
+
+    makeMultipleInput(input, field) {
+        input.removeAttr("id");
+        input.addClass(`multiple-${field.id}`);
+        const wrapper = $("<div>")
+            .addClass("multiple-field")
+            .attr("id", field.id);
+
+        let counter = 0;
+        const createRow = function(input) {
+            const inputCopy = input.clone();
+            inputCopy.attr("name", `${field.id}[${counter}]`);
+            counter++;
+
+            const deleteButton = $("<button>")
+                .attr("type", "button ")
+                .addClass("button button-multiple-delete")
+                .text("-")
+                .click(function(e){
+                    e.preventDefault();
+                    $(this).parent().remove();
+                });
+            const addButton = $("<button>")
+                .attr("type", "button ")
+                .addClass("button button-multiple-add")
+                .text("+")
+                .click(function(e){
+                    e.preventDefault();
+                    $(this).parent().parent().append(createRow(input));
+                });
+            return $("<div>")
+                .addClass("multiple-row")
+                .append(inputCopy)
+                .append(deleteButton)
+                .append(addButton);
+        };
+        wrapper.append(createRow(input));
+        return wrapper;
+    }
+
+    makeInput(field) {
+        const input = this.makeInputField(field);
+        return field.multiple ? this.makeMultipleInput(input, field) : input;
+    }
+
+    makeInitFieldDiv(field) {
+        return $("<div>")
             .attr("id", `form-group-${field.id}`)
-            .addClass("metadata-form-group")
-            .addClass(field.required ? "required" : "optional");
+            .addClass("metadata-form-group");
+    }
 
-        if (!field.required) { fieldDiv.addClass("hidden"); }
+    makeOptionalFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .addClass("optional")
+            .addClass("hidden")
+            .append(this.makeLabel(field))
+            .append(this.makeInput(field));
+    }
 
-        const input = makeInput(field);
+    makeRequiredFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .addClass("required")
+            .append(this.makeLabel(field))
+            .append(this.makeInput(field));
+    }
 
-        fieldDiv.append(makeLabel(field));
-        fieldDiv.append(input);
+    makeHiddenFieldDiv(field) {
+        return this.makeInitFieldDiv(field)
+            .append(this.makeInput(field));
+    }
+
+    makeFieldDiv(field) {
+        if (field.hidden) {
+            return this.makeHiddenFieldDiv(field);
+        } else if (field.required) {
+            return this.makeRequiredFieldDiv(field);
+        } else {
+            return this.makeOptionalFieldDiv(field);
+        }
+    }
+
+    makeXorFormGroup(field) {
+        let fieldDiv = this.makeInitFieldDiv(field);
+        if (field.required) {
+            fieldDiv.addClass("required");
+        } else {
+            fieldDiv.addClass("optional").addClass("hidden");
+        }
+        const xorFields = $("<div>").addClass("xor-fields");
+        const xorSwitches = $("<div>").addClass("xor-switches");
+        field.options.forEach((option) => {
+            const switchId = `${field.id}-${option.id}`;
+            const inputField = this.makeInputField(option)
+                .addClass("hidden")
+                .addClass(`field-${field.id}`);
+            const xorSwitch = $("<div>")
+                .addClass("xor-switch")
+                .append(
+                    $("<input>")
+                        .attr("type", "radio")
+                        .attr("name", `${field.id}`)
+                        .attr("id", switchId)
+                        .val(option.id)
+                        .prop("required", field.required)
+                ).append(
+                    $("<label>")
+                        .attr("for", switchId)
+                        .text($.i18n(`metadata/${this.specs.id}/${option.id}/name`))
+                );
+            xorSwitch.on("change", () => {
+                if(!$(`#${switchId}`).is(":checked")) {
+                    return;
+                }
+                $(`.field-${field.id}`).each(function() {
+                    $(this)
+                        .addClass("hidden")
+                        .val("")
+                        .prop("required", false);
+
+                });
+                $(`#${option.id}`)
+                    .removeClass("hidden")
+                    .prop("required", field.required);
+            });
+            xorSwitches.append(xorSwitch);
+            xorFields.append(inputField);
+        });
+        fieldDiv.append(xorSwitches);
+        fieldDiv.append(xorFields);
+        return fieldDiv;
+    }
+
+    makeFormGroup(field) {
+        if (field.type === "xor") {
+            return this.makeXorFormGroup(field);
+        }
+
+        let fieldDiv = this.makeFieldDiv(field);
 
         if ("nested" in field) {
             let nestedDiv = $("<div>")
                 .addClass("nested-fields");
             field.nested.fields.forEach((innerField) => {
-                nestedDiv.append(makeFormGroup(innerField));
+                nestedDiv.append(this.makeFormGroup(innerField));
             });
             fieldDiv.append(nestedDiv);
         }
 
         return fieldDiv;
-    };
+    }
 
-    specs.fields.forEach((field) => {
-        dialog._elmts.metadataForm.append(makeFormGroup(field));
-    });
-
-    const submitBtn = $("<button>")
-        .attr("type", "submit")
-        .addClass("button")
-        .text($.i18n(`metadata/${specs.id}/submit`));
-    dialog._elmts.metadataForm.append(submitBtn);
-
-    dialog._elmts.metadataForm.submit((e) => {
-        e.preventDefault();
-        let result = {};
-        specs.fields.forEach((field) => {
-            result[field.id] = dialog._elmts.metadataForm.find(`#${field.id}`).val();
-        });
-        callback(result);
-        MetadataFormDialog.dismissFunc(dialog)();
-    });
-};
+    // launcher
+    static createAndLaunch(type, specs, callbackFn, prefill) {
+        const dialog = new MetadataFormDialog(type, specs, callbackFn, prefill);
+        dialog.launch();
+    }
+}

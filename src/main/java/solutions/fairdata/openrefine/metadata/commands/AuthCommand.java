@@ -23,10 +23,10 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
-
+import solutions.fairdata.openrefine.metadata.commands.request.AuthRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.AuthResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.FDPMetadataResponse;
-import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,26 +34,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
-public class FDPMetadataCommand extends Command {
+public class AuthCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String fdpUri = request.getParameter("fdpUri");
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        AuthRequest authRequest = CommandUtils.objectMapper.readValue(request.getReader(), AuthRequest.class);
         Writer w = response.getWriter();
 
-        logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
-            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
+            FairDataPointClient fdpClient = new FairDataPointClient(authRequest.getFdpUri(), logger);
+            TokenDTO tokenDTO = fdpClient.postAuthentication(authRequest.getAuthDTO());
 
-            logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
-            CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
+            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken()));
         } catch (Exception e) {
-            logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
-            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
+            logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
         }
+
     }
 }

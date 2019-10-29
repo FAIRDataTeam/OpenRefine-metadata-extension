@@ -20,35 +20,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.dto;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import java.util.List;
 
-import java.util.ArrayList;
+public class CatalogDTO extends MetadataDTO {
 
-public class CatalogsMetadataResponse {
+    private String language;
+    private String homepage;
+    private List<String> themeTaxonomies;
+    private List<String> datasets;
+    private String parentFDP;
 
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
-
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
+    public String getLanguage() {
+        return language;
     }
 
-    public String getStatus() {
-        return status;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getHomepage() {
+        return homepage;
     }
 
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
     }
 
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
+    public List<String> getThemeTaxonomies() {
+        return themeTaxonomies;
+    }
+
+    public void setThemeTaxonomies(List<String> themeTaxonomies) {
+        this.themeTaxonomies = themeTaxonomies;
+    }
+
+    public List<String> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(List<String> datasets) {
+        this.datasets = datasets;
+    }
+
+    public String getParentFDP() {
+        return parentFDP;
+    }
+
+    public void setParentFDP(String parentFDP) {
+        this.parentFDP = parentFDP;
     }
 }

@@ -22,16 +22,16 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
 
 public class FDPMetadataResponse {
 
     private String status;
     private String message;
-    private FDPMetadata fdpMetadata;
+    private FDPMetadataDTO fdpMetadata;
 
-    public FDPMetadataResponse(String status, String message, FDPMetadata fdpMetadata) {
-        this.status = status;
+    public FDPMetadataResponse(String message, FDPMetadataDTO fdpMetadata) {
+        this.status = "ok";
         this.message = message;
         this.fdpMetadata = fdpMetadata;
     }
@@ -52,11 +52,11 @@ public class FDPMetadataResponse {
         this.message = message;
     }
 
-    public FDPMetadata getFdpMetadata() {
+    public FDPMetadataDTO getFdpMetadata() {
         return fdpMetadata;
     }
 
-    public void setFdpMetadata(FDPMetadata fdpMetadata) {
+    public void setFdpMetadata(FDPMetadataDTO fdpMetadata) {
         this.fdpMetadata = fdpMetadata;
     }
 }

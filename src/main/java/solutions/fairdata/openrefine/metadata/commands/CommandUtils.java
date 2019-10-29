@@ -20,35 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands;
 
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
+public class CommandUtils {
 
-public class CatalogsMetadataResponse {
-
-    private String status;
-    private ArrayList<CatalogDTO> catalogs;
-
-    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
-        this.status = "ok";
-        this.catalogs = catalogs;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ArrayList<CatalogDTO> getCatalogs() {
-        return catalogs;
-    }
-
-    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
-        this.catalogs = catalogs;
-    }
+    public static final ObjectMapper objectMapper = new ObjectMapper();
 }

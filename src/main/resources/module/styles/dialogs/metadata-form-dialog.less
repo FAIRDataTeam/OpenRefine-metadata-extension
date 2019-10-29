@@ -20,11 +20,60 @@ form.metadata-form div.metadata-form-group > label {
   display: block;
 }
 
-form.metadata-form div.metadata-form-group.required > label {
+form.metadata-form div.metadata-form-group.required > label,
+form.metadata-form div.metadata-form-group.required > div.xor-switches label {
   font-weight: bold;
 }
 
 form.metadata-form div.metadata-form-group > input,
-form.metadata-form div.metadata-form-group > textarea {
+form.metadata-form div.metadata-form-group > textarea,
+form.metadata-form div.metadata-form-group > div.xor-fields > input,
+form.metadata-form div.metadata-form-group > div.xor-fields > textarea {
   width: 100%;
+}
+
+form.metadata-form div.metadata-form-group > div.xor-switches {
+  display: flex;
+  margin-bottom: 0.3em;
+}
+
+form.metadata-form div.metadata-form-group > div.xor-switches > div.xor-switch {
+  margin-right: 0.5em;
+}
+
+form.metadata-form div.multiple-field > div.multiple-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.5em;
+}
+form.metadata-form div.multiple-field > div.multiple-row:last-child {
+  margin-bottom: 0;
+}
+
+form.metadata-form div.multiple-field > div.multiple-row > input {
+  flex-grow: 1;
+}
+
+form.metadata-form div.multiple-field > div.multiple-row > button.button {
+  margin-left: 0.3em;
+  min-width: 2em;
+}
+
+form.metadata-form div.multiple-field > div.multiple-row:last-child > button.button-multiple-add,
+form.metadata-form div.multiple-field > div.multiple-row > button.button-multiple-delete {
+  display: block;
+}
+
+form.metadata-form div.multiple-field > div.multiple-row > button.button-multiple-add,
+form.metadata-form div.multiple-field > div.multiple-row:only-child > button.button-multiple-delete {
+  display: none;
+}
+
+div.metadata-dialog div#error-message {
+  color: red;
+  text-align: center;
+
+  span.fdp-message {
+    font-weight: bold;
+  }
 }

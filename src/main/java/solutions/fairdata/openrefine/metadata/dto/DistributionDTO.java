@@ -20,51 +20,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.dto;
 
-public class ErrorResponse {
+public class DistributionDTO extends MetadataDTO {
 
-    private String status;
-    private String message;
-    private String exceptionName;
-    private String exception;
+    private String format;
+    private String bytesize;
+    private String mediaType;
+    private String downloadUrl;
+    private String accessUrl;
+    private String parentDataset;
 
-    public ErrorResponse(String message, Exception exception) {
-        this.status = "error";
-        this.message = message;
-        this.exceptionName = exception.getClass().getName();
-        this.exception = exception.getMessage();
+    public String getFormat() {
+        return format;
     }
 
-    public String getStatus() {
-        return status;
+    public void setFormat(String format) {
+        this.format = format;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getBytesize() {
+        return bytesize;
     }
 
-    public String getMessage() {
-        return message;
+    public void setBytesize(String bytesize) {
+        this.bytesize = bytesize;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getMediaType() {
+        return mediaType;
     }
 
-    public String getExceptionName() {
-        return exceptionName;
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
     }
 
-    public void setExceptionName(String exceptionName) {
-        this.exceptionName = exceptionName;
+    public String getDownloadUrl() {
+        return downloadUrl;
     }
 
-    public String getException() {
-        return exception;
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
-    public void setException(String exception) {
-        this.exception = exception;
+    public String getAccessUrl() {
+        return accessUrl;
+    }
+
+    public void setAccessUrl(String accessUrl) {
+        this.accessUrl = accessUrl;
+    }
+
+    public String getParentDataset() {
+        return parentDataset;
+    }
+
+    public void setParentDataset(String parentDataset) {
+        this.parentDataset = parentDataset;
     }
 }
