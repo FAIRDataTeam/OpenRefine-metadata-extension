@@ -19,11 +19,12 @@ function init() {
         "project/scripts",
         module,
         [
+            "scripts/api-client.js",
             "scripts/helpers.js",
             "scripts/menu-bar-extension.js",
             "scripts/metadata-specs.js",
-            "scripts/dialogs/post-fdp-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
+            "scripts/dialogs/post-fdp-dialog.js",
         ]);
     ClientSideResourceManager.addPaths(
         "project/styles",

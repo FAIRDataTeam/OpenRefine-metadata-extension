@@ -1,14 +1,14 @@
-/* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs */
+/* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs, MetadataApiClient */
 
 class PostFdpDialog {
-    // TODO: refactor - separate Model and APIClient
 
     constructor() {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
-        this.token = null;
+        this.apiClient = null;
 
+        // Model
         this.metadata = {
             fdp: null,
             catalogs: new Map(),
@@ -51,84 +51,54 @@ class PostFdpDialog {
             const password = elmts.password.val();
 
             self.resetDefault();
-            self.ajaxConnectFDP(fdpUri, username, password);
+            self.apiClient = new MetadataApiClient(fdpUri, username, password);
+            self.apiClient.connectFDP(
+                [this.callbackFDPConnected(), this.callbackErrorResponse()],
+                [this.callbackGeneralError()]
+            );
         });
 
         elmts.catalogSelect.on("change", () => {
-            const fdpUri = elmts.baseURI.val();
-            const catalogUri = elmts.catalogSelect.val();
-
             self.resetDatasetLayer();
-            self.ajaxDatasets(fdpUri, catalogUri);
+            self.apiClient.getDatasets(
+                elmts.catalogSelect.val(),
+                [this.callbackDatasets(), this.callbackErrorResponse()],
+                [this.callbackGeneralError()]
+            );
         });
 
         elmts.datasetSelect.on("change", () => {
-            const fdpUri = elmts.baseURI.val();
-            const datasetUri = elmts.datasetSelect.val();
-
             self.resetDistributionLayer();
-            self.ajaxDistributions(fdpUri, datasetUri);
+            self.apiClient.getDistributions(
+                elmts.datasetSelect.val(),
+                [this.callbackDistributions(), this.callbackErrorResponse()],
+                [this.callbackGeneralError()]
+            );
         });
 
         elmts.catalogAddButton.click(() => {
-            const fdpUri = elmts.baseURI.val();
-            const token = this.token;
             MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
                 (catalog, formDialog) => {
-                    const self = this;
-                    const catalogPostRequest = JSON.stringify({
-                        fdpUri, token, catalog
-                    });
-                    MetadataHelpers.ajax("catalogs-metadata", "POST", catalogPostRequest,
-                        (result) => {
-                            if (result.status === "ok") {
-                                this.newlyCreatedIRIs.add(result.catalog.iri);
-                                self.resetCatalogLayer();
-                                self.ajaxCatalogs(fdpUri, [
-                                    () => { elmts.catalogSelect.val(result.catalog.iri).trigger("change"); }
-                                ]);
-                                formDialog.dismiss();
-                            } else {
-                                formDialog.displayError(result.exceptionName, result.exception);
-                            }
-                        },
-                        () => {
-                            formDialog.displayError($.i18n("metadata-post/error-general"));
-                        }
+                    this.apiClient.postCatalog(
+                        catalog,
+                        [this.callbackPostCatalog(formDialog)],
+                        [this.callbackPostError(formDialog)]
                     );
                 },
                 {
-                    parentFDP: fdpUri
+                    parentFDP: elmts.baseURI.val()
                 }
             );
         });
 
         elmts.datasetAddButton.click(() => {
-            const fdpUri = elmts.baseURI.val();
-            const catalogUri = elmts.catalogSelect.val();
-            const token = this.token;
+            const catalogUri = this.elements.catalogSelect.val();
             MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
                 (dataset, formDialog) => {
-                    const self = this;
-                    const datasetPostRequest = JSON.stringify({
-                        fdpUri, token, dataset
-                    });
-                    this.ajaxGeneric("datasets-metadata", "POST", datasetPostRequest,
-                        (result) => {
-                            if (result.status === "ok") {
-                                this.newlyCreatedIRIs.add(result.dataset.iri);
-                                self.resetDatasetLayer();
-                                self.ajaxDatasets(fdpUri, catalogUri, [
-                                    () => { elmts.datasetSelect.val(result.dataset.iri).trigger("change"); }
-                                ]);
-                                formDialog.dismiss();
-                            } else {
-                                formDialog.displayError(result.exceptionName, result.exception);
-                            }
-                        },
-                        () => {
-                            formDialog.displayError($.i18n("metadata-post/error-general"));
-                        }
+                    this.apiClient.postDataset(
+                        dataset,
+                        [this.callbackPostDataset(formDialog, catalogUri)],
+                        [this.callbackPostError(formDialog)]
                     );
                 },
                 {
@@ -138,29 +108,13 @@ class PostFdpDialog {
         });
 
         elmts.distributionAddButton.click(() => {
-            const fdpUri = elmts.baseURI.val();
             const datasetUri = elmts.datasetSelect.val();
-            const token = this.token;
             MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
                 (distribution, formDialog) => {
-                    const self = this;
-                    const distributionPostRequest = JSON.stringify({
-                        fdpUri, token, distribution
-                    });
-                    this.ajaxGeneric("distributions-metadata", "POST", distributionPostRequest,
-                        (result) => {
-                            if (result.status === "ok") {
-                                this.newlyCreatedIRIs.add(result.distribution.iri);
-                                self.resetDistributionLayer();
-                                self.ajaxDistributions(fdpUri, datasetUri);
-                                formDialog.dismiss();
-                            } else {
-                                formDialog.displayError(result.exceptionName, result.exception);
-                            }
-                        },
-                        () => {
-                            formDialog.displayError($.i18n("metadata-post/error-general"));
-                        }
+                    this.apiClient.postDistribution(
+                        distribution,
+                        [this.callbackPostDistribution(formDialog, datasetUri)],
+                        [this.callbackPostError(formDialog)]
                     );
                 },
                 {
@@ -205,103 +159,137 @@ class PostFdpDialog {
         this.elements.distributionLayer.addClass("hidden");
     }
 
-    // ajax
-    ajaxConnectFDP(fdpUri, username, password, callbacks) {
-        const self = this;
-        callbacks = callbacks || [];
-        const authRequest = JSON.stringify({
-            fdpUri,
-            authDTO: {
-                username,
-                password
-            }
-        });
-        this.ajaxGeneric("fdp-auth", "POST", authRequest,
-            (result) => {
-                self.token = result.token;
-                self.ajaxFDPMetadata(fdpUri);
-                callbacks.forEach((callback) => { callback(result); });
-            }
-        );
+    // callbacks (factories)
+    callbackGeneralError() {
+        return () => {
+            this.elements.fdpConnected.addClass("hidden");
+            this.elements.fdpConnectionError.removeClass("hidden");
+            this.elements.warningsArea.text($.i18n("connect-fdp-command/error"));
+        };
     }
 
-    ajaxGeneric(command, method, data, callback) {
-        const self = this;
-        MetadataHelpers.ajax(command, method, data,
-            (result) => {
-                if (result.status === "ok") {
-                    callback(result);
-                } else {
-                    self.elements.fdpConnected.addClass("hidden");
-                    self.elements.fdpConnectionError.removeClass("hidden");
-                    self.elements.warningsArea.text($.i18n(result.message));
-                }
-            },
-            () => {
-                self.elements.fdpConnected.addClass("hidden");
-                self.elements.fdpConnectionError.removeClass("hidden");
-                self.elements.warningsArea.text($.i18n("connect-fdp-command/error"));
+    callbackErrorResponse(result) {
+        return (result) => {
+            if (result.status !== "ok") {
+                this.elements.fdpConnected.addClass("hidden");
+                this.elements.fdpConnectionError.removeClass("hidden");
+                this.elements.warningsArea.text($.i18n(result.message));
             }
-        );
+        };
     }
 
-    ajaxFDPMetadata(fdpUri) {
-        const self = this;
-        this.ajaxGeneric("fdp-metadata", "GET", { fdpUri },
-            (result) => {
-                self.elements.fdpConnected.removeClass("hidden");
-                self.metadata.fdp = result.fdpMetadata;
-                self.showFDPMetadata();
+    callbackFDPConnected() {
+        return (result) => {
+            if (result.status === "ok") {
+                this.elements.fdpConnected.removeClass("hidden");
+                this.metadata.fdp = result.fdpMetadata;
+                this.showFDPMetadata();
 
-                self.resetCatalogLayer();
-                self.ajaxCatalogs(fdpUri);
+                this.resetCatalogLayer();
+                this.apiClient.getCatalogs(
+                    [this.callbackCatalogs(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
             }
-        );
+        };
     }
 
-    ajaxCatalogs(fdpUri, callbacks) {
-        const self = this;
-        callbacks = callbacks || [];
-        this.ajaxGeneric("catalogs-metadata", "GET", { fdpUri },
-            (result) => {
-                self.metadata.catalogs.clear();
+    callbackCatalogs() {
+        return (result) => {
+            if (result.status === "ok") {
+                this.metadata.catalogs.clear();
                 result.catalogs.forEach((catalog) => {
-                    self.metadata.catalogs.set(catalog.iri, catalog);
+                    this.metadata.catalogs.set(catalog.iri, catalog);
                 });
-                self.showCatalogs();
-                callbacks.forEach((callback) => { callback(result); });
+                this.showCatalogs();
             }
-        );
+        };
     }
 
-    ajaxDatasets(fdpUri, catalogUri, callbacks) {
-        const self = this;
-        callbacks = callbacks || [];
-        this.ajaxGeneric("datasets-metadata", "GET", { fdpUri, catalogUri },
-            (result) => {
-                self.metadata.datasets.clear();
+    callbackDatasets() {
+        return (result) => {
+            if (result.status === "ok") {
+                this.metadata.datasets.clear();
                 result.datasets.forEach((dataset) => {
-                    self.metadata.datasets.set(dataset.iri, dataset);
+                    this.metadata.datasets.set(dataset.iri, dataset);
                 });
-                self.showDatasets();
-                callbacks.forEach((callback) => { callback(result); });
+                this.showDatasets();
             }
-        );
+        };
     }
 
-    ajaxDistributions(fdpUri, datasetUri, callbacks) {
-        const self = this;
-        callbacks = callbacks || [];
-        this.ajaxGeneric("distributions-metadata", "GET", { fdpUri, datasetUri },
-            (result) => {
-                self.metadata.distributions.clear();
+    callbackDistributions() {
+        return (result) => {
+            if (result.status === "ok") {
+                this.metadata.distributions.clear();
                 result.distributions.forEach((distribution) => {
-                    self.metadata.distributions.set(distribution.iri, distribution);
+                    this.metadata.distributions.set(distribution.iri, distribution);
                 });
-                self.showDistributions();
-                callbacks.forEach((callback) => { callback(result); });
+                this.showDistributions();
             }
-        );
+        };
+    }
+
+    callbackPostError(formDialog) {
+        return () => {
+            formDialog.displayError($.i18n("metadata-post/error-general"));
+        };
+    }
+
+    callbackPostCatalog(formDialog) {
+        return (result) => {
+            if (result.status === "ok") {
+                this.newlyCreatedIRIs.add(result.catalog.iri);
+                this.resetCatalogLayer();
+                this.apiClient.getCatalogs(
+                    [
+                        this.callbackCatalogs(),
+                        () => { this.elements.catalogSelect.val(result.catalog.iri).trigger("change"); }
+                    ],
+                    [ this.callbackGeneralError() ]
+                );
+                formDialog.dismiss();
+            } else {
+                formDialog.displayError(result.exceptionName, result.exception);
+            }
+        };
+    }
+
+    callbackPostDataset(formDialog, catalogUri) {
+        return (result) => {
+            if (result.status === "ok") {
+                this.newlyCreatedIRIs.add(result.dataset.iri);
+                this.resetDatasetLayer();
+                this.apiClient.getDatasets(
+                    catalogUri,
+                    [
+                        this.callbackDatasets(),
+                        () => { this.elements.datasetSelect.val(result.dataset.iri).trigger("change"); }
+                    ],
+                    [ this.callbackGeneralError() ]
+                );
+                formDialog.dismiss();
+            } else {
+                formDialog.displayError(result.exceptionName, result.exception);
+            }
+        };
+    }
+
+    callbackPostDistribution(formDialog, datasetUri) {
+        return (result) => {
+            if (result.status === "ok") {
+                this.newlyCreatedIRIs.add(result.distribution.iri);
+                this.resetDistributionLayer();
+                this.apiClient.getDistributions(
+                    datasetUri,
+                    [ this.callbackDistributions() ],
+                    [ this.callbackGeneralError() ]
+                );
+                formDialog.dismiss();
+            } else {
+                formDialog.displayError(result.exceptionName, result.exception);
+            }
+        }
     }
 
     // show parts

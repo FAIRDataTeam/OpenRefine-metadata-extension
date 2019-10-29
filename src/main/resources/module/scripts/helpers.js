@@ -1,6 +1,5 @@
 /* global $, theProject, Refine, window, DialogSystem */
 
-
 let MetadataHelpers = {
     moduleName: "metadata"
 };

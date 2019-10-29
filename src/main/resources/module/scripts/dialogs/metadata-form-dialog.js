@@ -133,14 +133,15 @@ class MetadataFormDialog {
             .attr("id", field.id)
             .attr("name", field.id)
             .attr("type", "text")
-            .attr("placeholder", field.type === "iri" ? "http://" : "")
             .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
             .prop("required", field.required);
 
         if (field.hidden) {
             input.attr("type", "hidden");
         } else if (field.type === "iri") {
-            input.attr("type", "uri");
+            input
+                .attr("type", "uri")
+                .attr("placeholder", "http://");
         }
         return input;
     }
