@@ -20,23 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
-import java.io.IOException;
-import java.io.Writer;
+public class MetadataModuleImpl extends ButterflyModuleImpl {
 
-import javax.servlet.http.HttpServletResponse;
-
-public class CommandUtils {
-
-    public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
-
-    public static Writer prepareWriter(HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        return response.getWriter();
-    }
+    public static final String USER_AGENT = "OpenRefine/metadata";
+    public static final ObjectMapper objectMapper = new ObjectMapper();
 }

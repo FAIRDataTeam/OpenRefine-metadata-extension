@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import org.slf4j.Logger;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.dto.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
 import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
@@ -78,7 +79,7 @@ public class FairDataPointClient {
             308   // HTTP Permanent Redirect
     ));
 
-    private static final String USER_AGENT = "OpenRefine/metadata";
+    private static final String USER_AGENT = MetadataModuleImpl.USER_AGENT;
 
     private final Logger logger;
     private final String token;

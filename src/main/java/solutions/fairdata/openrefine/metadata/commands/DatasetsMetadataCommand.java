@@ -43,7 +43,7 @@ public class DatasetsMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String fdpUri = request.getParameter("fdpUri");
         String catalogUri = request.getParameter("catalogUri");
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
         try {
@@ -68,7 +68,7 @@ public class DatasetsMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DatasetPostRequest datasetPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DatasetPostRequest.class);
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), logger);

@@ -6,7 +6,7 @@ class PostFdpDialog {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/post-fdp-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
-        this.apiClient = null;
+        this.apiClient = new MetadataApiClient();
 
         // Model
         this.metadata = {
@@ -51,8 +51,8 @@ class PostFdpDialog {
             const password = elmts.password.val();
 
             self.resetDefault();
-            self.apiClient = new MetadataApiClient(fdpUri, username, password);
             self.apiClient.connectFDP(
+                fdpUri, username, password,
                 [this.callbackFDPConnected(), this.callbackErrorResponse()],
                 [this.callbackGeneralError()]
             );

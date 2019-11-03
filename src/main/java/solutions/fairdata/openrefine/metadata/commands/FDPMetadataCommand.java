@@ -39,7 +39,7 @@ public class FDPMetadataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String fdpUri = request.getParameter("fdpUri");
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
         try {

@@ -37,12 +37,20 @@ MetadataSpecs.catalog = {
             "id": "language",
             "type": "iri",
             "required": false,
+            "typehints": {
+                "name": "language",
+                "type": "static"
+            },
             //"multiple": true,
         },
         {
             "id": "license",
             "type": "iri",
             "required": false,
+            "typehints": {
+                "name": "license",
+                "type": "static"
+            },
         },
         {
             "id": "rights",
@@ -105,12 +113,20 @@ MetadataSpecs.dataset = {
             "id": "language",
             "type": "iri",
             "required": false,
+            "typehints": {
+                "name": "language",
+                "type": "static"
+            },
             //"multiple": true,
         },
         {
             "id": "license",
             "type": "iri",
             "required": false,
+            "typehints": {
+                "name": "license",
+                "type": "static"
+            },
         },
         {
             "id": "rights",
@@ -122,6 +138,10 @@ MetadataSpecs.dataset = {
             "type": "iri",
             "required": true,
             "multiple": true,
+            "typehints": {
+                "name": "theme",
+                "type": "dynamic"
+            },
         },
         {
             "id": "contactPoint",
@@ -160,6 +180,10 @@ MetadataSpecs.distribution = {
             "id": "license",
             "type": "iri",
             "required": true,
+            "typehints": {
+                "name": "license",
+                "type": "static"
+            },
         },
         {
             "id": "version",

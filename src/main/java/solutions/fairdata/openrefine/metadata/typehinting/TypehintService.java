@@ -20,23 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata.typehinting;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+public interface TypehintService {
 
-public class CommandUtils {
+    List<TypehintDTO> getTypehints(String query) throws IOException;
 
-    public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
-
-    public static Writer prepareWriter(HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        return response.getWriter();
-    }
+    String getSource();
 }

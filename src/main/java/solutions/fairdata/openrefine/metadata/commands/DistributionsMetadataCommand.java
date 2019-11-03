@@ -43,7 +43,7 @@ public class DistributionsMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String fdpUri = request.getParameter("fdpUri");
         String datasetUri = request.getParameter("datasetUri");
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         logger.info("Retrieving Distributions metadata from dataset URI: " + datasetUri);
         try {
@@ -68,7 +68,7 @@ public class DistributionsMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DistributionPostRequest distributionPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DistributionPostRequest.class);
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), logger);

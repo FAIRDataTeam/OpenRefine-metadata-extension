@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
+/* global $, DOM, DialogSystem, Refine, MetadataApiClient */
 
 class MetadataFormDialog {
     constructor(type, specs, callbackFn, prefill) {
@@ -9,6 +9,9 @@ class MetadataFormDialog {
         this.type = type;
         this.specs = specs;
         this.callbackFn = callbackFn;
+        this.apiClient = new MetadataApiClient();
+
+        this.datalists = new Set();
 
         const prefillObj = prefill || {};
 
@@ -128,6 +131,71 @@ class MetadataFormDialog {
     }
 
     // helpers
+    callbackTypehints(field) {
+        return (result) => {
+            if (result.status !== "ok") {
+                // ignore error for typehints
+                return;
+            }
+            const datalist = this.frame.find(`#list-${field.typehints.name}`);
+            datalist.empty();
+            result.datalist.forEach((entry) => {
+                datalist.append($("<option>").attr("data-value", entry.value).text(`${entry.title} (${entry.value})`));
+            });
+        };
+    }
+
+    makeDataList(field, input) {
+        const listId = `list-${field.typehints.name}`;
+        input.attr("list", listId);
+
+        if (!this.datalists.has(field.typehints.name)) {
+            this.datalists.add(field.typehints.name);
+            this.elements.datalists.append(
+                $("<datalist>").attr("id", listId).addClass(field.typehints.type)
+            );
+
+            if (field.typehints.type === "static") {
+                this.apiClient.getTypehints(
+                    field.typehints.name,
+                    null,
+                    [this.callbackTypehints(field)],
+                    []
+                );
+            }
+        }
+
+        const self = this;
+        if (field.typehints.type === "dynamic") {
+            let ajaxTimer;
+            input.keyup(function() {
+                if ($(this).val() !== "") {
+                    clearTimeout(ajaxTimer);
+                    ajaxTimer = setTimeout(() => {
+                        self.apiClient.getTypehints(
+                            field.typehints.name,
+                            $(this).val(),
+                            [self.callbackTypehints(field)],
+                            []
+                        );
+                    }, 500);
+                }
+            });
+            input.keydown(function() {
+                clearTimeout(ajaxTimer);
+            });
+        }
+
+        input.on("change", function() {
+            const shownValue = $(this).val();
+            self.frame.find(`#${listId}`).children().each((index, element) => {
+                if (shownValue === $(element).text()) {
+                    $(this).val($(element).data("value"));
+                }
+            });
+        });
+    }
+
     makeInputField(field) {
         const input = $(field.type === "text" ? "<textarea>" : "<input>")
             .attr("id", field.id)
@@ -142,6 +210,9 @@ class MetadataFormDialog {
             input
                 .attr("type", "uri")
                 .attr("placeholder", "http://");
+        }
+        if (field.typehints) {
+            this.makeDataList(field, input);
         }
         return input;
     }
@@ -161,12 +232,12 @@ class MetadataFormDialog {
 
         let counter = 0;
         const createRow = function(input) {
-            const inputCopy = input.clone();
+            const inputCopy = input.clone(true, true);
             inputCopy.attr("name", `${field.id}[${counter}]`);
             counter++;
 
             const deleteButton = $("<button>")
-                .attr("type", "button ")
+                .attr("type", "button")
                 .addClass("button button-multiple-delete")
                 .text("-")
                 .click(function(e){
@@ -174,7 +245,7 @@ class MetadataFormDialog {
                     $(this).parent().remove();
                 });
             const addButton = $("<button>")
-                .attr("type", "button ")
+                .attr("type", "button")
                 .addClass("button button-multiple-add")
                 .text("+")
                 .click(function(e){
