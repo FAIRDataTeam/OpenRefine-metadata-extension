@@ -186,7 +186,7 @@ class MetadataFormDialog {
             });
         }
 
-        input.on('change', function() {
+        input.on("change", function() {
             const shownValue = $(this).val();
             self.frame.find(`#${listId}`).children().each((index, element) => {
                 if (shownValue === $(element).text()) {
