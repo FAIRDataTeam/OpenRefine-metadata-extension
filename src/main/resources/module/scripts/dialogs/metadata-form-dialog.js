@@ -140,7 +140,7 @@ class MetadataFormDialog {
             const datalist = this.frame.find(`#list-${field.typehints.name}`);
             datalist.empty();
             result.datalist.forEach((entry) => {
-                datalist.append($("<option>").attr("data-value", entry.value).text(entry.title));
+                datalist.append($("<option>").attr("data-value", entry.value).text(`${entry.title} (${entry.value})`));
             });
         };
     }
@@ -185,6 +185,15 @@ class MetadataFormDialog {
                 clearTimeout(ajaxTimer);
             });
         }
+
+        input.on('change', function() {
+            const shownValue = $(this).val();
+            self.frame.find(`#${listId}`).children().each((index, element) => {
+                if (shownValue === $(element).text()) {
+                    $(this).val($(element).data("value"));
+                }
+            });
+        });
     }
 
     makeInputField(field) {
