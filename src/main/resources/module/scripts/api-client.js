@@ -2,21 +2,21 @@
 
 class MetadataApiClient {
 
-    constructor(fdpUri, username, password) {
-        this.fdpUri = fdpUri;
-        this.username = username;
-        this.password = password;
+    constructor() {
+        this.fdpUri = null;
         this.token = null;
     }
 
-    connectFDP(callbacks, errorCallbacks) {
+    connectFDP(fdpUri, username, password, callbacks, errorCallbacks) {
+        this.fdpUri = fdpUri;
+
         callbacks = callbacks || [];
         this._ajaxGeneric("fdp-auth", "POST",
             JSON.stringify({
                 fdpUri: this.fdpUri,
                 authDTO: {
-                    username: this.username,
-                    password: this.password
+                    username,
+                    password,
                 }
             }),
             [(result) => {
@@ -45,6 +45,10 @@ class MetadataApiClient {
     getDistributions(datasetUri, callbacks, errorCallbacks) {
         const params = { fdpUri: this.fdpUri, datasetUri };
         this._ajaxGeneric("distributions-metadata", "GET", params, callbacks, errorCallbacks);
+    }
+
+    getTypehints(name, callbacks, errorCallbacks) {
+        this._ajaxGeneric("typehints", "GET", { name }, callbacks, errorCallbacks);
     }
 
     postCatalog(catalog, callbacks, errorCallbacks) {

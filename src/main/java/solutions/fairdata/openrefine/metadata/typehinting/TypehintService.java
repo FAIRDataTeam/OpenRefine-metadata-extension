@@ -20,12 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata.typehinting;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 
-public class CommandUtils {
+import java.io.IOException;
+import java.util.List;
 
-    public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
+public interface TypehintService {
+
+    List<TypehintDTO> getTypehints(String query) throws IOException;
+
+    String getSource();
 }

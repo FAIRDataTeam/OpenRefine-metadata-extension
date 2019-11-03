@@ -5,7 +5,10 @@
     </div>
     <div class="dialog-body" bind="dialogBody">
         <div bind="errorMessage" id="error-message"></div>
-        <form bind="metadataForm" autocomplete="on" class="metadata-form"></form>
+        <form bind="metadataForm" autocomplete="on" class="metadata-form">
+
+            <div bind="datalists" id="datalists"></div>
+        </form>
     </div>
     <div class="dialog-footer">
         <button class="button" bind="optionalShowButton" data-i18n="metadata/optional-show"></button>

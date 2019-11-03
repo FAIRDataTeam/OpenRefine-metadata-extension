@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, Refine, MetadataHelpers */
+/* global $, DOM, DialogSystem, Refine, MetadataApiClient */
 
 class MetadataFormDialog {
     constructor(type, specs, callbackFn, prefill) {
@@ -9,6 +9,9 @@ class MetadataFormDialog {
         this.type = type;
         this.specs = specs;
         this.callbackFn = callbackFn;
+        this.apiClient = new MetadataApiClient();
+
+        this.datalists = new Set();
 
         const prefillObj = prefill || {};
 
@@ -128,6 +131,34 @@ class MetadataFormDialog {
     }
 
     // helpers
+    callbackTypehints(field) {
+        return (result) => {
+            if (result.status !== "ok") {
+                // ignore error for typehints
+                return;
+            }
+            const datalist = $("<datalist>").attr("id", field.typehints);
+            result.datalist.forEach((entry) => {
+                datalist.append($("<option>").attr("data-value", entry.value).text(entry.title));
+            });
+            this.elements.datalists.append(datalist);
+        };
+    }
+
+    makeDataList(field) {
+        if (this.datalists.has(field.typehints)) {
+            // there is a datalist for such field already
+            return;
+        }
+        this.datalists.add(field.typehints);
+
+        this.apiClient.getTypehints(
+            field.id,
+            [this.callbackTypehints(field)],
+            []
+        );
+    }
+
     makeInputField(field) {
         const input = $(field.type === "text" ? "<textarea>" : "<input>")
             .attr("id", field.id)
@@ -142,6 +173,10 @@ class MetadataFormDialog {
             input
                 .attr("type", "uri")
                 .attr("placeholder", "http://");
+        }
+        if (field.typehints) {
+            input.attr("list", field.typehints);
+            this.makeDataList(field);
         }
         return input;
     }

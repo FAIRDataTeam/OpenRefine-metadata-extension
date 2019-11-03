@@ -20,12 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
-public class CommandUtils {
+public class MetadataModuleImpl extends ButterflyModuleImpl {
 
-    public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
+    public static final String USER_AGENT = "OpenRefine/metadata";
+    public static final ObjectMapper objectMapper = new ObjectMapper();
 }

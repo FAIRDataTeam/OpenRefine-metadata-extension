@@ -1,18 +1,20 @@
 /*
  * Main JS file for FAIR Metadata extension of OpenRefine
  */
-/* global importPackage, module, Packages, ConnectFDPCommand, ClientSideResourceManager */
+/* global importPackage, module, Packages, ClientSideResourceManager */
 /* eslint-disable no-unused-vars */
 
 function init() {
-    var RefineServlet = Packages.com.google.refine.RefineServlet;
+    const RefineServlet = Packages.com.google.refine.RefineServlet;
+    const MetadataCommands = Packages.solutions.fairdata.openrefine.metadata.commands;
 
     // Commands
-    RefineServlet.registerCommand(module, "fdp-auth", new Packages.solutions.fairdata.openrefine.metadata.commands.AuthCommand());
-    RefineServlet.registerCommand(module, "fdp-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.FDPMetadataCommand());
-    RefineServlet.registerCommand(module, "catalogs-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.CatalogsMetadataCommand());
-    RefineServlet.registerCommand(module, "datasets-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DatasetsMetadataCommand());
-    RefineServlet.registerCommand(module, "distributions-metadata", new Packages.solutions.fairdata.openrefine.metadata.commands.DistributionsMetadataCommand());
+    RefineServlet.registerCommand(module, "fdp-auth", new MetadataCommands.AuthCommand());
+    RefineServlet.registerCommand(module, "fdp-metadata", new MetadataCommands.FDPMetadataCommand());
+    RefineServlet.registerCommand(module, "catalogs-metadata", new MetadataCommands.CatalogsMetadataCommand());
+    RefineServlet.registerCommand(module, "datasets-metadata", new MetadataCommands.DatasetsMetadataCommand());
+    RefineServlet.registerCommand(module, "distributions-metadata", new MetadataCommands.DistributionsMetadataCommand());
+    RefineServlet.registerCommand(module, "typehints", new MetadataCommands.TypehintsCommand());
 
     // Resources
     ClientSideResourceManager.addPaths(

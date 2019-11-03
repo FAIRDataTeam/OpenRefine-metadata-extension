@@ -20,12 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands;
+package solutions.fairdata.openrefine.metadata.commands.response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 
-public class CommandUtils {
+import java.util.List;
 
-    public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
+public class TypehintsResponse {
+
+    private String status;
+    private String source;
+    private List<TypehintDTO> datalist;
+
+    public TypehintsResponse() {
+    }
+
+    public TypehintsResponse(String source, List<TypehintDTO> datalist) {
+        this.status = "ok";
+        this.source = source;
+        this.datalist = datalist;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public List<TypehintDTO> getDatalist() {
+        return datalist;
+    }
+
+    public void setDatalist(List<TypehintDTO> datalist) {
+        this.datalist = datalist;
+    }
 }
