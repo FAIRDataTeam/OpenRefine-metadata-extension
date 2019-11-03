@@ -28,6 +28,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.TypehintsRespons
 import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 import solutions.fairdata.openrefine.metadata.typehinting.LanguageTypehintService;
 import solutions.fairdata.openrefine.metadata.typehinting.LicenseTypehintService;
+import solutions.fairdata.openrefine.metadata.typehinting.ThemeTypehintService;
 import solutions.fairdata.openrefine.metadata.typehinting.TypehintService;
 
 import javax.servlet.ServletException;
@@ -46,6 +47,7 @@ public class TypehintsCommand extends Command {
     static {
         typehintServices.put("language", new LanguageTypehintService());
         typehintServices.put("license", new LicenseTypehintService());
+        typehintServices.put("theme", new ThemeTypehintService());
     }
 
     @Override

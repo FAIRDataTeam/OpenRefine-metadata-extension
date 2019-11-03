@@ -22,10 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.typehinting;
 
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.query.GraphQueryResult;
-import org.eclipse.rdf4j.query.QueryResults;
-import org.eclipse.rdf4j.rio.RDFFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 
@@ -37,19 +34,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LicenseTypehintService implements TypehintService {
+public class ThemeTypehintService implements TypehintService {
 
-    private static final String TARGET_URL = "http://rdflicense.appspot.com/rdflicense";
+    private static final String TARGET_URL = "https://www.wikidata.org/";
     private static final String USER_AGENT =  MetadataModuleImpl.USER_AGENT;
+    private static final String LIST_PROP = "search";
+    private static final String TITLE_PROP = "label";
+    private static final String URI_PROP = "concepturi";
 
     @Override
     public List<TypehintDTO> getTypehints(String query) throws IOException {
         List<TypehintDTO> result = new ArrayList<>();
-        HashMap<String, String> licenses = getLicenses();
-        for (Map.Entry<String, String> license : licenses.entrySet()) {
-            if (license.getValue().toLowerCase().contains(query.toLowerCase())) {
-                result.add(new TypehintDTO(license.getValue(), license.getKey()));
-            }
+        if (query.equals("")) {
+            return result;
+        }
+        for (Map.Entry<String, String> entry : getThemes(query).entrySet()) {
+            result.add(new TypehintDTO(entry.getValue(), entry.getKey()));
         }
         return result;
     }
@@ -59,19 +59,22 @@ public class LicenseTypehintService implements TypehintService {
         return TARGET_URL;
     }
 
-    private HashMap<String, String> getLicenses() throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(TARGET_URL).openConnection();
+    private HashMap<String, String> getThemes(String query) throws IOException {
+        String url = TARGET_URL + "w/api.php?action=wbsearchentities&limit=50&language=en&format=json&origin=*&search=" + query;
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "text/turtle;charset=utf-8");
         conn.addRequestProperty("User-Agent", USER_AGENT);
 
         HashMap<String, String> result = new HashMap<>();
         if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            GraphQueryResult query = QueryResults.parseGraphBackground(conn.getInputStream(), TARGET_URL, RDFFormat.TURTLE);
-            while (query.hasNext()) {
-                Statement st = query.next();
-                if (st.getPredicate().getLocalName().equals("label")) {
-                    result.put(st.getSubject().stringValue(), st.getObject().stringValue());
+            JsonNode root = MetadataModuleImpl.objectMapper.readTree(conn.getInputStream());
+            if (root.isObject() ) {
+                JsonNode themeList = root.get(LIST_PROP);
+                if (themeList.isArray()) {
+                    for (final JsonNode theme : themeList) {
+                        result.put(theme.get(URI_PROP).asText(), theme.get(TITLE_PROP).asText());
+                    }
                 }
             }
         }

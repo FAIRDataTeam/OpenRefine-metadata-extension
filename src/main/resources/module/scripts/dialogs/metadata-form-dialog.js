@@ -137,26 +137,54 @@ class MetadataFormDialog {
                 // ignore error for typehints
                 return;
             }
-            const datalist = $("<datalist>").attr("id", field.typehints);
+            const datalist = this.frame.find(`#list-${field.typehints.name}`);
+            datalist.empty();
             result.datalist.forEach((entry) => {
                 datalist.append($("<option>").attr("data-value", entry.value).text(entry.title));
             });
-            this.elements.datalists.append(datalist);
         };
     }
 
-    makeDataList(field) {
-        if (this.datalists.has(field.typehints)) {
-            // there is a datalist for such field already
-            return;
-        }
-        this.datalists.add(field.typehints);
+    makeDataList(field, input) {
+        const listId = `list-${field.typehints.name}`;
+        input.attr("list", listId);
 
-        this.apiClient.getTypehints(
-            field.id,
-            [this.callbackTypehints(field)],
-            []
-        );
+        if (!this.datalists.has(field.typehints.name)) {
+            this.datalists.add(field.typehints.name);
+            this.elements.datalists.append(
+                $("<datalist>").attr("id", listId).addClass(field.typehints.type)
+            );
+
+            if (field.typehints.type === "static") {
+                this.apiClient.getTypehints(
+                    field.typehints.name,
+                    null,
+                    [this.callbackTypehints(field)],
+                    []
+                );
+            }
+        }
+
+        const self = this;
+        if (field.typehints.type === "dynamic") {
+            let ajaxTimer;
+            input.keyup(function() {
+                if ($(this).val() !== "") {
+                    clearTimeout(ajaxTimer);
+                    ajaxTimer = setTimeout(() => {
+                        self.apiClient.getTypehints(
+                            field.typehints.name,
+                            $(this).val(),
+                            [self.callbackTypehints(field)],
+                            []
+                        );
+                    }, 500);
+                }
+            });
+            input.keydown(function() {
+                clearTimeout(ajaxTimer);
+            });
+        }
     }
 
     makeInputField(field) {
@@ -175,8 +203,7 @@ class MetadataFormDialog {
                 .attr("placeholder", "http://");
         }
         if (field.typehints) {
-            input.attr("list", field.typehints);
-            this.makeDataList(field);
+            this.makeDataList(field, input);
         }
         return input;
     }
@@ -196,12 +223,12 @@ class MetadataFormDialog {
 
         let counter = 0;
         const createRow = function(input) {
-            const inputCopy = input.clone();
+            const inputCopy = input.clone(true, true);
             inputCopy.attr("name", `${field.id}[${counter}]`);
             counter++;
 
             const deleteButton = $("<button>")
-                .attr("type", "button ")
+                .attr("type", "button")
                 .addClass("button button-multiple-delete")
                 .text("-")
                 .click(function(e){
@@ -209,7 +236,7 @@ class MetadataFormDialog {
                     $(this).parent().remove();
                 });
             const addButton = $("<button>")
-                .attr("type", "button ")
+                .attr("type", "button")
                 .addClass("button button-multiple-add")
                 .text("+")
                 .click(function(e){

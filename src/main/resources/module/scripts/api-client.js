@@ -47,8 +47,8 @@ class MetadataApiClient {
         this._ajaxGeneric("distributions-metadata", "GET", params, callbacks, errorCallbacks);
     }
 
-    getTypehints(name, callbacks, errorCallbacks) {
-        this._ajaxGeneric("typehints", "GET", { name }, callbacks, errorCallbacks);
+    getTypehints(name, query, callbacks, errorCallbacks) {
+        this._ajaxGeneric("typehints", "GET", { name, query }, callbacks, errorCallbacks);
     }
 
     postCatalog(catalog, callbacks, errorCallbacks) {
