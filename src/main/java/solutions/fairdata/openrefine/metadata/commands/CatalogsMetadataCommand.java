@@ -42,7 +42,7 @@ public class CatalogsMetadataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String fdpUri = request.getParameter("fdpUri");
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         logger.info("Retrieving Catalogs metadata from FDP URI: " + fdpUri);
         try {
@@ -67,7 +67,7 @@ public class CatalogsMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CatalogPostRequest catalogPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), CatalogPostRequest.class);
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getFdpUri(), catalogPostRequest.getToken(), logger);

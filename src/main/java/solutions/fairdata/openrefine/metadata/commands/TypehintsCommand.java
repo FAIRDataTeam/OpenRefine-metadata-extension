@@ -55,8 +55,7 @@ public class TypehintsCommand extends Command {
         if (query == null) {
             query = "";
         }
-        response.setCharacterEncoding("UTF-8");
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         try {
             List<TypehintDTO> typehints = null;

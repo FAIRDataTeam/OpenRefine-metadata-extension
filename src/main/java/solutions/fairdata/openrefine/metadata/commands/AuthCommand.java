@@ -39,7 +39,7 @@ public class AuthCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         AuthRequest authRequest = CommandUtils.objectMapper.readValue(request.getReader(), AuthRequest.class);
-        Writer w = response.getWriter();
+        Writer w = CommandUtils.prepareWriter(response);
 
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(authRequest.getFdpUri(), logger);

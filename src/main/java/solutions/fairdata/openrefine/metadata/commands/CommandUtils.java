@@ -25,7 +25,18 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.servlet.http.HttpServletResponse;
+
 public class CommandUtils {
 
     public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;
+
+    public static Writer prepareWriter(HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        return response.getWriter();
+    }
 }
