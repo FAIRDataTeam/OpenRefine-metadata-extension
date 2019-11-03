@@ -45,7 +45,7 @@ public class ThemeTypehintService implements TypehintService {
     @Override
     public List<TypehintDTO> getTypehints(String query) throws IOException {
         List<TypehintDTO> result = new ArrayList<>();
-        if (query.equals("")) {
+        if (query.isEmpty()) {
             return result;
         }
         for (Map.Entry<String, String> entry : getThemes(query).entrySet()) {
