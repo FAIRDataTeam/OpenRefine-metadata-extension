@@ -104,5 +104,16 @@
   "metadata/distribution/accessUrl/description": "A landing page, feed, SPARQL endpoint or other type of resource that gives access to the distribution of the dataset.",
   "metadata/distribution/downloadUrl/name": "Download URL",
   "metadata/distribution/downloadUrl/description": "A file that contains the distribution of the dataset in a given format.",
-  "store-data-dialog/title": "Store data to FAIR storage"
+  "store-data-dialog/title": "Store data to FAIR storage",
+  "store-data-dialog/formats/csv": "Comma-separated values",
+  "store-data-dialog/formats/tsv": "Tab-separated values",
+  "store-data-dialog/formats/xls": "Excel Spreadsheet",
+  "store-data-dialog/formats/xlsx": "Open XML Spreadsheet",
+  "store-data-dialog/formats/html": "Hypertext Markup Language",
+  "store-data-dialog/formats/ods": "OpenDocument Spreadsheet",
+  "store-data-dialog/formats/sql": "Structured Query Language",
+  "store-data-dialog/formats/rdf": "Resource Description Framework",
+  "store-data-dialog/formats/Turtle": "Turtle - Terse RDF Triple Language",
+  "store-data-dialog/form/fileFormat": "File format",
+  "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3"
 }
