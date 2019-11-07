@@ -51,12 +51,16 @@ public class StoreDataCommand extends Command {
         formats.put("sql", new ExportFormatDTO("sql", "OpenRefine", "sql"));
         formats.put("rdf", new ExportFormatDTO("rdf", "rdf-extension", "rdf"));
         formats.put("Turtle", new ExportFormatDTO("Turtle", "rdf-extension", "ttl"));
+    }
 
+    private static void updateFormats() {
         for (Map.Entry<String, ExportFormatDTO> format : formats.entrySet()) {
             final Exporter e = ExporterRegistry.getExporter(format.getKey());
             if (e != null) {
                 format.getValue().setContentType(e.getContentType());
                 format.getValue().setUsable(true);
+            } else {
+                format.getValue().setUsable(false);
             }
         }
     }
@@ -65,6 +69,7 @@ public class StoreDataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
+        updateFormats();
 
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(new ArrayList<>(formats.values())));
 
