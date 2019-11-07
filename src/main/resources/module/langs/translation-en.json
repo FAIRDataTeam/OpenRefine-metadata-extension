@@ -1,5 +1,6 @@
 {
   "menu-bar-extension/menu-label": "FAIR Metadata",
+  "menu-bar-extension/store-data": "Store data to FAIR storage",
   "menu-bar-extension/post-fdp": "POST to FAIR Data Point",
   "post-fdp-dialog/title": "POST metadata to FAIR Data Point",
   "post-fdp-dialog/button-connect": "Connect",
@@ -102,5 +103,6 @@
   "metadata/distribution/accessUrl/name": "Access URL",
   "metadata/distribution/accessUrl/description": "A landing page, feed, SPARQL endpoint or other type of resource that gives access to the distribution of the dataset.",
   "metadata/distribution/downloadUrl/name": "Download URL",
-  "metadata/distribution/downloadUrl/description": "A file that contains the distribution of the dataset in a given format."
+  "metadata/distribution/downloadUrl/description": "A file that contains the distribution of the dataset in a given format.",
+  "store-data-dialog/title": "Store data to FAIR storage"
 }

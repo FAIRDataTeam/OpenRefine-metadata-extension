@@ -25,6 +25,11 @@ $(function(){
             "label": $.i18n("menu-bar-extension/menu-label"),
             "submenu" : [
                 {
+                    id: "metadata/store-data",
+                    label: $.i18n("menu-bar-extension/store-data"),
+                    click: StoreDataDialog.createAndLaunch
+                },
+                {
                     id: "metadata/post-fdp",
                     label: $.i18n("menu-bar-extension/post-fdp"),
                     click: PostFdpDialog.createAndLaunch
