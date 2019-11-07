@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem */
+/* global $, DOM, DialogSystem, MetadataHelpers */
 
 class StoreDataDialog {
 
@@ -12,7 +12,9 @@ class StoreDataDialog {
 
         MetadataHelpers.ajax("store-data", "GET", null, (data) => {
             this.formats = data.formats;
+            this.storages = data.storages;
             this.showFormats();
+            this.showStorages();
         });
     }
 
@@ -44,9 +46,7 @@ class StoreDataDialog {
             if (format.usable) {
                 const label = $.i18n(`store-data-dialog/formats/${format.identifier}`);
                 this.elements.fileFormatSelect.append(
-                    $("<option>")
-                        .val(format.identifier)
-                        .text(`${label} (*.${format.extension})`)
+                    $("<option>").val(format.identifier).text(`${label} (*.${format.extension})`)
                 );
             } else {
                 if (!unusables.has(format.source)) {
@@ -65,6 +65,18 @@ class StoreDataDialog {
             });
             this.elements.unusableFormats.append(list);
         }
+    }
+
+    showStorages() {
+        this.elements.storageSelect.empty();
+        this.storages.forEach((storage) => {
+            if (storage.enabled) {
+                const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
+                this.elements.storageSelect.append(
+                    $("<option>").val(storage.name).text(label)
+                );
+            }
+        });
     }
 
     // launcher

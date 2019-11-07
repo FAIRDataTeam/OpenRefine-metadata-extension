@@ -25,6 +25,7 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.google.refine.commands.Command;
 import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoResponse;
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
 
@@ -71,7 +72,10 @@ public class StoreDataCommand extends Command {
         Writer w = CommandUtils.prepareWriter(response);
         updateFormats();
 
-        CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(new ArrayList<>(formats.values())));
+        CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
+                new ArrayList<>(formats.values()),
+                MetadataModuleImpl.getInstance().getStorages()
+        ));
 
         w.flush();
         w.close();

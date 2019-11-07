@@ -23,6 +23,7 @@
 package solutions.fairdata.openrefine.metadata.commands.response;
 
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
+import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
 
 import java.util.List;
 
@@ -30,13 +31,15 @@ public class StoreDataInfoResponse {
 
     private String status;
     private List<ExportFormatDTO> formats;
+    private List<StorageDTO> storages;
 
     public StoreDataInfoResponse() {
     }
 
-    public StoreDataInfoResponse(List<ExportFormatDTO> formats) {
+    public StoreDataInfoResponse(List<ExportFormatDTO> formats, List<StorageDTO> storages) {
         this.status = "ok";
         this.formats = formats;
+        this.storages = storages;
     }
 
     public String getStatus() {
@@ -53,5 +56,13 @@ public class StoreDataInfoResponse {
 
     public void setFormats(List<ExportFormatDTO> formats) {
         this.formats = formats;
+    }
+
+    public List<StorageDTO> getStorages() {
+        return storages;
+    }
+
+    public void setStorages(List<StorageDTO> storages) {
+        this.storages = storages;
     }
 }

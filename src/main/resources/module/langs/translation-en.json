@@ -114,6 +114,9 @@
   "store-data-dialog/formats/sql": "Structured Query Language",
   "store-data-dialog/formats/rdf": "Resource Description Framework",
   "store-data-dialog/formats/Turtle": "Turtle - Terse RDF Triple Language",
+  "store-data-dialog/storages/ftp": "$1 (FTP @ $2$3)",
+  "store-data-dialog/storages/virtuoso": "$1 (Virtuoso @ $2$3)",
   "store-data-dialog/form/fileFormat": "File format",
+  "store-data-dialog/form/storage": "Storage",
   "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3"
 }

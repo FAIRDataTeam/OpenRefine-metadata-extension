@@ -1,4 +1,4 @@
-/* global $, lang, ExtensionBar, PostFdpDialog */
+/* global $, lang, ExtensionBar, PostFdpDialog, StoreDataDialog */
 
 // Load the localization file
 var dictionary = {};
