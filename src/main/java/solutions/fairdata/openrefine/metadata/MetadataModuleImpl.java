@@ -32,8 +32,10 @@ import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
@@ -45,7 +47,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
     private static MetadataModuleImpl instance;
 
-    private List<StorageDTO> storages = new ArrayList<>();
+    private Map<String, StorageDTO> storages = new HashMap<>();
 
     private static void setInstance(MetadataModuleImpl metadataModule) {
         instance = metadataModule;
@@ -75,14 +77,14 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     private void readStorageConfig(File file) {
         try {
             List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<>(){});
-            storages = configuredStorages.stream().filter(s -> StorageDTO.ALLOWED_TYPES.contains(s.getType())).collect(Collectors.toList());
+            storages = configuredStorages.stream().filter(s -> StorageDTO.ALLOWED_TYPES.contains(s.getType())).collect(Collectors.toMap(StorageDTO::getName, Function.identity()));
             logger.trace("Loaded storage configuration with " + storages.size() + " items");
         } catch (IOException e) {
             logger.warn("Could not load storages configuration - skipping");
         }
     }
 
-    public List<StorageDTO> getStorages() {
+    public Map<String, StorageDTO> getStorages() {
         return storages;
     }
 }

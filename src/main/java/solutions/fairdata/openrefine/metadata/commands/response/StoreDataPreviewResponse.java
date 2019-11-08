@@ -20,53 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.commands.response;
 
-public class ExportFormatDTO {
+public class StoreDataPreviewResponse {
 
-    private String identifier;
-    private String source;
-    private String extension;
+    private String filename;
     private String contentType;
-    private Boolean usable;
+    private String data;
 
-    public ExportFormatDTO() {
-    }
-
-    public ExportFormatDTO(String identifier, String source, String extension) {
-        this(identifier, source, extension, "uknown", false);
-    }
-
-    public ExportFormatDTO(String identifier, String source, String extension, String contentType, Boolean usable) {
-        this.identifier = identifier;
-        this.source = source;
-        this.extension = extension;
+    public StoreDataPreviewResponse(String filename, String contentType, String data) {
+        this.filename = filename;
         this.contentType = contentType;
-        this.usable = usable;
+        this.data = data;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getContentType() {
@@ -77,11 +50,11 @@ public class ExportFormatDTO {
         this.contentType = contentType;
     }
 
-    public Boolean getUsable() {
-        return usable;
+    public String getData() {
+        return data;
     }
 
-    public void setUsable(Boolean usable) {
-        this.usable = usable;
+    public void setData(String data) {
+        this.data = data;
     }
 }

@@ -36,6 +36,18 @@ class StoreDataDialog {
         const elmts = this.elements;
 
         elmts.closeButton.click(() => { self.dismiss(); });
+
+        elmts.previewButton.click(() => {
+            const storeDataRequest = JSON.stringify({
+                mode: "preview",
+                format: elmts.fileFormatSelect.val(),
+                storage: elmts.storageSelect.val(),
+            });
+
+            MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
+                MetadataHelpers.download(data.data, data.filename, data.contentType);
+            });
+        });
     }
 
     showFormats() {

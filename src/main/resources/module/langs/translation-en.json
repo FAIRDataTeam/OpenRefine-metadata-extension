@@ -118,5 +118,6 @@
   "store-data-dialog/storages/virtuoso": "$1 (Virtuoso @ $2$3)",
   "store-data-dialog/form/fileFormat": "File format",
   "store-data-dialog/form/storage": "Storage",
-  "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3"
+  "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3",
+  "store-data-dialog/preview": "Preview (download)"
 }

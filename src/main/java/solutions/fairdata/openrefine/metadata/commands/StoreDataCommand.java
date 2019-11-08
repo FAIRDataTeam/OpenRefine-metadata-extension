@@ -22,21 +22,27 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
+import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
+import com.google.refine.exporters.StreamExporter;
+import com.google.refine.exporters.WriterExporter;
+import com.google.refine.model.Project;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.commands.request.StoreDataRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.StoreDataPreviewResponse;
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static com.google.refine.commands.project.ExportRowsCommand.getRequestParameters;
 
 public class StoreDataCommand extends Command {
 
@@ -66,7 +72,6 @@ public class StoreDataCommand extends Command {
         }
     }
 
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
@@ -74,10 +79,60 @@ public class StoreDataCommand extends Command {
 
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
                 new ArrayList<>(formats.values()),
-                MetadataModuleImpl.getInstance().getStorages()
+                new ArrayList<>(MetadataModuleImpl.getInstance().getStorages().values())
         ));
 
         w.flush();
         w.close();
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        StoreDataRequest storeDataRequest = CommandUtils.objectMapper.readValue(request.getReader(), StoreDataRequest.class);
+        Writer w = CommandUtils.prepareWriter(response);
+
+        try {
+            Project project = getProject(request);
+            Engine engine = getEngine(request, project);
+            Properties params = getRequestParameters(request);
+
+            ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
+            Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
+            if (exporter == null) {
+                // TODO: handle
+            }
+
+            // Ugly but that's OpenRefine ...
+            try (
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)
+            ) {
+                if (exporter instanceof WriterExporter) {
+                    WriterExporter writerExporter = (WriterExporter) exporter;
+                    writerExporter.export(project, params, engine, writer);
+                }
+                else if (exporter instanceof StreamExporter) {
+                    StreamExporter streamExporter = (StreamExporter) exporter;
+                    streamExporter.export(project, params, engine, stream);
+                } else {
+                    // TODO: handle
+                }
+
+                byte[] data = stream.toByteArray(); // OK?
+
+                if (storeDataRequest.getMode().equals("preview")) {
+                    String filename = project.getMetadata().getName().replaceAll("\\W+", "_") + "." + format.getExtension();
+                    String base64Data = Base64.getEncoder().encodeToString(data);
+                    CommandUtils.objectMapper.writeValue(w,
+                            new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
+                    );
+                } else {
+                    // TODO: pick storage and send it there
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

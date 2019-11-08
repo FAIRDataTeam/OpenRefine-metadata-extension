@@ -42,9 +42,6 @@ public class StorageDTO {
     private String host;
     private String directory;
 
-    public StorageDTO() {
-    }
-
     public String getName() {
         return name;
     }
