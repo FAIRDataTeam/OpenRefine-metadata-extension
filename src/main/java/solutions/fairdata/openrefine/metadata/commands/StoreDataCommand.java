@@ -32,6 +32,7 @@ import com.google.refine.model.Project;
 import solutions.fairdata.openrefine.metadata.commands.request.StoreDataRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataPreviewResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.StoreDataResponse;
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
 import solutions.fairdata.openrefine.metadata.storage.Storage;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistry;
@@ -80,6 +81,7 @@ public class StoreDataCommand extends Command {
         Project project = getProject(request);
         updateFormats();
 
+        // TODO: avoid sending username+password to client
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
                 project.getMetadata().getName().replaceAll("\\W+", "_"),
                 new ArrayList<>(formats.values()),
@@ -103,8 +105,18 @@ public class StoreDataCommand extends Command {
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
             String filename = storeDataRequest.getFilename() + "." + format.getExtension();
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
+            Storage storage = StorageRegistry.getStorage(storeDataRequest.getStorage());
             if (exporter == null) {
                 // TODO: handle
+                throw new IOException("Unknown export format");
+            }
+            else if (storage == null) {
+                // TODO: handle
+                throw new IOException("Unknown storage");
+            }
+            else if (!storage.allowsContentType(exporter.getContentType())) {
+                // TODO: handle
+                throw new IOException("Unsupported content type for selected storage");
             }
 
             // Ugly but that's OpenRefine ...
@@ -115,12 +127,12 @@ public class StoreDataCommand extends Command {
                 if (exporter instanceof WriterExporter) {
                     WriterExporter writerExporter = (WriterExporter) exporter;
                     writerExporter.export(project, params, engine, writer);
-                }
-                else if (exporter instanceof StreamExporter) {
+                } else if (exporter instanceof StreamExporter) {
                     StreamExporter streamExporter = (StreamExporter) exporter;
                     streamExporter.export(project, params, engine, stream);
                 } else {
                     // TODO: handle
+                    throw new IOException("Unusable exporter given by OpenRefine");
                 }
 
                 byte[] data = stream.toByteArray(); // OK?
@@ -131,11 +143,15 @@ public class StoreDataCommand extends Command {
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
                 } else {
-                    // TODO: pick storage and send it there
+                    storage.storeData(data, filename, exporter.getContentType());
+                    CommandUtils.objectMapper.writeValue(w,
+                            new StoreDataResponse(storage.getURL(filename))
+                    );
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            // TODO: send error message
         }
 
     }

@@ -2,10 +2,11 @@
 
 class StoreDataDialog {
 
-    constructor() {
+    constructor(callback) {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/store-data-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
+        this.callback = callback || this.defaultCallback;
 
         this.initBasicTexts();
         this.bindActions();
@@ -49,6 +50,20 @@ class StoreDataDialog {
 
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
                 MetadataHelpers.download(data.data, data.filename, data.contentType);
+            });
+        });
+
+        elmts.storeButton.click((event) => {
+            event.preventDefault();
+            const storeDataRequest = JSON.stringify({
+                mode: "store",
+                format: elmts.fileFormatSelect.val(),
+                storage: elmts.storageSelect.val(),
+                filename: elmts.filenameInput.val(),
+            });
+
+            MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
+                this.callback(data.link);
             });
         });
 
@@ -104,6 +119,11 @@ class StoreDataDialog {
                 );
             }
         });
+    }
+
+    defaultCallback(link) {
+        // TODO: nicer
+        this.elements.storeDataResult.text(link);
     }
 
     // launcher

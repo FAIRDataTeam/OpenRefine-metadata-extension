@@ -121,5 +121,6 @@
   "store-data-dialog/form/filename": "Filename",
   "store-data-dialog/form/filename/note": "File extension will be added automatically",
   "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3",
+  "store-data-dialog/store": "Store",
   "store-data-dialog/preview": "Preview (download)"
 }

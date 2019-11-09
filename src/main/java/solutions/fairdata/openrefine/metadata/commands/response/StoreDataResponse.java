@@ -20,35 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.storage;
+package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+public class StoreDataResponse {
 
-import java.io.IOException;
+    private String status;
+    private String link;
 
-abstract public class Storage {
-
-    protected StorageDTO storageDTO;
-
-    public Storage(StorageDTO storageDTO) {
-        this.storageDTO = storageDTO;
+    public StoreDataResponse(String link) {
+        this.status = "ok";
+        this.link = link;
     }
 
-    public StorageDTO getStorageDTO() {
-        return storageDTO;
+    public String getStatus() {
+        return status;
     }
 
-    public String getName() {
-        return getStorageDTO().getName();
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public abstract String getType();
-    public abstract String getFilePath(String filename);
-    public abstract void storeData(byte[] data, String filename, String contentType) throws IOException;
-
-    public boolean allowsContentType(String contentType) {
-        return storageDTO != null && (storageDTO.getContentTypes() == null || storageDTO.getContentTypes().contains(contentType));
+    public String getLink() {
+        return link;
     }
 
-    public abstract String getURL(String filename);
+    public void setLink(String link) {
+        this.link = link;
+    }
 }
