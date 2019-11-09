@@ -30,14 +30,16 @@ import java.util.List;
 public class StoreDataInfoResponse {
 
     private String status;
+    private String defaultFilename;
     private List<ExportFormatDTO> formats;
     private List<StorageDTO> storages;
 
     public StoreDataInfoResponse() {
     }
 
-    public StoreDataInfoResponse(List<ExportFormatDTO> formats, List<StorageDTO> storages) {
+    public StoreDataInfoResponse(String defaultFilename, List<ExportFormatDTO> formats, List<StorageDTO> storages) {
         this.status = "ok";
+        this.defaultFilename = defaultFilename;
         this.formats = formats;
         this.storages = storages;
     }
@@ -48,6 +50,14 @@ public class StoreDataInfoResponse {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDefaultFilename() {
+        return defaultFilename;
+    }
+
+    public void setDefaultFilename(String defaultFilename) {
+        this.defaultFilename = defaultFilename;
     }
 
     public List<ExportFormatDTO> getFormats() {

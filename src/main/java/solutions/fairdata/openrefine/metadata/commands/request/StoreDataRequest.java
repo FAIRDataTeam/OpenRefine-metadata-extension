@@ -34,6 +34,7 @@ public class StoreDataRequest {
     private String mode;
     private String format;
     private String storage;
+    private String filename;
 
     public StoreDataRequest() {
     }
@@ -60,5 +61,13 @@ public class StoreDataRequest {
 
     public void setStorage(String storage) {
         this.storage = storage;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

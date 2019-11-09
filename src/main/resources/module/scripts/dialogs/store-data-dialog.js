@@ -15,6 +15,8 @@ class StoreDataDialog {
             this.storages = data.storages;
             this.showStorages();
             this.showFormats();
+
+            this.elements.filenameInput.val(data.defaultFilename);
         });
     }
 
@@ -42,6 +44,7 @@ class StoreDataDialog {
                 mode: "preview",
                 format: elmts.fileFormatSelect.val(),
                 storage: elmts.storageSelect.val(),
+                filename: elmts.filenameInput.val(),
             });
 
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {

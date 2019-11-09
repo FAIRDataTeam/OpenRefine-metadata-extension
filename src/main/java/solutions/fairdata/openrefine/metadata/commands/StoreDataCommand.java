@@ -77,9 +77,11 @@ public class StoreDataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
+        Project project = getProject(request);
         updateFormats();
 
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
+                project.getMetadata().getName().replaceAll("\\W+", "_"),
                 new ArrayList<>(formats.values()),
                 new ArrayList<>(StorageRegistry.getStorages().stream().map(Storage::getStorageDTO).collect(Collectors.toList()))
         ));
@@ -99,6 +101,7 @@ public class StoreDataCommand extends Command {
             Properties params = getRequestParameters(request);
 
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
+            String filename = storeDataRequest.getFilename() + "." + format.getExtension();
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
             if (exporter == null) {
                 // TODO: handle
@@ -123,7 +126,6 @@ public class StoreDataCommand extends Command {
                 byte[] data = stream.toByteArray(); // OK?
 
                 if (storeDataRequest.getMode().equals("preview")) {
-                    String filename = project.getMetadata().getName().replaceAll("\\W+", "_") + "." + format.getExtension();
                     String base64Data = Base64.getEncoder().encodeToString(data);
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
