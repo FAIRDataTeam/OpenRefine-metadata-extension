@@ -28,15 +28,12 @@ import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+import solutions.fairdata.openrefine.metadata.storage.StorageRegistry;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
 
@@ -46,8 +43,6 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static MetadataModuleImpl instance;
-
-    private Map<String, StorageDTO> storages = new HashMap<>();
 
     private static void setInstance(MetadataModuleImpl metadataModule) {
         instance = metadataModule;
@@ -77,14 +72,17 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     private void readStorageConfig(File file) {
         try {
             List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<>(){});
-            storages = configuredStorages.stream().filter(s -> StorageDTO.ALLOWED_TYPES.contains(s.getType())).collect(Collectors.toMap(StorageDTO::getName, Function.identity()));
-            logger.trace("Loaded storage configuration with " + storages.size() + " items");
+            for (StorageDTO storageDTO : configuredStorages) {
+                try {
+                    StorageRegistry.createAndRegisterStorageFor(storageDTO);
+                } catch (IllegalArgumentException e) {
+                    logger.warn("Skipped storage " + storageDTO.getName() + ": " + e.getMessage());
+                }
+            }
+            logger.trace("Loaded storage configuration with " + configuredStorages.size() + " items");
         } catch (IOException e) {
+            e.printStackTrace();
             logger.warn("Could not load storages configuration - skipping");
         }
-    }
-
-    public Map<String, StorageDTO> getStorages() {
-        return storages;
     }
 }

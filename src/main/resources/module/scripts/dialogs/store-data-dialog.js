@@ -13,8 +13,8 @@ class StoreDataDialog {
         MetadataHelpers.ajax("store-data", "GET", null, (data) => {
             this.formats = data.formats;
             this.storages = data.storages;
-            this.showFormats();
             this.showStorages();
+            this.showFormats();
         });
     }
 
@@ -48,13 +48,25 @@ class StoreDataDialog {
                 MetadataHelpers.download(data.data, data.filename, data.contentType);
             });
         });
+
+        elmts.storageSelect.on("change", () => {
+            const selectedStorage = elmts.storageSelect.val();
+            const storage =  this.storages.find((s) => { s.name === selectedStorage });
+            if (storage) {
+                this.showFormats(storage.contentTypes);
+            }
+        });
     }
 
-    showFormats() {
+    showFormats(contentTypes) {
+        const allowedTypes = new Set(contentTypes);
         const unusables = new Map();
         this.elements.unusableFormats.empty();
         this.elements.fileFormatSelect.empty();
         this.formats.forEach((format) => {
+            if (contentTypes && !allowedTypes.has(format.contentType)) {
+                return;
+            }
             if (format.usable) {
                 const label = $.i18n(`store-data-dialog/formats/${format.identifier}`);
                 this.elements.fileFormatSelect.append(

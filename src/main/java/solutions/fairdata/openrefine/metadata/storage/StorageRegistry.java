@@ -24,26 +24,41 @@ package solutions.fairdata.openrefine.metadata.storage;
 
 import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
 
-import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
-abstract public class Storage {
+public class StorageRegistry {
 
-    protected StorageDTO storageDTO;
+    private static final HashMap<String, Storage> storages = new HashMap<>();
 
-    public Storage(StorageDTO storageDTO) {
-        this.storageDTO = storageDTO;
+    public static void registerStorage(String name, Storage storage) {
+        storages.put(name, storage);
     }
 
-    public StorageDTO getStorageDTO() {
-        return storageDTO;
+    public static Storage getStorage(String name) {
+        return storages.get(name);
     }
 
-    public String getName() {
-        return getStorageDTO().getName();
+    public static Set<String> getStorageNames() {
+        return storages.keySet();
     }
 
-    abstract String getType();
-    abstract String getFilePath(String filename);
-    abstract Boolean storeData(byte[] data, String filename, String contentType) throws IOException;
+    public static Collection<Storage> getStorages() {
+        return storages.values();
+    }
 
+    public static void createAndRegisterStorageFor(StorageDTO storageDTO) throws IllegalArgumentException {
+        if (!storageDTO.getEnabled()) {
+            return;
+        }
+        Storage storage = null;
+        if (storageDTO.getType().toLowerCase().equals(FTPStorage.TYPE)) {
+            storage = new FTPStorage(storageDTO);
+        }
+        if (storage == null) {
+            throw new IllegalArgumentException("Given storage type has no implementation: " + storageDTO.getType());
+        }
+        StorageRegistry.registerStorage(storage.getName(), storage);
+    }
 }

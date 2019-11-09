@@ -29,11 +29,12 @@ import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.request.StoreDataRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataPreviewResponse;
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
+import solutions.fairdata.openrefine.metadata.storage.Storage;
+import solutions.fairdata.openrefine.metadata.storage.StorageRegistry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.refine.commands.project.ExportRowsCommand.getRequestParameters;
 
@@ -79,7 +81,7 @@ public class StoreDataCommand extends Command {
 
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
                 new ArrayList<>(formats.values()),
-                new ArrayList<>(MetadataModuleImpl.getInstance().getStorages().values())
+                new ArrayList<>(StorageRegistry.getStorages().stream().map(Storage::getStorageDTO).collect(Collectors.toList()))
         ));
 
         w.flush();

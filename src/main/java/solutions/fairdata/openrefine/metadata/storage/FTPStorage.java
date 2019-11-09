@@ -22,28 +22,38 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
+import org.apache.commons.net.ftp.FTPClient;
 import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-abstract public class Storage {
+public class FTPStorage extends Storage {
 
-    protected StorageDTO storageDTO;
+    public static final String TYPE = "ftp";
 
-    public Storage(StorageDTO storageDTO) {
-        this.storageDTO = storageDTO;
+    public FTPStorage(StorageDTO storageDTO) {
+        super(storageDTO);
     }
 
-    public StorageDTO getStorageDTO() {
-        return storageDTO;
+    @Override
+    String getType() {
+        return TYPE;
     }
 
-    public String getName() {
-        return getStorageDTO().getName();
+    public String getFilePath(String filename) {
+        return storageDTO.getType() + "/" + filename;
     }
 
-    abstract String getType();
-    abstract String getFilePath(String filename);
-    abstract Boolean storeData(byte[] data, String filename, String contentType) throws IOException;
+    public Boolean storeData(byte[] data, String filename, String contentType) throws IOException {
+        FTPClient ftpClient = new FTPClient();
+        ftpClient.connect(storageDTO.getHost());
+        ftpClient.login(storageDTO.getUsername(), storageDTO.getPassword());
+        ftpClient.changeWorkingDirectory(storageDTO.getDirectory());
+        ftpClient.setFileTransferMode(FTPClient.BINARY_FILE_TYPE);
 
+        try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {
+            return ftpClient.storeFile(filename, is);
+        }
+    }
 }

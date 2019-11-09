@@ -22,28 +22,5 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
-import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
-
-import java.io.IOException;
-
-abstract public class Storage {
-
-    protected StorageDTO storageDTO;
-
-    public Storage(StorageDTO storageDTO) {
-        this.storageDTO = storageDTO;
-    }
-
-    public StorageDTO getStorageDTO() {
-        return storageDTO;
-    }
-
-    public String getName() {
-        return getStorageDTO().getName();
-    }
-
-    abstract String getType();
-    abstract String getFilePath(String filename);
-    abstract Boolean storeData(byte[] data, String filename, String contentType) throws IOException;
-
+public class VirtuosoStorage {
 }

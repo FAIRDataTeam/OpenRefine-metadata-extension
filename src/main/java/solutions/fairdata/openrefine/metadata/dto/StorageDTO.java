@@ -25,14 +25,9 @@ package solutions.fairdata.openrefine.metadata.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 public class StorageDTO {
-
-    public static final Set<String> ALLOWED_TYPES = Collections.unmodifiableSet(
-            Set.of("virtuoso", "ftp")
-    );
 
     private String name;
     private String type;
@@ -41,6 +36,7 @@ public class StorageDTO {
     private String password;
     private String host;
     private String directory;
+    private List<String> contentTypes;
 
     public String getName() {
         return name;
@@ -98,5 +94,13 @@ public class StorageDTO {
 
     public void setDirectory(String directory) {
         this.directory = directory;
+    }
+
+    public List<String> getContentTypes() {
+        return contentTypes;
+    }
+
+    public void setContentTypes(List<String> contentTypes) {
+        this.contentTypes = contentTypes;
     }
 }

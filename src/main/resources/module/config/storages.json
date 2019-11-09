@@ -15,6 +15,7 @@
     "username": "dba",
     "password": "virtDemo",
     "host": "127.0.0.1:8890",
-    "directory": "/DAV/home/dba/rdf_sink/"
+    "directory": "/DAV/home/dba/rdf_sink/",
+    "contentTypes": ["rdf"]
   }
 ]
