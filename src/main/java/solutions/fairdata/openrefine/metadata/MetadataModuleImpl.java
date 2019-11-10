@@ -28,7 +28,7 @@ import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
-import solutions.fairdata.openrefine.metadata.storage.StorageRegistry;
+import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
@@ -74,7 +74,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
             List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<>(){});
             for (StorageDTO storageDTO : configuredStorages) {
                 try {
-                    StorageRegistry.createAndRegisterStorageFor(storageDTO);
+                    StorageRegistryUtil.createAndRegisterStorageFor(storageDTO);
                 } catch (IllegalArgumentException e) {
                     logger.warn("Skipped storage " + storageDTO.getName() + ": " + e.getMessage());
                 }

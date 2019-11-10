@@ -22,9 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Set;
 
 public class StorageDTO {
@@ -100,5 +97,9 @@ public class StorageDTO {
 
     public void setContentTypes(Set<String> contentTypes) {
         this.contentTypes = contentTypes;
+    }
+
+    public StorageInfoDTO toInfo() {
+        return new StorageInfoDTO(this);
     }
 }

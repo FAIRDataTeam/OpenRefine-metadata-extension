@@ -36,9 +36,6 @@ public class StoreDataRequest {
     private String storage;
     private String filename;
 
-    public StoreDataRequest() {
-    }
-
     public String getMode() {
         return mode;
     }

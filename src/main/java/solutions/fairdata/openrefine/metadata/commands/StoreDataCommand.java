@@ -34,8 +34,9 @@ import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoRes
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataPreviewResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataResponse;
 import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
+import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.Storage;
-import solutions.fairdata.openrefine.metadata.storage.StorageRegistry;
+import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,11 +82,10 @@ public class StoreDataCommand extends Command {
         Project project = getProject(request);
         updateFormats();
 
-        // TODO: avoid sending username+password to client
         CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
                 project.getMetadata().getName().replaceAll("\\W+", "_"),
                 new ArrayList<>(formats.values()),
-                new ArrayList<>(StorageRegistry.getStorages().stream().map(Storage::getStorageDTO).collect(Collectors.toList()))
+                new ArrayList<>(StorageRegistryUtil.getStorages().stream().map(Storage::getStorageDTO).map(StorageDTO::toInfo).collect(Collectors.toList()))
         ));
 
         w.flush();
@@ -105,7 +105,7 @@ public class StoreDataCommand extends Command {
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
             String filename = storeDataRequest.getFilename() + "." + format.getExtension();
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
-            Storage storage = StorageRegistry.getStorage(storeDataRequest.getStorage());
+            Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage());
             if (exporter == null) {
                 // TODO: handle
                 throw new IOException("Unknown export format");

@@ -69,7 +69,7 @@ class StoreDataDialog {
 
         elmts.storageSelect.on("change", () => {
             const selectedStorage = elmts.storageSelect.val();
-            const storage =  this.storages.find((s) => { s.name === selectedStorage });
+            const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
             if (storage) {
                 this.showFormats(storage.contentTypes);
             }
@@ -83,9 +83,8 @@ class StoreDataDialog {
         this.elements.fileFormatSelect.empty();
         this.formats.forEach((format) => {
             if (contentTypes && !allowedTypes.has(format.contentType)) {
-                return;
-            }
-            if (format.usable) {
+                // nothing to do with unallowed format
+            } else if (format.usable) {
                 const label = $.i18n(`store-data-dialog/formats/${format.identifier}`);
                 this.elements.fileFormatSelect.append(
                     $("<option>").val(format.identifier).text(`${label} (*.${format.extension})`)

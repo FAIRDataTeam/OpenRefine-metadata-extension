@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
-public class StorageRegistry {
+public class StorageRegistryUtil {
 
     private static final HashMap<String, Storage> storages = new HashMap<>();
 
@@ -53,12 +53,12 @@ public class StorageRegistry {
             return;
         }
         Storage storage = null;
-        if (storageDTO.getType().toLowerCase().equals(FTPStorage.TYPE)) {
+        if (storageDTO.getType().equalsIgnoreCase(FTPStorage.TYPE)) {
             storage = new FTPStorage(storageDTO);
         }
         if (storage == null) {
             throw new IllegalArgumentException("Given storage type has no implementation: " + storageDTO.getType());
         }
-        StorageRegistry.registerStorage(storage.getName(), storage);
+        StorageRegistryUtil.registerStorage(storage.getName(), storage);
     }
 }

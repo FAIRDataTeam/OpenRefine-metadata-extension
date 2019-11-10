@@ -51,9 +51,9 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
 
 MetadataHelpers.download = (contenBase64, filename, contentType) => {
     if(!contentType) {
-        contentType = 'application/octet-stream';
+        contentType = "application/octet-stream";
     }
-    let link = document.createElement('a');
+    let link = document.createElement("a");
     link.download = filename;
     link.href = `data:${contentType};base64,${contenBase64}`;
     link.click();
