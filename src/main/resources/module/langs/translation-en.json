@@ -1,8 +1,8 @@
 {
   "menu-bar-extension/menu-label": "FAIR Metadata",
   "menu-bar-extension/store-data": "Store data to FAIR storage",
-  "menu-bar-extension/post-fdp": "POST to FAIR Data Point",
-  "post-fdp-dialog/title": "POST metadata to FAIR Data Point",
+  "menu-bar-extension/post-fdp": "Create metadata in FAIR Data Point",
+  "post-fdp-dialog/title": "Create metadata in FAIR Data Point",
   "post-fdp-dialog/button-connect": "Connect",
   "post-fdp-dialog/button-close": "Close",
   "post-fdp-dialog/label-username": "Username",
@@ -122,5 +122,7 @@
   "store-data-dialog/form/filename/note": "File extension will be added automatically",
   "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3",
   "store-data-dialog/store": "Store",
-  "store-data-dialog/preview": "Preview (download)"
+  "store-data-dialog/preview": "Preview (download)",
+  "store-data-dialog/result": "File has been stored successfully at: ",
+  "store-data-dialog/copy-clipboard": "Copy link to clipboard"
 }

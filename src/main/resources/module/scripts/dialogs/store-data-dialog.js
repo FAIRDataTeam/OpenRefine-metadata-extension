@@ -63,7 +63,8 @@ class StoreDataDialog {
             });
 
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
-                this.callback(data.link);
+                // TODO: handle errors
+                this.callback(data.url);
             });
         });
 
@@ -111,18 +112,26 @@ class StoreDataDialog {
     showStorages() {
         this.elements.storageSelect.empty();
         this.storages.forEach((storage) => {
-            if (storage.enabled) {
-                const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
-                this.elements.storageSelect.append(
-                    $("<option>").val(storage.name).text(label)
-                );
-            }
+            const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
+            this.elements.storageSelect.append(
+                $("<option>").val(storage.name).text(label)
+            );
         });
     }
 
-    defaultCallback(link) {
-        // TODO: nicer
-        this.elements.storeDataResult.text(link);
+    defaultCallback(url) {
+        this.elements.storeDataResult.empty();
+        this.elements.storeDataResult.append(
+            $("<span>").addClass("intro").text($.i18n("store-data-dialog/result"))
+        );
+        this.elements.storeDataResult.append(
+            $("<a>").addClass("link").attr("href", url).attr("target", "_blank").text(url)
+        );
+        this.elements.storeDataResult.append(
+            $("<button>").addClass("copy-clipboard").text($.i18n("store-data-dialog/copy-clipboard")).click(() => {
+                MetadataHelpers.copyToClipboard(url);
+            })
+        );
     }
 
     // launcher
