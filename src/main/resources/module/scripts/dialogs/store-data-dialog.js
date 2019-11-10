@@ -21,8 +21,9 @@ class StoreDataDialog {
         });
     }
 
-    launch() {
+    launch(callback) {
         this.level = DialogSystem.showDialog(this.frame);
+        this.callback = callback || this.defaultCallback;
     }
 
     dismiss() {
@@ -135,8 +136,8 @@ class StoreDataDialog {
     }
 
     // launcher
-    static createAndLaunch() {
+    static createAndLaunch(callback) {
         const dialog = new StoreDataDialog();
-        dialog.launch();
+        dialog.launch(callback);
     }
 }

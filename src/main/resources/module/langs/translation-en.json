@@ -27,6 +27,7 @@
   "metadata/optional-show": "Show optional fields",
   "metadata/optional-hide": "Hide optional fields",
   "metadata/custom-flag": "[custom]",
+  "metadata/storeData": "Store data to FAIR storage",
   "metadata/catalog/name": "catalog",
   "metadata/catalog/submit": "Add catalog",
   "metadata/catalog/dialog-title": "Add new catalog to FAIR Data Point",
