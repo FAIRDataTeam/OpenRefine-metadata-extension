@@ -2,11 +2,11 @@
 
 class StoreDataDialog {
 
-    constructor(callback) {
+    constructor() {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/store-data-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
-        this.callback = callback || this.defaultCallback;
+        this.storeCallback = this.defaultCallback();
 
         this.initBasicTexts();
         this.bindActions();
@@ -21,9 +21,12 @@ class StoreDataDialog {
         });
     }
 
-    launch(callback) {
+    setCallback(callback) {
+        this.storeCallback = callback;
+    }
+
+    launch() {
         this.level = DialogSystem.showDialog(this.frame);
-        this.callback = callback || this.defaultCallback;
     }
 
     dismiss() {
@@ -62,10 +65,9 @@ class StoreDataDialog {
                 storage: elmts.storageSelect.val(),
                 filename: elmts.filenameInput.val(),
             });
-
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
                 // TODO: handle errors
-                this.callback(data.url);
+                self.storeCallback(data.url);
             });
         });
 
@@ -120,19 +122,21 @@ class StoreDataDialog {
         });
     }
 
-    defaultCallback(url) {
-        this.elements.storeDataResult.empty();
-        this.elements.storeDataResult.append(
-            $("<span>").addClass("intro").text($.i18n("store-data-dialog/result"))
-        );
-        this.elements.storeDataResult.append(
-            $("<a>").addClass("link").attr("href", url).attr("target", "_blank").text(url)
-        );
-        this.elements.storeDataResult.append(
-            $("<button>").addClass("copy-clipboard").text($.i18n("store-data-dialog/copy-clipboard")).click(() => {
-                MetadataHelpers.copyToClipboard(url);
-            })
-        );
+    defaultCallback() {
+        return (url) => {
+            this.elements.storeDataResult.empty();
+            this.elements.storeDataResult.append(
+                $("<span>").addClass("intro").text($.i18n("store-data-dialog/result"))
+            );
+            this.elements.storeDataResult.append(
+                $("<a>").addClass("link").attr("href", url).attr("target", "_blank").text(url)
+            );
+            this.elements.storeDataResult.append(
+                $("<button>").addClass("copy-clipboard").text($.i18n("store-data-dialog/copy-clipboard")).click(() => {
+                    MetadataHelpers.copyToClipboard(url);
+                })
+            );
+        };
     }
 
     // launcher

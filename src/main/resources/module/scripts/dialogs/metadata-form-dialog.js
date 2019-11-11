@@ -407,10 +407,11 @@ class MetadataFormDialog {
                 .text($.i18n("metadata/storeData"))
                 .click(() => {
                     const dialog = new StoreDataDialog();
-                    dialog.launch((url) => {
+                    dialog.setCallback((url) => {
                         callback(url);
                         dialog.dismiss();
                     });
+                    dialog.launch();
                 })
         );
     }
