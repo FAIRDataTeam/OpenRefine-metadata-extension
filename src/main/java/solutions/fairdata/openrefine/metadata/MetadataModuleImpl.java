@@ -37,7 +37,7 @@ import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger("MetadataModule");
+    private static final Logger logger = LoggerFactory.getLogger("metadata");
 
     public static final String USER_AGENT = "OpenRefine/metadata";
     public static final ObjectMapper objectMapper = new ObjectMapper();
@@ -84,5 +84,9 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
             e.printStackTrace();
             logger.warn("Could not load storages configuration - skipping");
         }
+    }
+
+    public static Logger getLogger() {
+        return logger;
     }
 }

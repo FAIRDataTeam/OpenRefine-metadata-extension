@@ -125,5 +125,10 @@
   "store-data-dialog/store": "Store",
   "store-data-dialog/preview": "Preview (download)",
   "store-data-dialog/result": "File has been stored successfully at: ",
-  "store-data-dialog/copy-clipboard": "Copy link to clipboard"
+  "store-data-dialog/copy-clipboard": "Copy link to clipboard",
+  "store-data-dialog/error/unknown-export-format" :"Unknown export format",
+  "store-data-dialog/error/unknown-storage" :"Unknown storage",
+  "store-data-dialog/error/unsupported-type": "Unsupported content type for selected storage",
+  "store-data-dialog/error/unusable-exporter": "Unusable exporter given by OpenRefine",
+  "store-data-dialog/error/exporting": "Error while exporting to storage: \"$1\""
 }

@@ -45,6 +45,7 @@ class StoreDataDialog {
         elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.previewButton.click(() => {
+            self.elements.errorMessage.empty();
             const storeDataRequest = JSON.stringify({
                 mode: "preview",
                 format: elmts.fileFormatSelect.val(),
@@ -53,11 +54,16 @@ class StoreDataDialog {
             });
 
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
-                MetadataHelpers.download(data.data, data.filename, data.contentType);
+                if (data.status === "ok") {
+                    MetadataHelpers.download(data.data, data.filename, data.contentType);
+                } else {
+                    self.elements.errorMessage.text($.i18n(data.message, data.exception));
+                }
             });
         });
 
         elmts.storeButton.click((event) => {
+            self.elements.errorMessage.empty();
             event.preventDefault();
             const storeDataRequest = JSON.stringify({
                 mode: "store",
@@ -66,8 +72,12 @@ class StoreDataDialog {
                 filename: elmts.filenameInput.val(),
             });
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
-                // TODO: handle errors
-                self.storeCallback(data.url);
+                if (data.status === "ok") {
+                    self.storeCallback(data.url);
+                } else {
+                    self.elements.errorMessage.text($.i18n(data.message, data.exception));
+                }
+
             });
         });
 

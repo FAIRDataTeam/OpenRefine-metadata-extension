@@ -29,7 +29,9 @@ import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
+import solutions.fairdata.openrefine.metadata.commands.exceptions.MetadataCommandException;
 import solutions.fairdata.openrefine.metadata.commands.request.StoreDataRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataInfoResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataPreviewResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.StoreDataResponse;
@@ -107,16 +109,13 @@ public class StoreDataCommand extends Command {
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
             Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage());
             if (exporter == null) {
-                // TODO: handle
-                throw new IOException("Unknown export format");
+                throw new MetadataCommandException("store-data-dialog/error/unknown-export-format");
             }
             else if (storage == null) {
-                // TODO: handle
-                throw new IOException("Unknown storage");
+                throw new MetadataCommandException("store-data-dialog/error/unknown-storage");
             }
             else if (!storage.allowsContentType(exporter.getContentType())) {
-                // TODO: handle
-                throw new IOException("Unsupported content type for selected storage");
+                throw new MetadataCommandException("store-data-dialog/error/unsupported-type");
             }
 
             // Ugly but that's OpenRefine ...
@@ -131,11 +130,10 @@ public class StoreDataCommand extends Command {
                     StreamExporter streamExporter = (StreamExporter) exporter;
                     streamExporter.export(project, params, engine, stream);
                 } else {
-                    // TODO: handle
-                    throw new IOException("Unusable exporter given by OpenRefine");
+                    throw new MetadataCommandException("store-data-dialog/error/unusable-exporter");
                 }
 
-                byte[] data = stream.toByteArray(); // OK?
+                byte[] data = stream.toByteArray();
 
                 if (storeDataRequest.getMode().equals("preview")) {
                     String base64Data = Base64.getEncoder().encodeToString(data);
@@ -149,10 +147,15 @@ public class StoreDataCommand extends Command {
                     );
                 }
             }
+        } catch (MetadataCommandException e) {
+            logger.warn("Unable to store data (bad request)");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse(e.getMessage(), e));
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: send error message
+            logger.warn("Unable to store data: " + e.getMessage());
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("store-data-dialog/error/exporting", e));
+        } finally {
+            w.flush();
+            w.close();
         }
-
     }
 }
