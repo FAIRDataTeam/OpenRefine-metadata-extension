@@ -116,6 +116,7 @@ class MetadataFormDialog {
         });
 
         if (this.specs.storeData) {
+            const formGroupId = `#form-group-${this.specs.storeData.inline}`;
             const target = this.specs.storeData.target;
             const others = this.specs.storeData.others;
 
@@ -125,7 +126,8 @@ class MetadataFormDialog {
                         this.setValue(fieldId, value);
                     });
                     this.setValue(target, url);
-                }
+                },
+                formGroupId
             );
         }
     }
@@ -399,8 +401,8 @@ class MetadataFormDialog {
         return fieldDiv;
     }
 
-    makeStoreDataButton(callback) {
-        this.elements.dialogFooter.append(
+    makeStoreDataButton(callback, formGroupId) {
+        this.frame.find(formGroupId).append($("<div>").addClass("store-button-row").append(
             $("<button>")
                 .addClass("button")
                 .addClass("store-data")
@@ -413,7 +415,7 @@ class MetadataFormDialog {
                     });
                     dialog.launch();
                 })
-        );
+        ));
     }
 
     // launcher
