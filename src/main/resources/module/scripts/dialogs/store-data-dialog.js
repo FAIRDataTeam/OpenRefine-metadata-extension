@@ -96,18 +96,17 @@ class StoreDataDialog {
         this.elements.unusableFormats.empty();
         this.elements.fileFormatSelect.empty();
         this.formats.forEach((format) => {
-            if (contentTypes && !allowedTypes.has(format.contentType)) {
-                // nothing to do with unallowed format
-            } else if (format.usable) {
-                const label = $.i18n(`store-data-dialog/formats/${format.identifier}`);
-                this.elements.fileFormatSelect.append(
-                    $("<option>").val(format.identifier).text(`${label} (*.${format.extension})`)
-                );
-            } else {
-                if (!unusables.has(format.source)) {
-                    unusables.set(format.source, []);
+            const valid = !contentTypes || allowedTypes.has(format.contentType);
+            if (valid) {
+                if (format.usable) {
+                    const label = $.i18n(`store-data-dialog/formats/${format.identifier}`);
+                    this.elements.fileFormatSelect.append(
+                        $("<option>").val(format.identifier).text(`${label} (*.${format.extension})`)
+                    );
+                } else {
+                    unusables.set(format.source, unusables.get(format.source) || []);
+                    unusables.get(format.source).push(format);
                 }
-                unusables.get(format.source).push(format);
             }
         });
         if (unusables.size > 0) {

@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, Refine, MetadataApiClient */
+/* global $, DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
 
 class MetadataFormDialog {
     constructor(type, specs, callbackFn, prefill) {
@@ -66,12 +66,12 @@ class MetadataFormDialog {
     setValue(fieldId, value) {
         const input = this.elements.metadataForm.find(`#${fieldId}`);
         if (input != null) {
-            if (input.is(':radio') && value === true) {
+            if (input.is(":radio") && value === true) {
                 input.prop("checked", true);
             } else {
                 input.val(value);
             }
-            input.trigger("change")
+            input.trigger("change");
         }
     }
 
