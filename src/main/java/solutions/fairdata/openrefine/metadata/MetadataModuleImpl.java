@@ -22,11 +22,71 @@
  */
 package solutions.fairdata.openrefine.metadata;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
+
+import javax.servlet.ServletConfig;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
 
+    private static final Logger logger = LoggerFactory.getLogger("metadata");
+
     public static final String USER_AGENT = "OpenRefine/metadata";
     public static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static MetadataModuleImpl instance;
+
+    private static void setInstance(MetadataModuleImpl metadataModule) {
+        instance = metadataModule;
+    }
+
+    public static MetadataModuleImpl getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void init(ServletConfig config) throws Exception {
+        super.init(config);
+
+        setInstance(this);
+
+        readConfig();
+
+        logger.trace("Metadata Extension module has been initialized");
+    }
+
+    private void readConfig() {
+        File configFolderFile = new File(getPath(),"config");
+
+        readStorageConfig(new File(configFolderFile, "storages.json"));
+    }
+
+    private void readStorageConfig(File file) {
+        try {
+            List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<>(){});
+            for (StorageDTO storageDTO : configuredStorages) {
+                try {
+                    StorageRegistryUtil.createAndRegisterStorageFor(storageDTO);
+                } catch (IllegalArgumentException e) {
+                    logger.warn("Skipped storage " + storageDTO.getName() + ": " + e.getMessage());
+                }
+            }
+            logger.trace("Loaded storage configuration with " + configuredStorages.size() + " items");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.warn("Could not load storages configuration - skipping");
+        }
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
 }

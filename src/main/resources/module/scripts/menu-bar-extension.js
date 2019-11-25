@@ -1,4 +1,4 @@
-/* global $, lang, ExtensionBar, PostFdpDialog */
+/* global $, lang, ExtensionBar, PostFdpDialog, StoreDataDialog */
 
 // Load the localization file
 var dictionary = {};
@@ -24,6 +24,11 @@ $(function(){
             "id":"metadata",
             "label": $.i18n("menu-bar-extension/menu-label"),
             "submenu" : [
+                {
+                    id: "metadata/store-data",
+                    label: $.i18n("menu-bar-extension/store-data"),
+                    click: StoreDataDialog.createAndLaunch
+                },
                 {
                     id: "metadata/post-fdp",
                     label: $.i18n("menu-bar-extension/post-fdp"),

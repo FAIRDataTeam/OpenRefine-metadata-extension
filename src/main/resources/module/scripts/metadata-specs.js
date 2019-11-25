@@ -170,6 +170,13 @@ MetadataSpecs.dataset = {
 
 MetadataSpecs.distribution = {
     "id": "distribution",
+    "storeData": {
+        "inline": "targetUrl",
+        "target":  "downloadUrl",
+        "others": {
+            "targetUrl-downloadUrl": true
+        }
+    },
     "fields": [
         {
             "id": "title",

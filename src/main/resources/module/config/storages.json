@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Example FTP",
+    "type": "ftp",
+    "enabled": true,
+    "username": "test",
+    "password": "example",
+    "host": "localhost",
+    "directory": "/"
+  },
+  {
+    "name": "Example Virtuoso",
+    "type": "virtuoso",
+    "enabled": true,
+    "username": "dba",
+    "password": "virtDemo",
+    "host": "127.0.0.1:8890",
+    "directory": "/DAV/home/dba/rdf_sink/",
+    "contentTypes": [
+      "application/rdf+xml",
+      "application/x-turtle",
+      "text/turtle"
+    ]
+  }
+]

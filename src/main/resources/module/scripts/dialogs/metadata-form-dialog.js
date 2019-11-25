@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, Refine, MetadataApiClient */
+/* global $, DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
 
 class MetadataFormDialog {
     constructor(type, specs, callbackFn, prefill) {
@@ -58,9 +58,21 @@ class MetadataFormDialog {
         });
     }
 
-    getValue(field) {
-        const value = this.elements.metadataForm.find(`#${field.id}`).val();
+    getValue(fieldId) {
+        const value = this.elements.metadataForm.find(`#${fieldId}`).val();
         return value === "" ? null : value;
+    }
+
+    setValue(fieldId, value) {
+        const input = this.elements.metadataForm.find(`#${fieldId}`);
+        if (input != null) {
+            if (input.is(":radio") && value === true) {
+                input.prop("checked", true);
+            } else {
+                input.val(value);
+            }
+            input.trigger("change");
+        }
     }
 
     createForm() {
@@ -89,10 +101,10 @@ class MetadataFormDialog {
                             }).get().filter((e) => e !== "");
                     } else if(field.type === "xor") {
                         field.options.forEach((option) => {
-                            result[option.id] = this.getValue(option);
+                            result[option.id] = this.getValue(option.id);
                         });
                     } else {
-                        result[field.id] = this.getValue(field);
+                        result[field.id] = this.getValue(field.id);
                     }
                     if (field.nested) {
                         gatherResults(field.nested.fields);
@@ -102,6 +114,22 @@ class MetadataFormDialog {
             gatherResults(this.specs.fields);
             this.callbackFn(result, this);
         });
+
+        if (this.specs.storeData) {
+            const formGroupId = `#form-group-${this.specs.storeData.inline}`;
+            const target = this.specs.storeData.target;
+            const others = this.specs.storeData.others;
+
+            this.makeStoreDataButton(
+                (url) => {
+                    Object.entries(others).forEach(([fieldId, value]) => {
+                        this.setValue(fieldId, value);
+                    });
+                    this.setValue(target, url);
+                },
+                formGroupId
+            );
+        }
     }
 
     displayError(errorName, errorMessage) {
@@ -371,6 +399,23 @@ class MetadataFormDialog {
         }
 
         return fieldDiv;
+    }
+
+    makeStoreDataButton(callback, formGroupId) {
+        this.frame.find(formGroupId).append($("<div>").addClass("store-button-row").append(
+            $("<button>")
+                .addClass("button")
+                .addClass("store-data")
+                .text($.i18n("metadata/storeData"))
+                .click(() => {
+                    const dialog = new StoreDataDialog();
+                    dialog.setCallback((url) => {
+                        callback(url);
+                        dialog.dismiss();
+                    });
+                    dialog.launch();
+                })
+        ));
     }
 
     // launcher

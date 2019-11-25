@@ -15,6 +15,7 @@ function init() {
     RefineServlet.registerCommand(module, "datasets-metadata", new MetadataCommands.DatasetsMetadataCommand());
     RefineServlet.registerCommand(module, "distributions-metadata", new MetadataCommands.DistributionsMetadataCommand());
     RefineServlet.registerCommand(module, "typehints", new MetadataCommands.TypehintsCommand());
+    RefineServlet.registerCommand(module, "store-data", new MetadataCommands.StoreDataCommand());
 
     // Resources
     ClientSideResourceManager.addPaths(
@@ -27,11 +28,13 @@ function init() {
             "scripts/metadata-specs.js",
             "scripts/dialogs/metadata-form-dialog.js",
             "scripts/dialogs/post-fdp-dialog.js",
+            "scripts/dialogs/store-data-dialog.js",
         ]);
     ClientSideResourceManager.addPaths(
         "project/styles",
         module,
         [
+            "styles/dialogs/store-data-dialog.less",
             "styles/dialogs/metadata-form-dialog.less",
             "styles/dialogs/post-fdp-dialog.less",
         ]);
