@@ -168,7 +168,9 @@ class MetadataFormDialog {
             const datalist = this.frame.find(`#list-${field.typehints.name}`);
             datalist.empty();
             result.datalist.forEach((entry) => {
-                datalist.append($("<option>").attr("data-value", entry.value).text(`${entry.title} (${entry.value})`));
+                const text = `${entry.title} (${entry.value})${entry.description ? ": " + entry.description : ""}`;
+                datalist.append(
+                    $("<option>").attr("data-value", entry.value).text(text));
             });
         };
     }
