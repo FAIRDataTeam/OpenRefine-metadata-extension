@@ -8,7 +8,7 @@ MetadataHelpers.ajax = (command, method, body, success, error, params, hideProgr
     body = body || {};
 
     params = params || {};
-    progress = hideProgress !== true;
+    const progress = hideProgress !== true;
     params.project = theProject.id;
 
     const commandUrl =  "command/" + MetadataHelpers.moduleName + "/" + command + "?" + $.param(params);
@@ -19,17 +19,13 @@ MetadataHelpers.ajax = (command, method, body, success, error, params, hideProgr
     const makeDone = () => {
         done = true;
 
-        if (progress) {
-            if (dismissBusy) {
-                dismissBusy();
-            }
-            Refine.clearAjaxInProgress();
+        if (dismissBusy) {
+            dismissBusy();
         }
+        Refine.clearAjaxInProgress();
     };
 
-    if (progress) {
-        Refine.setAjaxInProgress();
-    }
+    Refine.setAjaxInProgress();
 
     $.ajax({
         url: commandUrl,
