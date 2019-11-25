@@ -48,7 +48,7 @@ class MetadataApiClient {
     }
 
     getTypehints(name, query, callbacks, errorCallbacks) {
-        this._ajaxGeneric("typehints", "GET", { name, query }, callbacks, errorCallbacks);
+        this._ajaxGeneric("typehints", "GET", { name, query }, callbacks, errorCallbacks, true);
     }
 
     postCatalog(catalog, callbacks, errorCallbacks) {
@@ -73,7 +73,7 @@ class MetadataApiClient {
     }
 
     // helpers
-    _ajaxGeneric(command, method, data, callbacks, errorCallbacks) {
+    _ajaxGeneric(command, method, data, callbacks, errorCallbacks, hideProgress) {
         callbacks = callbacks || [];
         errorCallbacks = errorCallbacks || [];
 
@@ -83,7 +83,9 @@ class MetadataApiClient {
             },
             () => {
                 errorCallbacks.forEach((callback) => { callback(); });
-            }
+            },
+            {},
+            hideProgress
         );
     }
 }
