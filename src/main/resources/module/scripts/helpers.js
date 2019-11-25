@@ -4,10 +4,11 @@ let MetadataHelpers = {
     moduleName: "metadata"
 };
 
-MetadataHelpers.ajax = (command, method, body, success, error, params) => {
+MetadataHelpers.ajax = (command, method, body, success, error, params, hideProgress) => {
     body = body || {};
 
     params = params || {};
+    const progress = hideProgress !== true;
     params.project = theProject.id;
 
     const commandUrl =  "command/" + MetadataHelpers.moduleName + "/" + command + "?" + $.param(params);
@@ -17,10 +18,10 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
 
     const makeDone = () => {
         done = true;
+
         if (dismissBusy) {
             dismissBusy();
         }
-
         Refine.clearAjaxInProgress();
     };
 
@@ -42,11 +43,13 @@ MetadataHelpers.ajax = (command, method, body, success, error, params) => {
         },
     });
 
-    window.setTimeout(function() {
-        if (!done) {
-            dismissBusy = DialogSystem.showBusy();
-        }
-    }, 500);
+    if (progress) {
+        window.setTimeout(function() {
+            if (!done) {
+                dismissBusy = DialogSystem.showBusy();
+            }
+        }, 500);
+    }
 };
 
 MetadataHelpers.download = (contenBase64, filename, contentType) => {

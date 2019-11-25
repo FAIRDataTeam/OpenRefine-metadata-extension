@@ -234,7 +234,11 @@ MetadataSpecs.distribution = {
         {
             "id": "mediaType",
             "type": "string",
-            "required": true
+            "required": true,
+            "typehints": {
+                "name": "mediaType",
+                "type": "static"
+            }
         },
         {
             "id": "targetUrl",
