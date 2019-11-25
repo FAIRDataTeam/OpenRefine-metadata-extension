@@ -23,6 +23,9 @@
 package solutions.fairdata.openrefine.metadata.storage;
 
 import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+import solutions.fairdata.openrefine.metadata.storage.factory.FTPStorageFactory;
+import solutions.fairdata.openrefine.metadata.storage.factory.StorageFactory;
+import solutions.fairdata.openrefine.metadata.storage.factory.VirtuosoStorageFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +34,12 @@ import java.util.Set;
 public class StorageRegistryUtil {
 
     private static final HashMap<String, Storage> storages = new HashMap<>();
+    private static final HashMap<String, StorageFactory> factories = new HashMap<>();
+
+    static {
+        factories.put(FTPStorage.TYPE.toLowerCase(), new FTPStorageFactory());
+        factories.put(VirtuosoStorage.TYPE.toLowerCase(), new VirtuosoStorageFactory());
+    }
 
     public static void registerStorage(String name, Storage storage) {
         storages.put(name, storage);
@@ -52,13 +61,11 @@ public class StorageRegistryUtil {
         if (!storageDTO.getEnabled()) {
             return;
         }
-        Storage storage = null;
-        if (storageDTO.getType().equalsIgnoreCase(FTPStorage.TYPE)) {
-            storage = new FTPStorage(storageDTO);
-        }
-        if (storage == null) {
+        StorageFactory storageFactory = factories.get(storageDTO.getType().toLowerCase());
+        if (storageFactory == null) {
             throw new IllegalArgumentException("Given storage type has no implementation: " + storageDTO.getType());
         }
+        Storage storage = storageFactory.createStorage(storageDTO);
         StorageRegistryUtil.registerStorage(storage.getName(), storage);
     }
 }

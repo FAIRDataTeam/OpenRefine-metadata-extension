@@ -41,14 +41,17 @@ public class FTPStorage extends Storage {
         return TYPE;
     }
 
+    @Override
     public String getFilePath(String filename) {
         return storageDTO.getDirectory() + filename;
     }
 
+    @Override
     public String getURL(String filename) {
         return "ftp://" + storageDTO.getHost() + getFilePath(filename);
     }
 
+    @Override
     public void storeData(byte[] data, String filename, String contentType) throws IOException {
         FTPClient ftpClient = new FTPClient();
         ftpClient.connect(storageDTO.getHost());
@@ -59,7 +62,6 @@ public class FTPStorage extends Storage {
         try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {
             boolean retval = ftpClient.storeFile(filename, is);
             if (!retval) {
-                // TODO: better exception
                 throw new IOException("Storing file in FTP storage failed");
             }
         }
