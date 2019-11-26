@@ -40,6 +40,7 @@ public class ThemeTypehintService implements TypehintService {
     private static final String USER_AGENT =  MetadataModuleImpl.USER_AGENT;
     private static final String LIST_PROP = "search";
     private static final String TITLE_PROP = "label";
+    private static final String DESCRIPTION_PROP = "description";
     private static final String URI_PROP = "concepturi";
 
     @Override
@@ -48,8 +49,8 @@ public class ThemeTypehintService implements TypehintService {
         if (query.isEmpty()) {
             return result;
         }
-        for (Map.Entry<String, String> entry : getThemes(query).entrySet()) {
-            result.add(new TypehintDTO(entry.getValue(), entry.getKey()));
+        for (Map.Entry<String, TypehintDTO> entry : getThemes(query).entrySet()) {
+            result.add(entry.getValue());
         }
         return result;
     }
@@ -59,21 +60,28 @@ public class ThemeTypehintService implements TypehintService {
         return TARGET_URL;
     }
 
-    private HashMap<String, String> getThemes(String query) throws IOException {
+    private HashMap<String, TypehintDTO> getThemes(String query) throws IOException {
         String url = TARGET_URL + "w/api.php?action=wbsearchentities&limit=50&language=en&format=json&origin=*&search=" + query;
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "text/turtle;charset=utf-8");
         conn.addRequestProperty("User-Agent", USER_AGENT);
 
-        HashMap<String, String> result = new HashMap<>();
+        HashMap<String, TypehintDTO> result = new HashMap<>();
         if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             JsonNode root = MetadataModuleImpl.objectMapper.readTree(conn.getInputStream());
             if (root.isObject() ) {
                 JsonNode themeList = root.get(LIST_PROP);
                 if (themeList.isArray()) {
                     for (final JsonNode theme : themeList) {
-                        result.put(theme.get(URI_PROP).asText(), theme.get(TITLE_PROP).asText());
+                        TypehintDTO typehintDTO = new TypehintDTO(
+                            theme.get(TITLE_PROP).asText(),
+                            theme.get(URI_PROP).asText()
+                        );
+                        if (theme.has(DESCRIPTION_PROP)) {
+                            typehintDTO.setDescription(theme.get(DESCRIPTION_PROP).asText());
+                        }
+                        result.put(theme.get(URI_PROP).asText(), typehintDTO);
                     }
                 }
             }
