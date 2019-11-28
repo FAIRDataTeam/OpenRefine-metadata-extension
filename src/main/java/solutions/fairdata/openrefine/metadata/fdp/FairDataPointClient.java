@@ -23,6 +23,7 @@
 package solutions.fairdata.openrefine.metadata.fdp;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
@@ -48,15 +49,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardCatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
@@ -105,6 +104,18 @@ public class FairDataPointClient {
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             return objectMapper.readValue(conn.getInputStream(), TokenDTO.class);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    // DASHBOARD
+
+    public List<DashboardCatalogDTO> getDashboard() throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(fdpBaseURI + "/fdp/dashboard", "GET", "application/json", true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return objectMapper.readValue(conn.getInputStream(), new TypeReference<List<DashboardCatalogDTO>>(){});
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }

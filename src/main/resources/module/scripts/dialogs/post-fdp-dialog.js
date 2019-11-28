@@ -190,7 +190,18 @@ class PostFdpDialog {
                     [this.callbackCatalogs(), this.callbackErrorResponse()],
                     [this.callbackGeneralError()]
                 );
+                this.apiClient.getDashboard(
+                    [this.callbackDashboard(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
             }
+        };
+    }
+
+    callbackDashboard() {
+        return (result) => {
+            // console.log(result);
+            // TODO: process dashboard (replace getting layers separately)
         };
     }
 
