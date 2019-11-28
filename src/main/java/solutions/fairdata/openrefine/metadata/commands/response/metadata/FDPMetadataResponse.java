@@ -20,46 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request;
+package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 
-public class DatasetPostRequest {
+public class FDPMetadataResponse {
 
-    private String fdpUri;
-    private String token;
-    private DatasetDTO dataset;
+    private String status;
+    private String message;
+    private FDPMetadataDTO fdpMetadata;
 
-    public DatasetPostRequest() {
+    public FDPMetadataResponse(String message, FDPMetadataDTO fdpMetadata) {
+        this.status = "ok";
+        this.message = message;
+        this.fdpMetadata = fdpMetadata;
     }
 
-    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.dataset = dataset;
+    public String getStatus() {
+        return status;
     }
 
-    public String getFdpUri() {
-        return fdpUri;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
+    public String getMessage() {
+        return message;
     }
 
-    public String getToken() {
-        return token;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public FDPMetadataDTO getFdpMetadata() {
+        return fdpMetadata;
     }
 
-    public DatasetDTO getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(DatasetDTO dataset) {
-        this.dataset = dataset;
+    public void setFdpMetadata(FDPMetadataDTO fdpMetadata) {
+        this.fdpMetadata = fdpMetadata;
     }
 }

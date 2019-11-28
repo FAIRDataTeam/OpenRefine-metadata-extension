@@ -55,12 +55,12 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
-import solutions.fairdata.openrefine.metadata.dto.AuthDTO;
-import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
-import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
-import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
+import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;

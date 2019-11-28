@@ -20,28 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.ExportFormatDTO;
-import solutions.fairdata.openrefine.metadata.dto.StorageInfoDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 
-import java.util.List;
-
-public class StoreDataInfoResponse {
+public class DistributionPostResponse {
 
     private String status;
-    private String defaultFilename;
-    private List<ExportFormatDTO> formats;
-    private List<StorageInfoDTO> storages;
+    private DistributionDTO distribution;
 
-    public StoreDataInfoResponse() {
-    }
-
-    public StoreDataInfoResponse(String defaultFilename, List<ExportFormatDTO> formats, List<StorageInfoDTO> storages) {
+    public DistributionPostResponse(DistributionDTO distribution) {
         this.status = "ok";
-        this.defaultFilename = defaultFilename;
-        this.formats = formats;
-        this.storages = storages;
+        this.distribution = distribution;
     }
 
     public String getStatus() {
@@ -52,27 +42,11 @@ public class StoreDataInfoResponse {
         this.status = status;
     }
 
-    public String getDefaultFilename() {
-        return defaultFilename;
+    public DistributionDTO getDistribution() {
+        return distribution;
     }
 
-    public void setDefaultFilename(String defaultFilename) {
-        this.defaultFilename = defaultFilename;
-    }
-
-    public List<ExportFormatDTO> getFormats() {
-        return formats;
-    }
-
-    public void setFormats(List<ExportFormatDTO> formats) {
-        this.formats = formats;
-    }
-
-    public List<StorageInfoDTO> getStorages() {
-        return storages;
-    }
-
-    public void setStorages(List<StorageInfoDTO> storages) {
-        this.storages = storages;
+    public void setDistribution(DistributionDTO distribution) {
+        this.distribution = distribution;
     }
 }

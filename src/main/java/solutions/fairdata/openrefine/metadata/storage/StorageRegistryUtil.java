@@ -22,7 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
-import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.factory.FTPStorageFactory;
 import solutions.fairdata.openrefine.metadata.storage.factory.StorageFactory;
 import solutions.fairdata.openrefine.metadata.storage.factory.VirtuosoStorageFactory;

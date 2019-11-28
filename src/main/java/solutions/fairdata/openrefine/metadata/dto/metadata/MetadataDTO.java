@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.dto.metadata;
 
 public class MetadataDTO {
 

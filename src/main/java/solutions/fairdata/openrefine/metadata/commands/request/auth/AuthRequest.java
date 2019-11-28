@@ -20,24 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.commands.request.auth;
 
-public class TokenDTO {
+import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 
-    private String token;
+public class AuthRequest {
 
-    public TokenDTO() {
+    private String fdpUri;
+    private AuthDTO authDTO;
+
+    public AuthRequest() {
     }
 
-    public TokenDTO(String token) {
-        this.token = token;
+    public AuthRequest(String fdpUri, AuthDTO authDTO) {
+        this.fdpUri = fdpUri;
+        this.authDTO = authDTO;
     }
 
-    public String getToken() {
-        return token;
+    public String getFdpUri() {
+        return fdpUri;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setFdpUri(String fdpUri) {
+        this.fdpUri = fdpUri;
+    }
+
+    public AuthDTO getAuthDTO() {
+        return authDTO;
+    }
+
+    public void setAuthDTO(AuthDTO authDTO) {
+        this.authDTO = authDTO;
     }
 }

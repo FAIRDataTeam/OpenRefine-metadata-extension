@@ -20,20 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 
-public class FDPMetadataResponse {
+import java.util.ArrayList;
+
+public class DatasetsMetadataResponse {
 
     private String status;
-    private String message;
-    private FDPMetadataDTO fdpMetadata;
+    private ArrayList<DatasetDTO> datasets;
 
-    public FDPMetadataResponse(String message, FDPMetadataDTO fdpMetadata) {
+    public DatasetsMetadataResponse(ArrayList<DatasetDTO> datasets) {
         this.status = "ok";
-        this.message = message;
-        this.fdpMetadata = fdpMetadata;
+        this.datasets = datasets;
     }
 
     public String getStatus() {
@@ -44,19 +44,11 @@ public class FDPMetadataResponse {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public ArrayList<DatasetDTO> getDatasets() {
+        return datasets;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public FDPMetadataDTO getFdpMetadata() {
-        return fdpMetadata;
-    }
-
-    public void setFdpMetadata(FDPMetadataDTO fdpMetadata) {
-        this.fdpMetadata = fdpMetadata;
+    public void setDatasets(ArrayList<DatasetDTO> datasets) {
+        this.datasets = datasets;
     }
 }

@@ -20,18 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.response.storage;
 
-import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.storage.ExportFormatDTO;
+import solutions.fairdata.openrefine.metadata.dto.storage.StorageInfoDTO;
 
-public class DistributionPostResponse {
+import java.util.List;
+
+public class StoreDataInfoResponse {
 
     private String status;
-    private DistributionDTO distribution;
+    private String defaultFilename;
+    private List<ExportFormatDTO> formats;
+    private List<StorageInfoDTO> storages;
 
-    public DistributionPostResponse(DistributionDTO distribution) {
+    public StoreDataInfoResponse() {
+    }
+
+    public StoreDataInfoResponse(String defaultFilename, List<ExportFormatDTO> formats, List<StorageInfoDTO> storages) {
         this.status = "ok";
-        this.distribution = distribution;
+        this.defaultFilename = defaultFilename;
+        this.formats = formats;
+        this.storages = storages;
     }
 
     public String getStatus() {
@@ -42,11 +52,27 @@ public class DistributionPostResponse {
         this.status = status;
     }
 
-    public DistributionDTO getDistribution() {
-        return distribution;
+    public String getDefaultFilename() {
+        return defaultFilename;
     }
 
-    public void setDistribution(DistributionDTO distribution) {
-        this.distribution = distribution;
+    public void setDefaultFilename(String defaultFilename) {
+        this.defaultFilename = defaultFilename;
+    }
+
+    public List<ExportFormatDTO> getFormats() {
+        return formats;
+    }
+
+    public void setFormats(List<ExportFormatDTO> formats) {
+        this.formats = formats;
+    }
+
+    public List<StorageInfoDTO> getStorages() {
+        return storages;
+    }
+
+    public void setStorages(List<StorageInfoDTO> storages) {
+        this.storages = storages;
     }
 }

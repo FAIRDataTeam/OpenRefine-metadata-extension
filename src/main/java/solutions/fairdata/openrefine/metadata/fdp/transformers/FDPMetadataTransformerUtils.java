@@ -23,7 +23,7 @@
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import solutions.fairdata.openrefine.metadata.dto.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 
 public class FDPMetadataTransformerUtils extends MetadataTransformerUtils {
 

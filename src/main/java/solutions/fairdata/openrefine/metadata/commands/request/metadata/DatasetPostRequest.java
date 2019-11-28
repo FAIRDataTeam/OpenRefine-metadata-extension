@@ -20,35 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.commands.request.metadata;
 
-public class AuthDTO {
+import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 
-    private String email;
+public class DatasetPostRequest {
 
-    private String password;
+    private String fdpUri;
+    private String token;
+    private DatasetDTO dataset;
 
-    public AuthDTO() {
+    public DatasetPostRequest() {
     }
 
-    public AuthDTO(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
+        this.fdpUri = fdpUri;
+        this.token = token;
+        this.dataset = dataset;
     }
 
-    public String getEmail() {
-        return email;
+    public String getFdpUri() {
+        return fdpUri;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setFdpUri(String fdpUri) {
+        this.fdpUri = fdpUri;
     }
 
-    public String getPassword() {
-        return password;
+    public String getToken() {
+        return token;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public DatasetDTO getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(DatasetDTO dataset) {
+        this.dataset = dataset;
     }
 }

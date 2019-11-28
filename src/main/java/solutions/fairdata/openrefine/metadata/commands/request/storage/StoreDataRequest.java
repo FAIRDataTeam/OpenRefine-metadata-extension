@@ -20,31 +20,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.request.storage;
 
-public class AuthResponse {
+import java.util.Collections;
+import java.util.Set;
 
-    private String status;
-    private String token;
+public class StoreDataRequest {
 
-    public AuthResponse(String token) {
-        this.status = "ok";
-        this.token = token;
+    public static final Set<String> MODES = Collections.unmodifiableSet(
+            Set.of("preview", "store")
+    );
+
+    private String mode;
+    private String format;
+    private String storage;
+    private String filename;
+
+    public String getMode() {
+        return mode;
     }
 
-    public String getStatus() {
-        return status;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getFormat() {
+        return format;
     }
 
-    public String getToken() {
-        return token;
+    public void setFormat(String format) {
+        this.format = format;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public String getStorage() {
+        return storage;
+    }
+
+    public void setStorage(String storage) {
+        this.storage = storage;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

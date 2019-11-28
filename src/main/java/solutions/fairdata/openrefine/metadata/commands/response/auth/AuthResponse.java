@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.response.auth;
 
-public class StoreDataResponse {
+public class AuthResponse {
 
     private String status;
-    private String url;
+    private String token;
 
-    public StoreDataResponse(String url) {
+    public AuthResponse(String token) {
         this.status = "ok";
-        this.url = url;
+        this.token = token;
     }
 
     public String getStatus() {
@@ -40,11 +40,11 @@ public class StoreDataResponse {
         this.status = status;
     }
 
-    public String getUrl() {
-        return url;
+    public String getToken() {
+        return token;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -20,46 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request;
+package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 
-public class DistributionPostRequest {
+import java.util.ArrayList;
 
-    private String fdpUri;
-    private String token;
-    private DistributionDTO distribution;
+public class CatalogsMetadataResponse {
 
-    public DistributionPostRequest() {
+    private String status;
+    private ArrayList<CatalogDTO> catalogs;
+
+    public CatalogsMetadataResponse(ArrayList<CatalogDTO> catalogs) {
+        this.status = "ok";
+        this.catalogs = catalogs;
     }
 
-    public DistributionPostRequest(String fdpUri, String token, DistributionDTO distribution) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.distribution = distribution;
+    public String getStatus() {
+        return status;
     }
 
-    public String getFdpUri() {
-        return fdpUri;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
+    public ArrayList<CatalogDTO> getCatalogs() {
+        return catalogs;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public DistributionDTO getDistribution() {
-        return distribution;
-    }
-
-    public void setDistribution(DistributionDTO distribution) {
-        this.distribution = distribution;
+    public void setCatalogs(ArrayList<CatalogDTO> catalogs) {
+        this.catalogs = catalogs;
     }
 }

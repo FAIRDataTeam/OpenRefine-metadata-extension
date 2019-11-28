@@ -20,36 +20,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request;
+package solutions.fairdata.openrefine.metadata.dto.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.AuthDTO;
+import java.util.List;
 
-public class AuthRequest {
+public class CatalogDTO extends MetadataDTO {
 
-    private String fdpUri;
-    private AuthDTO authDTO;
+    private String language;
+    private String homepage;
+    private List<String> themeTaxonomies;
+    private List<String> datasets;
+    private String parentFDP;
 
-    public AuthRequest() {
+    public String getLanguage() {
+        return language;
     }
 
-    public AuthRequest(String fdpUri, AuthDTO authDTO) {
-        this.fdpUri = fdpUri;
-        this.authDTO = authDTO;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public String getFdpUri() {
-        return fdpUri;
+    public String getHomepage() {
+        return homepage;
     }
 
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
     }
 
-    public AuthDTO getAuthDTO() {
-        return authDTO;
+    public List<String> getThemeTaxonomies() {
+        return themeTaxonomies;
     }
 
-    public void setAuthDTO(AuthDTO authDTO) {
-        this.authDTO = authDTO;
+    public void setThemeTaxonomies(List<String> themeTaxonomies) {
+        this.themeTaxonomies = themeTaxonomies;
+    }
+
+    public List<String> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(List<String> datasets) {
+        this.datasets = datasets;
+    }
+
+    public String getParentFDP() {
+        return parentFDP;
+    }
+
+    public void setParentFDP(String parentFDP) {
+        this.parentFDP = parentFDP;
     }
 }

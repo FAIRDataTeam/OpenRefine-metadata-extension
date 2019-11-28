@@ -20,20 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
-import solutions.fairdata.openrefine.metadata.dto.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 
-import java.util.ArrayList;
-
-public class DistributionsMetadataResponse {
+public class CatalogPostResponse {
 
     private String status;
-    private ArrayList<DistributionDTO> distributions;
+    private CatalogDTO catalog;
 
-    public DistributionsMetadataResponse(ArrayList<DistributionDTO> distributions) {
+    public CatalogPostResponse(CatalogDTO catalog) {
         this.status = "ok";
-        this.distributions = distributions;
+        this.catalog = catalog;
     }
 
     public String getStatus() {
@@ -44,11 +42,11 @@ public class DistributionsMetadataResponse {
         this.status = status;
     }
 
-    public ArrayList<DistributionDTO> getDistributions() {
-        return distributions;
+    public CatalogDTO getCatalog() {
+        return catalog;
     }
 
-    public void setDistributions(ArrayList<DistributionDTO> distributions) {
-        this.distributions = distributions;
+    public void setCatalog(CatalogDTO catalog) {
+        this.catalog = catalog;
     }
 }

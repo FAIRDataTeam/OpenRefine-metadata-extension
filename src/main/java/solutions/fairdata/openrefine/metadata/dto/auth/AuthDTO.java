@@ -20,51 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request;
+package solutions.fairdata.openrefine.metadata.dto.auth;
 
-import java.util.Collections;
-import java.util.Set;
+public class AuthDTO {
 
-public class StoreDataRequest {
+    private String email;
 
-    public static final Set<String> MODES = Collections.unmodifiableSet(
-            Set.of("preview", "store")
-    );
+    private String password;
 
-    private String mode;
-    private String format;
-    private String storage;
-    private String filename;
-
-    public String getMode() {
-        return mode;
+    public AuthDTO() {
     }
 
-    public void setMode(String mode) {
-        this.mode = mode;
+    public AuthDTO(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
-    public String getFormat() {
-        return format;
+    public String getEmail() {
+        return email;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getStorage() {
-        return storage;
+    public String getPassword() {
+        return password;
     }
 
-    public void setStorage(String storage) {
-        this.storage = storage;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

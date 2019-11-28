@@ -23,12 +23,12 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
-import solutions.fairdata.openrefine.metadata.commands.request.DatasetPostRequest;
-import solutions.fairdata.openrefine.metadata.commands.response.DatasetPostResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.DatasetsMetadataResponse;
+import solutions.fairdata.openrefine.metadata.commands.request.metadata.DatasetPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetPostResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetsMetadataResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.dto.CatalogDTO;
-import solutions.fairdata.openrefine.metadata.dto.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;

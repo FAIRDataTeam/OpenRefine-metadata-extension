@@ -20,12 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.example;
+package solutions.fairdata.openrefine.metadata.commands.response.storage;
 
-public class SampleUtil {
-    // Just an example file
+public class StoreDataResponse {
 
-    static public int sampleMethod() {
-        return 42;
+    private String status;
+    private String url;
+
+    public StoreDataResponse(String url) {
+        this.status = "ok";
+        this.url = url;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

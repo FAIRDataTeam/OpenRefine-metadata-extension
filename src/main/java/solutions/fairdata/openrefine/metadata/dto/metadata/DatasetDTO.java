@@ -20,17 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.dto.metadata;
 
 import java.util.List;
 
-public class CatalogDTO extends MetadataDTO {
+public class DatasetDTO extends MetadataDTO {
 
     private String language;
-    private String homepage;
-    private List<String> themeTaxonomies;
-    private List<String> datasets;
-    private String parentFDP;
+    private List<String> themes;
+    private String contactPoint;
+    private List<String> keywords;
+    private String landingPage;
+    private List<String> distributions;
+    private String parentCatalog;
 
     public String getLanguage() {
         return language;
@@ -40,35 +42,51 @@ public class CatalogDTO extends MetadataDTO {
         this.language = language;
     }
 
-    public String getHomepage() {
-        return homepage;
+    public List<String> getThemes() {
+        return themes;
     }
 
-    public void setHomepage(String homepage) {
-        this.homepage = homepage;
+    public void setThemes(List<String> themes) {
+        this.themes = themes;
     }
 
-    public List<String> getThemeTaxonomies() {
-        return themeTaxonomies;
+    public String getContactPoint() {
+        return contactPoint;
     }
 
-    public void setThemeTaxonomies(List<String> themeTaxonomies) {
-        this.themeTaxonomies = themeTaxonomies;
+    public void setContactPoint(String contactPoint) {
+        this.contactPoint = contactPoint;
     }
 
-    public List<String> getDatasets() {
-        return datasets;
+    public List<String> getKeywords() {
+        return keywords;
     }
 
-    public void setDatasets(List<String> datasets) {
-        this.datasets = datasets;
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
     }
 
-    public String getParentFDP() {
-        return parentFDP;
+    public String getLandingPage() {
+        return landingPage;
     }
 
-    public void setParentFDP(String parentFDP) {
-        this.parentFDP = parentFDP;
+    public void setLandingPage(String landingPage) {
+        this.landingPage = landingPage;
+    }
+
+    public List<String> getDistributions() {
+        return distributions;
+    }
+
+    public void setDistributions(List<String> distributions) {
+        this.distributions = distributions;
+    }
+
+    public String getParentCatalog() {
+        return parentCatalog;
+    }
+
+    public void setParentCatalog(String parentCatalog) {
+        this.parentCatalog = parentCatalog;
     }
 }
