@@ -7,7 +7,7 @@ class MetadataApiClient {
         this.token = null;
     }
 
-    connectFDP(fdpUri, username, password, callbacks, errorCallbacks) {
+    connectFDP(fdpUri, email, password, callbacks, errorCallbacks) {
         this.fdpUri = fdpUri;
 
         callbacks = callbacks || [];
@@ -15,7 +15,7 @@ class MetadataApiClient {
             JSON.stringify({
                 fdpUri: this.fdpUri,
                 authDTO: {
-                    username,
+                    email,
                     password,
                 }
             }),

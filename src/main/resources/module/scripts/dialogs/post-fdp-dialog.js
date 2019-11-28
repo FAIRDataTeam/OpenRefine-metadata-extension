@@ -47,12 +47,12 @@ class PostFdpDialog {
 
         elmts.connectButton.click(() => {
             const fdpUri = elmts.baseURI.val();
-            const username = elmts.username.val();
+            const email = elmts.email.val();
             const password = elmts.password.val();
 
             self.resetDefault();
             self.apiClient.connectFDP(
-                fdpUri, username, password,
+                fdpUri, email, password,
                 [this.callbackFDPConnected(), this.callbackErrorResponse()],
                 [this.callbackGeneralError()]
             );
