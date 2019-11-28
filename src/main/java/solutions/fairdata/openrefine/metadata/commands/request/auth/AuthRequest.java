@@ -24,32 +24,16 @@ package solutions.fairdata.openrefine.metadata.commands.request.auth;
 
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 
-public class AuthRequest {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class AuthRequest {
     private String fdpUri;
     private AuthDTO authDTO;
-
-    public AuthRequest() {
-    }
-
-    public AuthRequest(String fdpUri, AuthDTO authDTO) {
-        this.fdpUri = fdpUri;
-        this.authDTO = authDTO;
-    }
-
-    public String getFdpUri() {
-        return fdpUri;
-    }
-
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
-    }
-
-    public AuthDTO getAuthDTO() {
-        return authDTO;
-    }
-
-    public void setAuthDTO(AuthDTO authDTO) {
-        this.authDTO = authDTO;
-    }
 }

@@ -26,6 +26,15 @@ import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 
 import java.util.ArrayList;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DistributionsMetadataResponse {
 
     private String status;
@@ -33,22 +42,6 @@ public class DistributionsMetadataResponse {
 
     public DistributionsMetadataResponse(ArrayList<DistributionDTO> distributions) {
         this.status = "ok";
-        this.distributions = distributions;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ArrayList<DistributionDTO> getDistributions() {
-        return distributions;
-    }
-
-    public void setDistributions(ArrayList<DistributionDTO> distributions) {
         this.distributions = distributions;
     }
 }

@@ -22,6 +22,13 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.storage;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter
+@Setter
 public class ExportFormatDTO {
 
     private String identifier;
@@ -29,9 +36,6 @@ public class ExportFormatDTO {
     private String extension;
     private String contentType;
     private Boolean usable;
-
-    public ExportFormatDTO() {
-    }
 
     public ExportFormatDTO(String identifier, String source, String extension) {
         this(identifier, source, extension, "uknown", false);
@@ -42,46 +46,6 @@ public class ExportFormatDTO {
         this.source = source;
         this.extension = extension;
         this.contentType = contentType;
-        this.usable = usable;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public Boolean getUsable() {
-        return usable;
-    }
-
-    public void setUsable(Boolean usable) {
         this.usable = usable;
     }
 }

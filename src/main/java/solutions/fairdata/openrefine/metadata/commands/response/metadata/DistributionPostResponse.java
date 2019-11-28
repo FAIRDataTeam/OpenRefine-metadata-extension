@@ -24,6 +24,15 @@ package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DistributionPostResponse {
 
     private String status;
@@ -31,22 +40,6 @@ public class DistributionPostResponse {
 
     public DistributionPostResponse(DistributionDTO distribution) {
         this.status = "ok";
-        this.distribution = distribution;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public DistributionDTO getDistribution() {
-        return distribution;
-    }
-
-    public void setDistribution(DistributionDTO distribution) {
         this.distribution = distribution;
     }
 }

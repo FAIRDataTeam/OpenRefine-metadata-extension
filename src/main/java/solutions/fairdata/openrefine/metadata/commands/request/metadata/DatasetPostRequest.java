@@ -24,42 +24,17 @@ package solutions.fairdata.openrefine.metadata.commands.request.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 
-public class DatasetPostRequest {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class DatasetPostRequest {
     private String fdpUri;
     private String token;
     private DatasetDTO dataset;
-
-    public DatasetPostRequest() {
-    }
-
-    public DatasetPostRequest(String fdpUri, String token, DatasetDTO dataset) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.dataset = dataset;
-    }
-
-    public String getFdpUri() {
-        return fdpUri;
-    }
-
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public DatasetDTO getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(DatasetDTO dataset) {
-        this.dataset = dataset;
-    }
 }

@@ -24,42 +24,17 @@ package solutions.fairdata.openrefine.metadata.commands.request.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 
-public class CatalogPostRequest {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class CatalogPostRequest {
     private String fdpUri;
     private String token;
     private CatalogDTO catalog;
-
-    public CatalogPostRequest() {
-    }
-
-    public CatalogPostRequest(String fdpUri, String token, CatalogDTO catalog) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.catalog = catalog;
-    }
-
-    public String getFdpUri() {
-        return fdpUri;
-    }
-
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public CatalogDTO getCatalog() {
-        return catalog;
-    }
-
-    public void setCatalog(CatalogDTO catalog) {
-        this.catalog = catalog;
-    }
 }

@@ -24,6 +24,15 @@ package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class FDPMetadataResponse {
 
     private String status;
@@ -33,30 +42,6 @@ public class FDPMetadataResponse {
     public FDPMetadataResponse(String message, FDPMetadataDTO fdpMetadata) {
         this.status = "ok";
         this.message = message;
-        this.fdpMetadata = fdpMetadata;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public FDPMetadataDTO getFdpMetadata() {
-        return fdpMetadata;
-    }
-
-    public void setFdpMetadata(FDPMetadataDTO fdpMetadata) {
         this.fdpMetadata = fdpMetadata;
     }
 }

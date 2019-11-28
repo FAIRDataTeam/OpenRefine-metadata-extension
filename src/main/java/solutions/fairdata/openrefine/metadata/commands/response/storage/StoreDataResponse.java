@@ -22,6 +22,15 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response.storage;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class StoreDataResponse {
 
     private String status;
@@ -29,22 +38,6 @@ public class StoreDataResponse {
 
     public StoreDataResponse(String url) {
         this.status = "ok";
-        this.url = url;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
         this.url = url;
     }
 }

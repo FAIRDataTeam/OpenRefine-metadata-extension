@@ -22,39 +22,26 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response.storage;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class StoreDataPreviewResponse {
 
+    private String status;
     private String filename;
     private String contentType;
     private String data;
 
     public StoreDataPreviewResponse(String filename, String contentType, String data) {
+        this.status = "ok";
         this.filename = filename;
         this.contentType = contentType;
-        this.data = data;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
         this.data = data;
     }
 }

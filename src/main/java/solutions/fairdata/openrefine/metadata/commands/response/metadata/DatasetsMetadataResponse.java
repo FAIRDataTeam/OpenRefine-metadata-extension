@@ -26,6 +26,15 @@ import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 
 import java.util.ArrayList;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DatasetsMetadataResponse {
 
     private String status;
@@ -33,22 +42,6 @@ public class DatasetsMetadataResponse {
 
     public DatasetsMetadataResponse(ArrayList<DatasetDTO> datasets) {
         this.status = "ok";
-        this.datasets = datasets;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ArrayList<DatasetDTO> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(ArrayList<DatasetDTO> datasets) {
         this.datasets = datasets;
     }
 }

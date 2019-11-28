@@ -24,42 +24,17 @@ package solutions.fairdata.openrefine.metadata.commands.request.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 
-public class DistributionPostRequest {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class DistributionPostRequest {
     private String fdpUri;
     private String token;
     private DistributionDTO distribution;
-
-    public DistributionPostRequest() {
-    }
-
-    public DistributionPostRequest(String fdpUri, String token, DistributionDTO distribution) {
-        this.fdpUri = fdpUri;
-        this.token = token;
-        this.distribution = distribution;
-    }
-
-    public String getFdpUri() {
-        return fdpUri;
-    }
-
-    public void setFdpUri(String fdpUri) {
-        this.fdpUri = fdpUri;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public DistributionDTO getDistribution() {
-        return distribution;
-    }
-
-    public void setDistribution(DistributionDTO distribution) {
-        this.distribution = distribution;
-    }
 }

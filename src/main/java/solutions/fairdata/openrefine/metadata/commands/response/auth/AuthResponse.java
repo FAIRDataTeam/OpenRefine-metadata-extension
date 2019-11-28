@@ -22,6 +22,15 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response.auth;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class AuthResponse {
 
     private String status;
@@ -29,22 +38,6 @@ public class AuthResponse {
 
     public AuthResponse(String token) {
         this.status = "ok";
-        this.token = token;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
         this.token = token;
     }
 }

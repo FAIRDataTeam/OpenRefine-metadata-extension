@@ -26,42 +26,24 @@ import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class TypehintsResponse {
 
     private String status;
     private String source;
     private List<TypehintDTO> datalist;
 
-    public TypehintsResponse() {
-    }
-
     public TypehintsResponse(String source, List<TypehintDTO> datalist) {
         this.status = "ok";
         this.source = source;
-        this.datalist = datalist;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public List<TypehintDTO> getDatalist() {
-        return datalist;
-    }
-
-    public void setDatalist(List<TypehintDTO> datalist) {
         this.datalist = datalist;
     }
 }

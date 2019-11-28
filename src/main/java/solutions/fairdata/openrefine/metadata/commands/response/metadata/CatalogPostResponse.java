@@ -24,6 +24,15 @@ package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class CatalogPostResponse {
 
     private String status;
@@ -31,22 +40,6 @@ public class CatalogPostResponse {
 
     public CatalogPostResponse(CatalogDTO catalog) {
         this.status = "ok";
-        this.catalog = catalog;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public CatalogDTO getCatalog() {
-        return catalog;
-    }
-
-    public void setCatalog(CatalogDTO catalog) {
         this.catalog = catalog;
     }
 }

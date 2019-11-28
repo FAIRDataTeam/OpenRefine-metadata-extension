@@ -22,8 +22,16 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-public class ErrorResponse {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ErrorResponse {
     private String status;
     private String message;
     private String exceptionName;
@@ -34,37 +42,5 @@ public class ErrorResponse {
         this.message = message;
         this.exceptionName = exception.getClass().getName();
         this.exception = exception.getMessage();
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getExceptionName() {
-        return exceptionName;
-    }
-
-    public void setExceptionName(String exceptionName) {
-        this.exceptionName = exceptionName;
-    }
-
-    public String getException() {
-        return exception;
-    }
-
-    public void setException(String exception) {
-        this.exception = exception;
     }
 }

@@ -24,51 +24,17 @@ package solutions.fairdata.openrefine.metadata.dto.metadata;
 
 import java.util.List;
 
-public class CatalogDTO extends MetadataDTO {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@Getter
+@Setter
+public class CatalogDTO extends MetadataDTO {
     private String language;
     private String homepage;
     private List<String> themeTaxonomies;
     private List<String> datasets;
     private String parentFDP;
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getHomepage() {
-        return homepage;
-    }
-
-    public void setHomepage(String homepage) {
-        this.homepage = homepage;
-    }
-
-    public List<String> getThemeTaxonomies() {
-        return themeTaxonomies;
-    }
-
-    public void setThemeTaxonomies(List<String> themeTaxonomies) {
-        this.themeTaxonomies = themeTaxonomies;
-    }
-
-    public List<String> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(List<String> datasets) {
-        this.datasets = datasets;
-    }
-
-    public String getParentFDP() {
-        return parentFDP;
-    }
-
-    public void setParentFDP(String parentFDP) {
-        this.parentFDP = parentFDP;
-    }
 }

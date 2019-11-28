@@ -24,6 +24,15 @@ package solutions.fairdata.openrefine.metadata.commands.response.metadata;
 
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DatasetPostResponse {
 
     private String status;
@@ -31,22 +40,6 @@ public class DatasetPostResponse {
 
     public DatasetPostResponse(DatasetDTO dataset) {
         this.status = "ok";
-        this.dataset = dataset;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public DatasetDTO getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(DatasetDTO dataset) {
         this.dataset = dataset;
     }
 }

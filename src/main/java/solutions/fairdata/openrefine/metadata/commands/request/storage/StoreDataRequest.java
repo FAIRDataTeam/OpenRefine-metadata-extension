@@ -25,8 +25,16 @@ package solutions.fairdata.openrefine.metadata.commands.request.storage;
 import java.util.Collections;
 import java.util.Set;
 
-public class StoreDataRequest {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class StoreDataRequest {
     public static final Set<String> MODES = Collections.unmodifiableSet(
             Set.of("preview", "store")
     );
@@ -35,36 +43,4 @@ public class StoreDataRequest {
     private String format;
     private String storage;
     private String filename;
-
-    public String getMode() {
-        return mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getStorage() {
-        return storage;
-    }
-
-    public void setStorage(String storage) {
-        this.storage = storage;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
 }
