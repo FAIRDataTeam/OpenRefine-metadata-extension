@@ -4,6 +4,10 @@ let MetadataHelpers = {
     moduleName: "metadata"
 };
 
+MetadataHelpers.bugReport = () => {
+    window.open("https://github.com/FAIRDataTeam/OpenRefine-metadata-extension/issues", "_blank");
+};
+
 MetadataHelpers.ajax = (command, method, body, success, error, params, hideProgress) => {
     body = body || {};
 

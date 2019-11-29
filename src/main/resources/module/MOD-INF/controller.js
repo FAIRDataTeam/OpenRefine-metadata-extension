@@ -27,6 +27,7 @@ function init() {
             "scripts/helpers.js",
             "scripts/menu-bar-extension.js",
             "scripts/metadata-specs.js",
+            "scripts/dialogs/about-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
             "scripts/dialogs/post-fdp-dialog.js",
             "scripts/dialogs/store-data-dialog.js",
@@ -35,6 +36,7 @@ function init() {
         "project/styles",
         module,
         [
+            "styles/dialogs/about-dialog.less",
             "styles/dialogs/store-data-dialog.less",
             "styles/dialogs/metadata-form-dialog.less",
             "styles/dialogs/post-fdp-dialog.less",
