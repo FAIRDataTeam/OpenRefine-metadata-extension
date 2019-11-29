@@ -42,6 +42,7 @@ class PostFdpDialog {
     bindActions() {
         const self = this;
         const elmts = this.elements;
+        const isCreatePermission = (permission) => { return permission.code === 'C'; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
 
@@ -67,7 +68,8 @@ class PostFdpDialog {
                 catalog.datasets.forEach((dataset) => {
                     this.metadata.datasets.set(dataset.uri, dataset);
                 });
-                this.showDatasets();
+                const canCreate = catalog.membership && catalog.membership.permissions.some(isCreatePermission);
+                this.showDatasets(canCreate);
             }
         });
 
@@ -81,7 +83,8 @@ class PostFdpDialog {
                 dataset.distributions.forEach((distribution) => {
                     this.metadata.distributions.set(distribution.uri, distribution);
                 });
-                this.showDistributions();
+                const canCreate = dataset.membership.permissions && dataset.membership.permissions.some(isCreatePermission);
+                this.showDistributions(canCreate);
             }
         });
 
@@ -158,6 +161,7 @@ class PostFdpDialog {
         this.metadata.datasets.clear();
         this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
         this.elements.datasetLayer.addClass("hidden");
+        this.elements.datasetAddButton.addClass("hidden");
 
         this.resetDistributionLayer();
     }
@@ -166,6 +170,7 @@ class PostFdpDialog {
         this.metadata.distributions.clear();
         this.elements.distributionsList.empty();
         this.elements.distributionLayer.addClass("hidden");
+        this.elements.distributionAddButton.addClass("hidden");
     }
 
     // callbacks (factories)
@@ -341,16 +346,19 @@ class PostFdpDialog {
         this.elements.catalogLayer.removeClass("hidden");
     }
 
-    showDatasets() {
+    showDatasets(canCreate) {
         this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
         this.showMetadataSelect(
             this.elements.datasetSelect,
             this.metadata.datasets
         );
         this.elements.datasetLayer.removeClass("hidden");
+        if (canCreate) {
+            this.elements.datasetAddButton.removeClass("hidden");
+        }
     }
 
-    showDistributions() {
+    showDistributions(canCreate) {
         this.elements.distributionsList.empty();
         this.metadata.distributions.forEach((distribution) => {
             const isNew = this.newlyCreatedIRIs.has(distribution.uri);
@@ -365,6 +373,9 @@ class PostFdpDialog {
             this.elements.distributionsList.append(item);
         });
         this.elements.distributionLayer.removeClass("hidden");
+        if (canCreate) {
+            this.elements.distributionAddButton.removeClass("hidden");
+        }
     }
 
     // generic helpers
