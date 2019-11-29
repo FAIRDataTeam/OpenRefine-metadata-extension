@@ -60,20 +60,29 @@ class PostFdpDialog {
 
         elmts.catalogSelect.on("change", () => {
             self.resetDatasetLayer();
-            self.apiClient.getDatasets(
-                elmts.catalogSelect.val(),
-                [this.callbackDatasets(), this.callbackErrorResponse()],
-                [this.callbackGeneralError()]
-            );
+            const catalogUri = elmts.catalogSelect.val();
+            const catalog = this.metadata.catalogs.get(catalogUri);
+            if (catalog !== undefined) {
+                this.metadata.datasets.clear();
+                catalog.datasets.forEach((dataset) => {
+                    this.metadata.datasets.set(dataset.uri, dataset);
+                });
+                this.showDatasets();
+            }
         });
 
         elmts.datasetSelect.on("change", () => {
             self.resetDistributionLayer();
-            self.apiClient.getDistributions(
-                elmts.datasetSelect.val(),
-                [this.callbackDistributions(), this.callbackErrorResponse()],
-                [this.callbackGeneralError()]
-            );
+            const datasetUri = elmts.datasetSelect.val();
+            const dataset = this.metadata.datasets.get(datasetUri);
+
+            if (dataset !== undefined) {
+                this.metadata.distributions.clear();
+                dataset.distributions.forEach((distribution) => {
+                    this.metadata.distributions.set(distribution.uri, distribution);
+                });
+                this.showDistributions();
+            }
         });
 
         elmts.catalogAddButton.click(() => {
@@ -186,10 +195,6 @@ class PostFdpDialog {
                 this.showFDPMetadata();
 
                 this.resetCatalogLayer();
-                this.apiClient.getCatalogs(
-                    [this.callbackCatalogs(), this.callbackErrorResponse()],
-                    [this.callbackGeneralError()]
-                );
                 this.apiClient.getDashboard(
                     [this.callbackDashboard(), this.callbackErrorResponse()],
                     [this.callbackGeneralError()]
@@ -200,43 +205,14 @@ class PostFdpDialog {
 
     callbackDashboard() {
         return (result) => {
-            // console.log(result);
-            // TODO: process dashboard (replace getting layers separately)
-        };
-    }
-
-    callbackCatalogs() {
-        return (result) => {
             if (result.status === "ok") {
+                this.dashboard = result.catalogs;
+
                 this.metadata.catalogs.clear();
                 result.catalogs.forEach((catalog) => {
-                    this.metadata.catalogs.set(catalog.iri, catalog);
+                    this.metadata.catalogs.set(catalog.uri, catalog);
                 });
                 this.showCatalogs();
-            }
-        };
-    }
-
-    callbackDatasets() {
-        return (result) => {
-            if (result.status === "ok") {
-                this.metadata.datasets.clear();
-                result.datasets.forEach((dataset) => {
-                    this.metadata.datasets.set(dataset.iri, dataset);
-                });
-                this.showDatasets();
-            }
-        };
-    }
-
-    callbackDistributions() {
-        return (result) => {
-            if (result.status === "ok") {
-                this.metadata.distributions.clear();
-                result.distributions.forEach((distribution) => {
-                    this.metadata.distributions.set(distribution.iri, distribution);
-                });
-                this.showDistributions();
             }
         };
     }
@@ -250,15 +226,18 @@ class PostFdpDialog {
     callbackPostCatalog(formDialog) {
         return (result) => {
             if (result.status === "ok") {
-                this.newlyCreatedIRIs.add(result.catalog.iri);
+                const catalogUri = result.catalog.iri;
+                this.newlyCreatedIRIs.add(catalogUri);
                 this.resetCatalogLayer();
-                this.apiClient.getCatalogs(
+
+                this.apiClient.getDashboard(
                     [
-                        this.callbackCatalogs(),
-                        () => { this.elements.catalogSelect.val(result.catalog.iri).trigger("change"); }
+                        this.callbackDashboard(),
+                        () => { this.elements.catalogSelect.val(catalogUri).trigger("change"); }
                     ],
-                    [ this.callbackGeneralError() ]
+                    [this.callbackGeneralError()]
                 );
+
                 formDialog.dismiss();
             } else {
                 formDialog.displayError(result.exceptionName, result.exception);
@@ -269,16 +248,21 @@ class PostFdpDialog {
     callbackPostDataset(formDialog, catalogUri) {
         return (result) => {
             if (result.status === "ok") {
-                this.newlyCreatedIRIs.add(result.dataset.iri);
+                const datasetUri = result.dataset.iri;
+                this.newlyCreatedIRIs.add(datasetUri);
                 this.resetDatasetLayer();
-                this.apiClient.getDatasets(
-                    catalogUri,
+
+                this.apiClient.getDashboard(
                     [
-                        this.callbackDatasets(),
-                        () => { this.elements.datasetSelect.val(result.dataset.iri).trigger("change"); }
+                        this.callbackDashboard(),
+                        () => {
+                            this.elements.catalogSelect.val(catalogUri).trigger("change");
+                            this.elements.datasetSelect.val(datasetUri).trigger("change");
+                        }
                     ],
-                    [ this.callbackGeneralError() ]
+                    [this.callbackGeneralError()]
                 );
+
                 formDialog.dismiss();
             } else {
                 formDialog.displayError(result.exceptionName, result.exception);
@@ -289,13 +273,22 @@ class PostFdpDialog {
     callbackPostDistribution(formDialog, datasetUri) {
         return (result) => {
             if (result.status === "ok") {
-                this.newlyCreatedIRIs.add(result.distribution.iri);
+                const catalogUri = this.elements.catalogSelect.val();
+                const distributionUri = result.distribution.iri;
+                this.newlyCreatedIRIs.add(distributionUri);
                 this.resetDistributionLayer();
-                this.apiClient.getDistributions(
-                    datasetUri,
-                    [ this.callbackDistributions() ],
-                    [ this.callbackGeneralError() ]
+
+                this.apiClient.getDashboard(
+                    [
+                        this.callbackDashboard(),
+                        () => {
+                            this.elements.catalogSelect.val(catalogUri).trigger("change");
+                            this.elements.datasetSelect.val(datasetUri).trigger("change");
+                        }
+                    ],
+                    [this.callbackGeneralError()]
                 );
+
                 formDialog.dismiss();
             } else {
                 formDialog.displayError(result.exceptionName, result.exception);
@@ -328,12 +321,12 @@ class PostFdpDialog {
 
     showMetadataSelect(select, metadatas) {
         metadatas.forEach((metadata) => {
-            const isNew = this.newlyCreatedIRIs.has(metadata.iri);
+            const isNew = this.newlyCreatedIRIs.has(metadata.uri);
             select.append(
                 $("<option>")
                     .addClass("from-fdp")
                     .addClass(isNew ? "new" : "original")
-                    .attr("value", metadata.iri)
+                    .attr("value", metadata.uri)
                     .text(isNew ? `${metadata.title} [new]` : metadata.title)
             );
         });
@@ -360,8 +353,8 @@ class PostFdpDialog {
     showDistributions() {
         this.elements.distributionsList.empty();
         this.metadata.distributions.forEach((distribution) => {
-            const isNew = this.newlyCreatedIRIs.has(distribution.iri);
-            let text = `${distribution.title} (version: ${distribution.version})`;
+            const isNew = this.newlyCreatedIRIs.has(distribution.uri);
+            let text = distribution.title;
             if (isNew) {
                 text = `${text} [new]`;
             }
