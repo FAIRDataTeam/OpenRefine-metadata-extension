@@ -2,6 +2,8 @@
   "menu-bar-extension/menu-label": "FAIR Metadata",
   "menu-bar-extension/store-data": "Store data to FAIR storage",
   "menu-bar-extension/post-fdp": "Create metadata in FAIR Data Point",
+  "menu-bar-extension/about": "About extension",
+  "menu-bar-extension/bug-report": "Report a bug",
   "post-fdp-dialog/title": "Create metadata in FAIR Data Point",
   "post-fdp-dialog/button-connect": "Connect",
   "post-fdp-dialog/button-close": "Close",
@@ -130,5 +132,15 @@
   "store-data-dialog/error/unknown-storage" :"Unknown storage",
   "store-data-dialog/error/unsupported-type": "Unsupported content type for selected storage",
   "store-data-dialog/error/unusable-exporter": "Unusable exporter given by OpenRefine",
-  "store-data-dialog/error/exporting": "Error while exporting to storage: \"$1\""
+  "store-data-dialog/error/exporting": "Error while exporting to storage: \"$1\"",
+  "about-dialog/title": "About metadata extension",
+  "about-dialog/name": "Name",
+  "about-dialog/version": "Version",
+  "about-dialog/license": "License",
+  "about-dialog/homepage": "Homepage",
+  "about-dialog/openrefine-versions": "Supported OpenRefine versions",
+  "about-dialog/fdp-versions": "Supported FAIR Data Point versions",
+  "about-dialog/authors": "Authors",
+  "about-dialog/description": "Description",
+  "about-dialog/description-text": "Extension for OpenRefine to support FAIR metadata. It allows to store layered FAIR metadata to selected FAIR Data Point as well as upload data to supported storage in selected format. For more information about FAIR data, visit the homepage above."
 }
