@@ -42,7 +42,7 @@ class PostFdpDialog {
     bindActions() {
         const self = this;
         const elmts = this.elements;
-        const isCreatePermission = (permission) => { return permission.code === 'C'; };
+        const isCreatePermission = (permission) => { return permission.code === "C"; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
 
@@ -63,7 +63,7 @@ class PostFdpDialog {
             self.resetDatasetLayer();
             const catalogUri = elmts.catalogSelect.val();
             const catalog = this.metadata.catalogs.get(catalogUri);
-            if (catalog !== undefined) {
+            if (catalog) {
                 this.metadata.datasets.clear();
                 catalog.datasets.forEach((dataset) => {
                     this.metadata.datasets.set(dataset.uri, dataset);
@@ -78,7 +78,7 @@ class PostFdpDialog {
             const datasetUri = elmts.datasetSelect.val();
             const dataset = this.metadata.datasets.get(datasetUri);
 
-            if (dataset !== undefined) {
+            if (dataset) {
                 this.metadata.distributions.clear();
                 dataset.distributions.forEach((distribution) => {
                     this.metadata.distributions.set(distribution.uri, distribution);
