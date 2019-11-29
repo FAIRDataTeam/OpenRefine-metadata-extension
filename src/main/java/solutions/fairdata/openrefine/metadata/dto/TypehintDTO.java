@@ -22,14 +22,18 @@
  */
 package solutions.fairdata.openrefine.metadata.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter
+@Setter
 public class TypehintDTO {
 
     private String title;
     private String value;
     private String description;
-
-    public TypehintDTO() {
-    }
 
     public TypehintDTO(String title, String value) {
         this(title, value, null);
@@ -38,34 +42,6 @@ public class TypehintDTO {
     public TypehintDTO(String title, String value, String description) {
         this.title = title;
         this.value = value;
-        this.description = description;
-    }
-
-    public TypehintDTO(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 }

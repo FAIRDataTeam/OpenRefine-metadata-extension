@@ -5,7 +5,7 @@
   "post-fdp-dialog/title": "Create metadata in FAIR Data Point",
   "post-fdp-dialog/button-connect": "Connect",
   "post-fdp-dialog/button-close": "Close",
-  "post-fdp-dialog/label-username": "Username",
+  "post-fdp-dialog/label-email": "Email",
   "post-fdp-dialog/label-password": "Password",
   "post-fdp-dialog/label-uri": "FAIR Data Point base URI",
   "post-fdp-dialog/description": "Fill in the base URI of your desired FAIR Data Point.",

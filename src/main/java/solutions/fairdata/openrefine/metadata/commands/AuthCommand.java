@@ -23,10 +23,10 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
-import solutions.fairdata.openrefine.metadata.commands.request.AuthRequest;
-import solutions.fairdata.openrefine.metadata.commands.response.AuthResponse;
+import solutions.fairdata.openrefine.metadata.commands.request.auth.AuthRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.dto.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;

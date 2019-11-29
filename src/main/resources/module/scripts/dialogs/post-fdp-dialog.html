@@ -13,9 +13,9 @@
                         <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://localhost:8080" />
                     </div>
                     <div id="credentials-group">
-                        <div id="username-group">
-                            <label for="username" data-i18n="post-fdp-dialog/label-username"></label>
-                            <input type="text" name="username" id="username" bind="username" value="user" />
+                        <div id="email-group">
+                            <label for="email" data-i18n="post-fdp-dialog/label-email"></label>
+                            <input type="email" name="email" id="email" bind="email" value="albert.einstein@example.com" />
                         </div>
                         <div id="password-group">
                             <label for="password" data-i18n="post-fdp-dialog/label-password"></label>
@@ -46,14 +46,14 @@
                     <label class="layer-title" for="fdp-dataset" id="fdp-dataset-label" data-i18n="post-fdp-dialog/layers/dataset"></label>
                     <div class="layer-form">
                         <select id="fdp-dataset" bind="datasetSelect"></select>
-                        <button class="button button-primary" bind="datasetAddButton" data-i18n="post-fdp-dialog/layers/dataset-add"></button>
+                        <button class="button button-primary hidden" bind="datasetAddButton" data-i18n="post-fdp-dialog/layers/dataset-add"></button>
                     </div>
                 </div>
                 <div class="metadata-layer hidden default-hidden" id="distribution-layer" bind="distributionLayer">
                     <label class="layer-title" id="fdp-distribution-label" data-i18n="post-fdp-dialog/layers/distribution"></label>
                     <div class="layer-form">
                         <ul class="distributions-list" bind="distributionsList"></ul>
-                        <button class="button button-primary" bind="distributionAddButton" data-i18n="post-fdp-dialog/layers/distribution-add"></button>
+                        <button class="button button-primary hidden" bind="distributionAddButton" data-i18n="post-fdp-dialog/layers/distribution-add"></button>
                     </div>
                 </div>
             </div>

@@ -28,7 +28,7 @@ import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import solutions.fairdata.openrefine.metadata.dto.MetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.MetadataDTO;
 
 import java.util.Date;
 import java.util.List;

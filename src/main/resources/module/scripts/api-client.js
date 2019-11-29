@@ -7,7 +7,7 @@ class MetadataApiClient {
         this.token = null;
     }
 
-    connectFDP(fdpUri, username, password, callbacks, errorCallbacks) {
+    connectFDP(fdpUri, email, password, callbacks, errorCallbacks) {
         this.fdpUri = fdpUri;
 
         callbacks = callbacks || [];
@@ -15,7 +15,7 @@ class MetadataApiClient {
             JSON.stringify({
                 fdpUri: this.fdpUri,
                 authDTO: {
-                    username,
+                    email,
                     password,
                 }
             }),
@@ -25,6 +25,11 @@ class MetadataApiClient {
             }],
             errorCallbacks
         );
+    }
+
+    getDashboard(callbacks, errorCallbacks) {
+        const params = { fdpUri: this.fdpUri, token: this.token };
+        this._ajaxGeneric("fdp-dashboard", "GET", params, callbacks, errorCallbacks);
     }
 
     getFDPMetadata(callbacks, errorCallbacks) {

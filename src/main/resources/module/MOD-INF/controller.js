@@ -10,6 +10,7 @@ function init() {
 
     // Commands
     RefineServlet.registerCommand(module, "fdp-auth", new MetadataCommands.AuthCommand());
+    RefineServlet.registerCommand(module, "fdp-dashboard", new MetadataCommands.DashboardCommand());
     RefineServlet.registerCommand(module, "fdp-metadata", new MetadataCommands.FDPMetadataCommand());
     RefineServlet.registerCommand(module, "catalogs-metadata", new MetadataCommands.CatalogsMetadataCommand());
     RefineServlet.registerCommand(module, "datasets-metadata", new MetadataCommands.DatasetsMetadataCommand());

@@ -23,7 +23,7 @@
 package solutions.fairdata.openrefine.metadata.storage;
 
 import org.apache.commons.net.ftp.FTPClient;
-import solutions.fairdata.openrefine.metadata.dto.StorageDTO;
+import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

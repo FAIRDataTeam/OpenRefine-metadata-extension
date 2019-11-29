@@ -73,6 +73,8 @@
         <rdf4j.query.version>3.0.2</rdf4j.query.version>
         <rdf4j.rio.turtle.version>3.0.2</rdf4j.rio.turtle.version>
         <jackson.core.version>2.9.10</jackson.core.version>
+        <commons.net.version>3.6</commons.net.version>
+        <lombok.version>1.18.10</lombok.version>
 
         <!-- Test -->
         <test.junit-jupiter.api.version>5.5.2</test.junit-jupiter.api.version>
@@ -141,7 +143,14 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.6</version>
+            <version>${commons.net.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- TEST -->
