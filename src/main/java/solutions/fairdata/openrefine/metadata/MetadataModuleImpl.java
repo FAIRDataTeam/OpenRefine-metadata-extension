@@ -71,7 +71,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
     private void readStorageConfig(File file) {
         try {
-            List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<>(){});
+            List<StorageDTO> configuredStorages = objectMapper.readValue(file, new TypeReference<List<StorageDTO>>(){});
             for (StorageDTO storageDTO : configuredStorages) {
                 try {
                     StorageRegistryUtil.createAndRegisterStorageFor(storageDTO);

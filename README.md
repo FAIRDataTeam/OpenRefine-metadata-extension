@@ -31,6 +31,14 @@ $ docker run -p 3333:3333 fairdata/openrefine-metadata-extension
 
 Then just open [localhost:3333](http://localhost:3333) in your favorite web browser. Optionally you can change the port binding or run it "detached". Visit Docker `run` [documentation](https://docs.docker.com/engine/reference/run/) for more information.
 
+To persist data and eventually be able to share them across multiple instances of OpenRefine you need to mount `/data` directory, for example:
+
+```console
+$ docker run -p 3333:3333 -v /home/me/openrefine-data:/data:z fairdata/openrefine-metadata-extension
+```
+
+To add other extensions (e.g. [RDF extension](https://github.com/stkenny/grefine-rdf-extension)), you can just put them into the mounted folder according to the official [documentation](https://github.com/OpenRefine/OpenRefine/wiki/Installing-Extensions). Always also check installation instruction of the desired extension. For the previous example, you should place your extensions to the directory `/home/me/openrefine-data/extensions`.
+
 ## Development
 
 You are required to have Maven installed with other necessary tools for building Java (see [OpenRefine - Documentation for Developers](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)):
