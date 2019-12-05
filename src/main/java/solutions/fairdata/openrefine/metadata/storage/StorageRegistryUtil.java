@@ -24,8 +24,8 @@ package solutions.fairdata.openrefine.metadata.storage;
 
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.factory.FTPStorageFactory;
-import solutions.fairdata.openrefine.metadata.storage.factory.GraphDBStorageFactory;
 import solutions.fairdata.openrefine.metadata.storage.factory.StorageFactory;
+import solutions.fairdata.openrefine.metadata.storage.factory.TripleStoreHTTPStorageFactory;
 import solutions.fairdata.openrefine.metadata.storage.factory.VirtuosoStorageFactory;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class StorageRegistryUtil {
     static {
         factories.put(FTPStorage.TYPE.toLowerCase(), new FTPStorageFactory());
         factories.put(VirtuosoStorage.TYPE.toLowerCase(), new VirtuosoStorageFactory());
-        factories.put(GraphDBStorage.TYPE.toLowerCase(), new GraphDBStorageFactory());
+        factories.put(TripleStoreHTTPStorage.TYPE.toLowerCase(), new TripleStoreHTTPStorageFactory());
     }
 
     public static void registerStorage(String name, Storage storage) {

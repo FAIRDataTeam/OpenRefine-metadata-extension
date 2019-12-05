@@ -30,13 +30,21 @@ import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
-public class GraphDBStorage extends Storage {
+public class TripleStoreHTTPStorage extends Storage {
 
-    public static final String TYPE = "graphDB";
+    public static final String TYPE = "tripleStoreHTTP";
+    private static final HashMap<String, RDFFormat> formats = new HashMap<>();
     private final HTTPRepository repository;
 
-    public GraphDBStorage(StorageDTO storageDTO) {
+    static {
+        formats.put("application/x-turtle", RDFFormat.TURTLE);
+        formats.put("text/turtle", RDFFormat.TURTLE);
+        formats.put("application/rdf+xml", RDFFormat.RDFXML);
+    }
+
+    public TripleStoreHTTPStorage(StorageDTO storageDTO) {
         super(storageDTO);
         String uri = storageDTO.getHost();
         if (!uri.startsWith("http")) {  // For HTTPRepository it needs the protocol
@@ -57,10 +65,7 @@ public class GraphDBStorage extends Storage {
     }
 
     private RDFFormat getFormat(String contentType) {
-        if (contentType.equals("application/x-turtle") || contentType.equals("text/turtle")) {
-            return RDFFormat.TURTLE;
-        }
-        return RDFFormat.RDFXML;
+        return formats.getOrDefault(contentType, RDFFormat.RDFXML);
     }
 
     @Override

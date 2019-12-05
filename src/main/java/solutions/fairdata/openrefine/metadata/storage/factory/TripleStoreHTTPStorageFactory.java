@@ -23,14 +23,13 @@
 package solutions.fairdata.openrefine.metadata.storage.factory;
 
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
-import solutions.fairdata.openrefine.metadata.storage.GraphDBStorage;
 import solutions.fairdata.openrefine.metadata.storage.Storage;
-import solutions.fairdata.openrefine.metadata.storage.VirtuosoStorage;
+import solutions.fairdata.openrefine.metadata.storage.TripleStoreHTTPStorage;
 
-public class GraphDBStorageFactory implements StorageFactory {
+public class TripleStoreHTTPStorageFactory implements StorageFactory {
 
     @Override
     public Storage createStorage(StorageDTO storageDTO) {
-        return new GraphDBStorage(storageDTO);
+        return new TripleStoreHTTPStorage(storageDTO);
     }
 }
