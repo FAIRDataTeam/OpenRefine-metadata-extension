@@ -152,6 +152,7 @@ public class StoreDataCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse(e.getMessage(), e));
         } catch (Exception e) {
             logger.warn("Unable to store data: " + e.getMessage());
+            e.printStackTrace();
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("store-data-dialog/error/exporting", e));
         } finally {
             w.flush();

@@ -70,8 +70,7 @@
         <slf4j.version>1.7.18</slf4j.version>
         <fairmetadata4j.version>0.1-beta</fairmetadata4j.version>
         <!-- Core - other -->
-        <rdf4j.query.version>3.0.2</rdf4j.query.version>
-        <rdf4j.rio.turtle.version>3.0.2</rdf4j.rio.turtle.version>
+        <rdf4j.version>3.0.3</rdf4j.version>
         <jackson.core.version>2.9.10</jackson.core.version>
         <commons.net.version>3.6</commons.net.version>
         <lombok.version>1.18.10</lombok.version>
@@ -124,14 +123,32 @@
 
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
-            <artifactId>rdf4j-rio-turtle</artifactId>
-            <version>${rdf4j.rio.turtle.version}</version>
+            <artifactId>rdf4j-query</artifactId>
+            <version>${rdf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
-            <artifactId>rdf4j-query</artifactId>
-            <version>${rdf4j.query.version}</version>
+            <artifactId>rdf4j-rio-api</artifactId>
+            <version>${rdf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-rio-turtle</artifactId>
+            <version>${rdf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-repository-http</artifactId>
+            <version>${rdf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-repository-api</artifactId>
+            <version>${rdf4j.version}</version>
         </dependency>
 
         <dependency>

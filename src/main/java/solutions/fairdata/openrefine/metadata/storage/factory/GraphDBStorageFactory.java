@@ -20,28 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto.storage;
+package solutions.fairdata.openrefine.metadata.storage.factory;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
+import solutions.fairdata.openrefine.metadata.storage.GraphDBStorage;
+import solutions.fairdata.openrefine.metadata.storage.Storage;
+import solutions.fairdata.openrefine.metadata.storage.VirtuosoStorage;
 
-import java.util.Set;
+public class GraphDBStorageFactory implements StorageFactory {
 
-@NoArgsConstructor
-@Getter
-@Setter
-public class StorageDTO {
-    private String name;
-    private String type;
-    private Boolean enabled;
-    private String username;
-    private String password;
-    private String host;
-    private String directory;
-    private Set<String> contentTypes;
-
-    public StorageInfoDTO toInfo() {
-        return new StorageInfoDTO(this);
+    @Override
+    public Storage createStorage(StorageDTO storageDTO) {
+        return new GraphDBStorage(storageDTO);
     }
 }

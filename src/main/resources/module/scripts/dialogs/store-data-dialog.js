@@ -107,6 +107,11 @@ class StoreDataDialog {
 
         this.elements.unusableFormats.empty();
         this.elements.fileFormatSelect.empty();
+        this.elements.fileFormatSelect.append($("<option>")
+            .prop("disabled", true)
+            .prop("selected", true)
+            .text($.i18n("common/select-option/storage"))
+        );
         this.formats.forEach((format) => {
             if (!contentTypes || allowedTypes.has(format.contentType)) {
                 addFormat(format);
@@ -126,6 +131,11 @@ class StoreDataDialog {
 
     showStorages() {
         this.elements.storageSelect.empty();
+        this.elements.storageSelect.append($("<option>")
+            .prop("disabled", true)
+            .prop("selected", true)
+            .text($.i18n("common/select-option/storage"))
+        );
         this.storages.forEach((storage) => {
             const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
             this.elements.storageSelect.append(
