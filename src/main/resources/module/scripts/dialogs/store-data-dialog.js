@@ -41,16 +41,14 @@ class StoreDataDialog {
 
     prepareStoreDataRequest(mode) {
         const elmts = this.elements;
-        const metadata = new Map();
+        let metadata = new Map();
 
         this.metadataFields.forEach((value, key, map) => {
-            console.log(key);
-            console.log(value.val());
             metadata.set(key, value.val());
         });
 
         return JSON.stringify({
-            mode: mode,
+            mode,
             format: elmts.fileFormatSelect.val(),
             storage: elmts.storageSelect.val(),
             metadata: Object.fromEntries(metadata.entries())
