@@ -14,11 +14,9 @@
                 <label for="fileFormat" data-i18n="store-data-dialog/form/fileFormat"></label>
                 <select name="fileFormat" id="fileFormat" bind="fileFormatSelect"></select>
             </div>
-            <div class="form-group">
-                <label for="filename" data-i18n="store-data-dialog/form/filename"></label>
-                <input name="filename" id="filename" bind="filenameInput" value="">
-                <div class="input-note" data-i18n="store-data-dialog/form/filename/note"></div>
-            </div>
+
+            <div id="storage-metadata" bind="storageFields"></div>
+
             <button type="submit" bind="storeButton" data-i18n="store-data-dialog/store"></button>
             <button type="button" bind="previewButton" data-i18n="store-data-dialog/preview"></button>
         </form>

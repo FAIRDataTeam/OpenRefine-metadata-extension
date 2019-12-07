@@ -84,11 +84,16 @@ public class StoreDataCommand extends Command {
         Project project = getProject(request);
         updateFormats();
 
-        CommandUtils.objectMapper.writeValue(w, new StoreDataInfoResponse(
-                project.getMetadata().getName().replaceAll("\\W+", "_"),
+        String defaultFilename = project.getMetadata().getName().replaceAll("\\W+", "_");
+        String defaultBaseURI = "http://" + request.getServerName() + "/" + defaultFilename;
+        System.out.println(defaultBaseURI);
+        StoreDataInfoResponse storeDataInfoResponse = new StoreDataInfoResponse(
                 new ArrayList<>(formats.values()),
                 new ArrayList<>(StorageRegistryUtil.getStorages().stream().map(Storage::getStorageDTO).map(StorageDTO::toInfo).collect(Collectors.toList()))
-        ));
+        );
+        storeDataInfoResponse.getDefaults().put("filename", defaultFilename);
+        storeDataInfoResponse.getDefaults().put("baseURI", defaultBaseURI);
+        CommandUtils.objectMapper.writeValue(w, storeDataInfoResponse);
 
         w.flush();
         w.close();
@@ -103,9 +108,11 @@ public class StoreDataCommand extends Command {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
+            String defaultFilename = project.getMetadata().getName().replaceAll("\\W+", "_");
+
+            // TODO: rectify metadata
 
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
-            String filename = storeDataRequest.getFilename() + "." + format.getExtension();
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
             Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage());
             if (exporter == null) {
@@ -137,13 +144,14 @@ public class StoreDataCommand extends Command {
 
                 if (storeDataRequest.getMode().equals("preview")) {
                     String base64Data = Base64.getEncoder().encodeToString(data);
+                    String filename = storeDataRequest.getMetadata().getOrDefault("filename", defaultFilename) + "." + format.getExtension();
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
                 } else {
-                    storage.storeData(data, filename, exporter.getContentType());
+                    storage.storeData(data, storeDataRequest.getMetadata(), exporter.getContentType());
                     CommandUtils.objectMapper.writeValue(w,
-                            new StoreDataResponse(storage.getURL(filename))
+                            new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()))
                     );
                 }
             }

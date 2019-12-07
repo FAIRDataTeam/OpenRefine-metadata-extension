@@ -25,6 +25,7 @@ package solutions.fairdata.openrefine.metadata.commands.response.storage;
 import solutions.fairdata.openrefine.metadata.dto.storage.ExportFormatDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageInfoDTO;
 
+import java.util.HashMap;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -39,14 +40,14 @@ import lombok.Setter;
 public class StoreDataInfoResponse {
 
     private String status;
-    private String defaultFilename;
     private List<ExportFormatDTO> formats;
     private List<StorageInfoDTO> storages;
+    private HashMap<String, String> defaults;
 
-    public StoreDataInfoResponse(String defaultFilename, List<ExportFormatDTO> formats, List<StorageInfoDTO> storages) {
+    public StoreDataInfoResponse(List<ExportFormatDTO> formats, List<StorageInfoDTO> storages) {
         this.status = "ok";
-        this.defaultFilename = defaultFilename;
         this.formats = formats;
         this.storages = storages;
+        this.defaults = new HashMap<>();
     }
 }

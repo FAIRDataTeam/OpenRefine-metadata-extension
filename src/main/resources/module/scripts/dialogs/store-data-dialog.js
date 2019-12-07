@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, MetadataHelpers */
+/* global $, DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs */
 
 class StoreDataDialog {
 
@@ -7,6 +7,7 @@ class StoreDataDialog {
         this.elements = DOM.bind(this.frame);
         this.level = null;
         this.storeCallback = this.defaultCallback();
+        this.metadataFields = new Map();
 
         this.initBasicTexts();
         this.bindActions();
@@ -14,10 +15,10 @@ class StoreDataDialog {
         MetadataHelpers.ajax("store-data", "GET", null, (data) => {
             this.formats = data.formats;
             this.storages = data.storages;
+            this.defaults = new Map(Object.entries(data.defaults));
+
             this.showStorages();
             this.showFormats();
-
-            this.elements.filenameInput.val(data.defaultFilename);
         });
     }
 
@@ -38,6 +39,24 @@ class StoreDataDialog {
         this.frame.i18n();
     }
 
+    prepareStoreDataRequest(mode) {
+        const elmts = this.elements;
+        const metadata = new Map();
+
+        this.metadataFields.forEach((value, key, map) => {
+            console.log(key);
+            console.log(value.val());
+            metadata.set(key, value.val());
+        });
+
+        return JSON.stringify({
+            mode: mode,
+            format: elmts.fileFormatSelect.val(),
+            storage: elmts.storageSelect.val(),
+            metadata: Object.fromEntries(metadata.entries())
+        });
+    }
+
     bindActions() {
         const self = this;
         const elmts = this.elements;
@@ -45,37 +64,28 @@ class StoreDataDialog {
         elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.previewButton.click(() => {
-            self.elements.errorMessage.empty();
-            const storeDataRequest = JSON.stringify({
-                mode: "preview",
-                format: elmts.fileFormatSelect.val(),
-                storage: elmts.storageSelect.val(),
-                filename: elmts.filenameInput.val(),
-            });
+            elmts.errorMessage.empty();
+            const storeDataRequest = this.prepareStoreDataRequest("preview");
 
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
                 if (data.status === "ok") {
                     MetadataHelpers.download(data.data, data.filename, data.contentType);
                 } else {
-                    self.elements.errorMessage.text($.i18n(data.message, data.exception));
+                    elmts.errorMessage.text($.i18n(data.message, data.exception));
                 }
             });
         });
 
         elmts.storeButton.click((event) => {
-            self.elements.errorMessage.empty();
+            elmts.errorMessage.empty();
             event.preventDefault();
-            const storeDataRequest = JSON.stringify({
-                mode: "store",
-                format: elmts.fileFormatSelect.val(),
-                storage: elmts.storageSelect.val(),
-                filename: elmts.filenameInput.val(),
-            });
+            const storeDataRequest = this.prepareStoreDataRequest("store");
+
             MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
                 if (data.status === "ok") {
                     self.storeCallback(data.url);
                 } else {
-                    self.elements.errorMessage.text($.i18n(data.message, data.exception));
+                    elmts.errorMessage.text($.i18n(data.message, data.exception));
                 }
 
             });
@@ -86,6 +96,7 @@ class StoreDataDialog {
             const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
             if (storage) {
                 this.showFormats(storage.contentTypes);
+                this.showStorageFields(storage);
             }
         });
     }
@@ -142,6 +153,43 @@ class StoreDataDialog {
                 $("<option>").val(storage.name).text(label)
             );
         });
+    }
+
+    showStorageFields(storage) {
+        this.elements.storageFields.empty();
+        this.metadataFields.clear();
+
+        const storageSpec = MetadataStorageSpecs.types.get(storage.type);
+        if (storageSpec) {
+            storageSpec.metadata.forEach((fieldId) => {
+                if (MetadataStorageSpecs.metadata.has(fieldId)) {
+                    this.addStorageField(MetadataStorageSpecs.metadata.get(fieldId));
+                }
+            });
+        }
+    }
+
+    addStorageField(fieldSpec) {
+        const label = $("<label>")
+            .attr("for", fieldSpec.id)
+            .text($.i18n(`store-data-dialog/form/${fieldSpec.id}`));
+        const field = $("<input>")
+            .attr("name", fieldSpec.id)
+            .attr("id", fieldSpec.id)
+            .prop("required", fieldSpec.required)
+            .attr("type", fieldSpec.type);
+        const note = $("<div>")
+            .addClass("input-note")
+            .text($.i18n(`store-data-dialog/form/${fieldSpec.id}/note`));
+
+        if (this.defaults.has(fieldSpec.id)) {
+            field.val(this.defaults.get(fieldSpec.id));
+        }
+
+        this.metadataFields.set(fieldSpec.id, field);
+        this.elements.storageFields.append(
+            $("<div>").addClass("form-group").append(label).append(field).append(note)
+        );
     }
 
     defaultCallback() {

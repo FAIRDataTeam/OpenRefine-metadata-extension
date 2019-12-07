@@ -25,6 +25,7 @@ package solutions.fairdata.openrefine.metadata.storage;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 abstract public class Storage {
 
@@ -43,12 +44,12 @@ abstract public class Storage {
     }
 
     public abstract String getType();
-    public abstract String getFilePath(String filename);
-    public abstract void storeData(byte[] data, String filename, String contentType) throws IOException;
+    public abstract String getFilePath(HashMap<String, String> metadata);
+    public abstract String getURL(HashMap<String, String> metadata);
+    public abstract void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException;
 
     public boolean allowsContentType(String contentType) {
         return storageDTO != null && (storageDTO.getContentTypes() == null || storageDTO.getContentTypes().contains(contentType));
     }
 
-    public abstract String getURL(String filename);
 }

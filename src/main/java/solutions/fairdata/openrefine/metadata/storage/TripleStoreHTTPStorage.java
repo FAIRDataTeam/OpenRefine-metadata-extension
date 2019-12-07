@@ -60,7 +60,7 @@ public class TripleStoreHTTPStorage extends Storage {
     }
 
     @Override
-    public String getFilePath(String filename) {
+    public String getFilePath(HashMap<String, String> metadata) {
         return repository.getRepositoryURL();
     }
 
@@ -69,7 +69,11 @@ public class TripleStoreHTTPStorage extends Storage {
     }
 
     @Override
-    public void storeData(byte[] data, String baseURI, String contentType) throws IOException {
+    public void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException {
+        String baseURI = metadata.get("baseURI");
+        if (baseURI == null) {
+            throw new IOException("Base URI not given");
+        }
         InputStream inputStream =  new ByteArrayInputStream(data);
         RepositoryConnection repositoryConnection = repository.getConnection();
         try {
@@ -80,7 +84,7 @@ public class TripleStoreHTTPStorage extends Storage {
     }
 
     @Override
-    public String getURL(String filename) {
+    public String getURL(HashMap<String, String> metadata) {
         return repository.getRepositoryURL();
     }
 }
