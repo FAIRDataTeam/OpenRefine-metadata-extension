@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class VirtuosoStorage extends Storage {
 
@@ -44,21 +45,25 @@ public class VirtuosoStorage extends Storage {
     }
 
     @Override
-    public String getFilePath(String filename) {
-        return storageDTO.getDirectory() + filename;
+    public String getFilePath(HashMap<String, String> metadata) {
+        return storageDTO.getDirectory() + metadata.getOrDefault("filename", "");
     }
 
     @Override
-    public String getURL(String filename) {
-        return "http://" + storageDTO.getHost() + getFilePath(filename);
+    public String getURL(HashMap<String, String> metadata) {
+        return "http://" + storageDTO.getHost() + getFilePath(metadata);
     }
 
     @Override
-    public void storeData(byte[] data, String filename, String contentType) throws IOException {
+    public void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException {
+        String filename = metadata.get("filename");
+        if (filename == null) {
+            throw new IOException("Filename not given");
+        }
         if (!allowsContentType(contentType)) {
             throw new IOException("Bad content type for selected storage");
         }
-        makeVirtuosoPut(getURL(filename), new String(data, StandardCharsets.UTF_8), contentType + "; charset=\"UTF-8\"");
+        makeVirtuosoPut(getURL(metadata), new String(data, StandardCharsets.UTF_8), contentType + "; charset=\"UTF-8\"");
     }
 
     /**

@@ -383,7 +383,7 @@ class PostFdpDialog {
         return $("<option>")
             .prop("disabled", true)
             .prop("selected", true)
-            .text(`-- select a ${name} --`);
+            .text($.i18n("common/select-option", name));
     }
 
     static resetSelect(select, name) {

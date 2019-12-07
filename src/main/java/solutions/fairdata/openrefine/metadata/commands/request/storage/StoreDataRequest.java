@@ -23,6 +23,7 @@
 package solutions.fairdata.openrefine.metadata.commands.request.storage;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -42,5 +43,5 @@ public class StoreDataRequest {
     private String mode;
     private String format;
     private String storage;
-    private String filename;
+    private HashMap<String, String> metadata;
 }

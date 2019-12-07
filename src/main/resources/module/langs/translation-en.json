@@ -119,10 +119,13 @@
   "store-data-dialog/formats/Turtle": "Turtle - Terse RDF Triple Language",
   "store-data-dialog/storages/ftp": "$1 (FTP @ $2$3)",
   "store-data-dialog/storages/virtuoso": "$1 (Virtuoso @ $2$3)",
+  "store-data-dialog/storages/tripleStoreHTTP": "$1 (TripleStore @ $2/repository/$3)",
   "store-data-dialog/form/fileFormat": "File format",
   "store-data-dialog/form/storage": "Storage",
   "store-data-dialog/form/filename": "Filename",
   "store-data-dialog/form/filename/note": "File extension will be added automatically",
+  "store-data-dialog/form/baseURI": "Base URI",
+  "store-data-dialog/form/baseURI/note": "Base URI for relative identifiers",
   "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3",
   "store-data-dialog/store": "Store",
   "store-data-dialog/preview": "Preview (download)",
@@ -142,5 +145,8 @@
   "about-dialog/fdp-versions": "Supported FAIR Data Point versions",
   "about-dialog/authors": "Authors",
   "about-dialog/description": "Description",
-  "about-dialog/description-text": "Extension for OpenRefine to support FAIR metadata. It allows to store layered FAIR metadata to selected FAIR Data Point as well as upload data to supported storage in selected format. For more information about FAIR data, visit the homepage above."
+  "about-dialog/description-text": "Extension for OpenRefine to support FAIR metadata. It allows to store layered FAIR metadata to selected FAIR Data Point as well as upload data to supported storage in selected format. For more information about FAIR data, visit the homepage above.",
+  "common/select-option": "-- select $1 --",
+  "common/select-option/storage": "-- select storage --",
+  "common/select-option/format": "-- select format --"
 }

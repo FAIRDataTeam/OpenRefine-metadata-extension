@@ -27,6 +27,7 @@ function init() {
             "scripts/helpers.js",
             "scripts/menu-bar-extension.js",
             "scripts/metadata-specs.js",
+            "scripts/storages-specs.js",
             "scripts/dialogs/about-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
             "scripts/dialogs/post-fdp-dialog.js",

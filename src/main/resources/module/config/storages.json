@@ -21,5 +21,33 @@
       "application/x-turtle",
       "text/turtle"
     ]
+  },
+  {
+    "name": "Local GraphDB",
+    "type": "tripleStoreHTTP",
+    "enabled": true,
+    "username": "test",
+    "password": "pass",
+    "host": "localhost:7200",
+    "directory": "test01",
+    "contentTypes": [
+      "application/rdf+xml",
+      "application/x-turtle",
+      "text/turtle"
+    ]
+  },
+  {
+    "name": "Local AllegroGraph",
+    "type": "tripleStoreHTTP",
+    "enabled": true,
+    "username": "test",
+    "password": "pass",
+    "host": "localhost:10035",
+    "directory": "test01",
+    "contentTypes": [
+      "application/rdf+xml",
+      "application/x-turtle",
+      "text/turtle"
+    ]
   }
 ]
