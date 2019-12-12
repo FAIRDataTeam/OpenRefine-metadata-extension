@@ -27,12 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import solutions.fairdata.openrefine.metadata.dto.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
@@ -52,6 +54,8 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         return instance;
     }
 
+    private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
+
     @Override
     public void init(ServletConfig config) throws Exception {
         super.init(config);
@@ -63,10 +67,25 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         logger.trace("Metadata Extension module has been initialized");
     }
 
+    public List<FDPConnectionConfigDTO> getFdpConnections() {
+        return fdpConnections;
+    }
+
     private void readConfig() {
         File configFolderFile = new File(getPath(),"config");
 
         readStorageConfig(new File(configFolderFile, "storages.json"));
+        readFDPConnectionsConfig(new File(configFolderFile, "fdp-connections.json"));
+    }
+
+    private void readFDPConnectionsConfig(File file) {
+        try {
+            fdpConnections = objectMapper.readValue(file, new TypeReference<List<FDPConnectionConfigDTO>>(){});
+            logger.trace("Loaded FDP connections configuration with " + fdpConnections.size() + " items");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.warn("Could not load FDP connections configuration - skipping");
+        }
     }
 
     private void readStorageConfig(File file) {

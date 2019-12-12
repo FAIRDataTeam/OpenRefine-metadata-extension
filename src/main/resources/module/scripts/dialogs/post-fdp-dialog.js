@@ -20,7 +20,7 @@ class PostFdpDialog {
         this.initBasicTexts();
         this.resetDefault();
 
-        this.focusBaseURI();
+        // TODO: fetch FDP connections and allow people to use them
         this.bindActions();
     }
 
@@ -31,12 +31,6 @@ class PostFdpDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
-    }
-
-    focusBaseURI() {
-        // Focus value of FDP URI input for easy overwrite
-        this.elements.baseURI.focus();
-        this.elements.baseURI[0].setSelectionRange(0, this.elements.baseURI.val().length);
     }
 
     bindActions() {

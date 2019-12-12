@@ -27,6 +27,10 @@ class MetadataApiClient {
         );
     }
 
+    getFDPConnections(callbacks, errorCallbacks) {
+        this._ajaxGeneric("fdp-connections", "GET", {}, callbacks, errorCallbacks);
+    }
+
     getDashboard(callbacks, errorCallbacks) {
         const params = { fdpUri: this.fdpUri, token: this.token };
         this._ajaxGeneric("fdp-dashboard", "GET", params, callbacks, errorCallbacks);
