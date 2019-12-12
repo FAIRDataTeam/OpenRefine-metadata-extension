@@ -7,7 +7,7 @@ class MetadataFormDialog {
         this.level = null;
 
         this.type = type;
-        this.specs = specs;
+        this.specs = specs; // TODO: in the future, get specs from FDP API (client prepared)
         this.callbackFn = callbackFn;
         this.apiClient = new MetadataApiClient();
 

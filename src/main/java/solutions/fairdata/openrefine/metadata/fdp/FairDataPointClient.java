@@ -78,6 +78,13 @@ public class FairDataPointClient {
             308   // HTTP Permanent Redirect
     ));
 
+    private static final String CATALOG_PART = "/catalog";
+    private static final String DATASET_PART = "/dataset";
+    private static final String DISTRIBUTION_PART = "/distribution";
+    private static final String SPEC_PART = "/spec";
+    private static final String AUTH_PART = "/tokens";;
+    private static final String DASHBOARD_PART = "/dashboard";
+
     private static final String USER_AGENT = MetadataModuleImpl.USER_AGENT;
 
     private final Logger logger;
@@ -97,7 +104,7 @@ public class FairDataPointClient {
     // AUTH TOKEN
 
     public TokenDTO postAuthentication(AuthDTO auth) throws IOException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + "/tokens", "POST", "application/json");
+        HttpURLConnection conn = createConnection(fdpBaseURI + AUTH_PART, "POST", "application/json");
         conn.addRequestProperty("Content-Type", "application/json; utf-8");
         conn.setDoOutput(true);
         objectMapper.writeValue(conn.getOutputStream(), auth);
@@ -112,7 +119,7 @@ public class FairDataPointClient {
     // DASHBOARD
 
     public List<DashboardCatalogDTO> getDashboard() throws IOException, FairDataPointException {
-        HttpURLConnection conn = request(fdpBaseURI + "/fdp/dashboard", "GET", "application/json", true);
+        HttpURLConnection conn = request(fdpBaseURI + DASHBOARD_PART, "GET", "application/json", true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             return objectMapper.readValue(conn.getInputStream(), new TypeReference<List<DashboardCatalogDTO>>(){});
@@ -191,10 +198,34 @@ public class FairDataPointClient {
         }
     }
 
+    // GET Spects
+
+    public Object getCatalogSpec() throws IOException, FairDataPointException {
+        return getMetadataSpec(CATALOG_PART);
+    }
+
+    public Object getDatasetSpec() throws IOException, FairDataPointException {
+        return getMetadataSpec(DATASET_PART);
+    }
+
+    public Object getDistributionSpec() throws IOException, FairDataPointException {
+        return getMetadataSpec(DISTRIBUTION_PART);
+    }
+
+    private Object getMetadataSpec(String metadataPart) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(fdpBaseURI + metadataPart + SPEC_PART, "GET", "application/json", true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return objectMapper.readValue(conn.getInputStream(), Object.class);
+        } else {
+            throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
     // POST
 
     public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/catalog", "POST", "text/turtle");
+        HttpURLConnection conn = createConnection(fdpBaseURI + CATALOG_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
         conn.setDoOutput(true);
 
@@ -227,7 +258,7 @@ public class FairDataPointClient {
     }
 
     public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/dataset", "POST", "text/turtle");
+        HttpURLConnection conn = createConnection(fdpBaseURI + DATASET_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
         conn.setDoOutput(true);
 
@@ -260,7 +291,7 @@ public class FairDataPointClient {
     }
 
     public DistributionDTO postDistribution(DistributionDTO distributionDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + "/fdp/distribution", "POST", "text/turtle");
+        HttpURLConnection conn = createConnection(fdpBaseURI + DISTRIBUTION_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
         conn.setDoOutput(true);
 
