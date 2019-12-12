@@ -15,6 +15,7 @@ function init() {
     RefineServlet.registerCommand(module, "catalogs-metadata", new MetadataCommands.CatalogsMetadataCommand());
     RefineServlet.registerCommand(module, "datasets-metadata", new MetadataCommands.DatasetsMetadataCommand());
     RefineServlet.registerCommand(module, "distributions-metadata", new MetadataCommands.DistributionsMetadataCommand());
+    RefineServlet.registerCommand(module, "metadata-specs", new MetadataCommands.MetadataSpecsCommand());
     RefineServlet.registerCommand(module, "typehints", new MetadataCommands.TypehintsCommand());
     RefineServlet.registerCommand(module, "store-data", new MetadataCommands.StoreDataCommand());
 
