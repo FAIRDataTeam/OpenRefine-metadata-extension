@@ -71,7 +71,7 @@
         <fairmetadata4j.version>0.1-beta</fairmetadata4j.version>
         <!-- Core - other -->
         <rdf4j.version>3.0.3</rdf4j.version>
-        <jackson.core.version>2.9.10</jackson.core.version>
+        <jackson.version>2.9.10</jackson.version>
         <commons.net.version>3.6</commons.net.version>
         <lombok.version>1.18.10</lombok.version>
 
@@ -154,7 +154,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.core.version}</version>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>

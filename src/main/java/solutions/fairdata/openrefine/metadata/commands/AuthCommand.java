@@ -23,10 +23,13 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.request.auth.AuthRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
+import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,10 +45,21 @@ public class AuthCommand extends Command {
         Writer w = CommandUtils.prepareWriter(response);
 
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(authRequest.getFdpUri(), logger);
-            TokenDTO tokenDTO = fdpClient.postAuthentication(authRequest.getAuthDTO());
+            AuthDTO authDTO = authRequest.getAuthDTO();
+            String fdpUri = authRequest.getFdpUri();
+            if (authRequest.isConfiguredMode()) {
+                FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getFdpConnections().get(authRequest.getConfigId());
+                authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
+                authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
+                fdpUri = fdpConnectionConfigDTO.getBaseURI();
+            } else if (authRequest.isCustomMode() && !MetadataModuleImpl.getInstance().getSettings().getAllowCustomFDP()) {
+                throw new IOException("Custom FDP connection is not allowed!");
+            }
 
-            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken()));
+            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
+            TokenDTO tokenDTO = fdpClient.postAuthentication(authDTO);
+
+            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpUri));
         } catch (Exception e) {
             logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));

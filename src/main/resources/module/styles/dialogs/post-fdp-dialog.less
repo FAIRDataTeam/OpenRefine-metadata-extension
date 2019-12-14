@@ -1,5 +1,3 @@
-@import-less url("../theme.less");
-
 div.metadata-dialog {
   width: 800px;
   max-width: 100%;
@@ -38,7 +36,7 @@ form#fdp-post-form {
   max-width: 700px;
 }
 
-form#fdp-post-form div#uri-group label {
+form#fdp-post-form label {
   font-weight: bold;
 }
 
@@ -46,16 +44,16 @@ form#fdp-post-form div#fdp-group {
   flex-grow: 1;
 }
 
-form#fdp-post-form div#uri-group {
-  margin-bottom: 0.5em;
-}
-
-form#fdp-post-form div#uri-group {
+form#fdp-post-form div#uri-group,
+form#fdp-post-form div#fdp-connection-group {
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
   display: flex;
   align-items: center;
 }
 
-form#fdp-post-form div#uri-group input {
+form#fdp-post-form div#uri-group input,
+form#fdp-post-form div#fdp-connection-group select {
   flex-grow: 1;
   margin-left: 0.5em;
   width: auto;
@@ -81,11 +79,6 @@ form#fdp-post-form div#credentials-group > div > input {
   flex-grow: 1;
   margin-left: 0.5em;
 }
-
-.hidden {
-  display: none;
-}
-
 #fdp-metadata p {
   padding: 0.2em;
 }

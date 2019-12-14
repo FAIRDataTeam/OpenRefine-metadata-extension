@@ -7,24 +7,41 @@ class MetadataApiClient {
         this.token = null;
     }
 
-    connectFDP(fdpUri, email, password, callbacks, errorCallbacks) {
-        this.fdpUri = fdpUri;
+    connectCustomFDP(fdpUri, email, password, callbacks, errorCallbacks) {
+        this.connectFDP("custom", null, fdpUri, email, password, callbacks, errorCallbacks);
+    }
 
+    connectPreConfiguredFDP(configId, callbacks, errorCallbacks) {
+        this.connectFDP("configured", configId, null, null, null, callbacks, errorCallbacks);
+    }
+
+    connectFDP(mode, configId, fdpUri, email, password, callbacks, errorCallbacks) {
         callbacks = callbacks || [];
         this._ajaxGeneric("fdp-auth", "POST",
             JSON.stringify({
-                fdpUri: this.fdpUri,
+                mode,
+                configId,
+                fdpUri,
                 authDTO: {
                     email,
                     password,
                 }
             }),
             [(result) => {
+                this.fdpUri = result.fdpUri;
                 this.token = result.token;
                 this.getFDPMetadata(callbacks, errorCallbacks);
             }],
             errorCallbacks
         );
+    }
+
+    getSettings(callbacks) {
+        this._ajaxGeneric("settings","GET", {}, callbacks, []);
+    }
+
+    getFDPConnections(callbacks, errorCallbacks) {
+        this._ajaxGeneric("fdp-connections", "GET", {}, callbacks, errorCallbacks);
     }
 
     getDashboard(callbacks, errorCallbacks) {

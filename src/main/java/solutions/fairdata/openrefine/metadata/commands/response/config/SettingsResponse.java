@@ -20,26 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response.auth;
+package solutions.fairdata.openrefine.metadata.commands.response.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class AuthResponse {
+public class SettingsResponse {
 
     private String status;
-    private String token;
-    private String fdpUri;
+    private SettingsConfigDTO settings;
 
-    public AuthResponse(String token, String fdpUri) {
+    public SettingsResponse(SettingsConfigDTO settings) {
         this.status = "ok";
-        this.token = token;
-        this.fdpUri = fdpUri;
+        this.settings = settings;
     }
 }

@@ -16,12 +16,20 @@ class PostFdpDialog {
             distributions: new Map()
         };
         this.newlyCreatedIRIs = new Set();
+        this.settings = {};
 
         this.initBasicTexts();
         this.resetDefault();
 
-        this.focusBaseURI();
-        this.bindActions();
+        this.elements.dialogBody.addClass("hidden");
+        this.apiClient.getSettings([
+            (result) => {
+                this.settings = new Map(Object.entries(result.settings));
+                this.bindActions();
+                this.prepareConnections();
+                this.elements.dialogBody.removeClass("hidden");
+            }
+        ]);
     }
 
     launch() {
@@ -33,12 +41,6 @@ class PostFdpDialog {
         this.level = null;
     }
 
-    focusBaseURI() {
-        // Focus value of FDP URI input for easy overwrite
-        this.elements.baseURI.focus();
-        this.elements.baseURI[0].setSelectionRange(0, this.elements.baseURI.val().length);
-    }
-
     bindActions() {
         const self = this;
         const elmts = this.elements;
@@ -47,16 +49,36 @@ class PostFdpDialog {
         elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.connectButton.click(() => {
-            const fdpUri = elmts.baseURI.val();
-            const email = elmts.email.val();
-            const password = elmts.password.val();
+            const fdpConnection = elmts.fdpConnectionSelect.val();
 
             self.resetDefault();
-            self.apiClient.connectFDP(
-                fdpUri, email, password,
-                [this.callbackFDPConnected(), this.callbackErrorResponse()],
-                [this.callbackGeneralError()]
-            );
+
+            if (fdpConnection === "custom") {
+                const fdpUri = elmts.baseURI.val();
+                const email = elmts.email.val();
+                const password = elmts.password.val();
+
+                self.apiClient.connectCustomFDP(
+                    fdpUri, email, password,
+                    [this.callbackFDPConnected(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
+            } else if (Number.isInteger(Number.parseInt(fdpConnection))) {
+                self.apiClient.connectPreConfiguredFDP(
+                    Number.parseInt(fdpConnection),
+                    [this.callbackFDPConnected(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
+            }
+        });
+
+        elmts.fdpConnectionSelect.on("change", () => {
+            this.resetDefault();
+            if (elmts.fdpConnectionSelect.val() === "custom") {
+                elmts.fdpCustomForm.removeClass("hidden");
+            } else {
+                elmts.fdpCustomForm.addClass("hidden");
+            }
         });
 
         elmts.catalogSelect.on("change", () => {
@@ -139,6 +161,63 @@ class PostFdpDialog {
     initBasicTexts() {
         this.frame.i18n();
         this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
+    }
+
+    // pre-configured connections
+    prepareConnections() {
+        this.apiClient.getFDPConnections(
+            [
+                (result) => {
+                    if (result.status === "ok" && result.fdpConnections.length > 0) {
+                        this.showFDPConnections(result.fdpConnections);
+                    } else {
+                        this.customFDPOnly();
+                    }
+                }
+            ],
+            [ () => { this.customFDPOnly(); } ]
+        );
+    }
+
+    prepareFDPConnectionSelect() {
+        const defaultOption = $("<option>")
+            .prop("selected", true)
+            .prop("disabled", true)
+            .text($.i18n("post-fdp-dialog/connections/default-option"));
+        const customOption = $("<option>")
+            .attr("value", "custom")
+            .text($.i18n("post-fdp-dialog/connections/custom-option"));
+        this.elements.fdpConnectionSelect.empty();
+        this.elements.fdpConnectionSelect.append(defaultOption);
+        if (!this.settings.has("allowCustomFDP") || this.settings.get("allowCustomFDP") === true) {
+            this.elements.fdpConnectionSelect.append(customOption);
+        }
+    }
+
+    customFDPOnly() {
+        this.prepareFDPConnectionSelect();
+        this.elements.fdpCustomSelectForm.addClass("hidden");
+        this.elements.fdpCustomForm.removeClass("hidden");
+        this.elements.fdpConnectionSelect.val("custom");
+    }
+
+    showFDPConnections(fdpConnections) {
+        this.prepareFDPConnectionSelect();
+        this.elements.fdpCustomSelectForm.removeClass("hidden");
+        this.elements.fdpCustomForm.addClass("hidden");
+
+        let preselect = null;
+        fdpConnections.forEach((connection, index) => {
+            this.elements.fdpConnectionSelect.append(
+                $("<option>")
+                    .val(index)
+                    .text(`${connection.name} @ ${connection.baseURI}`)
+            );
+            if (preselect === null && connection.preselected === true) {
+                preselect = index;
+                this.elements.fdpConnectionSelect.val(index);
+            }
+        });
     }
 
     // resetting

@@ -1,0 +1,14 @@
+# Preconfigured FAIR Data Point connections
+
+# Each connection should have name, baseURI, email, and password
+# You can specify if should be pre-selected by "preselected" flag
+
+- name: 'My local FDP #01 (Albert Einstein)'
+  baseURI: http://localhost
+  email: albert.einstein@example.com
+  password: password
+  preselected: true
+- name: 'My local FDP #01 (Nikola Tesla)'
+  baseURI: http://localhost
+  email: nikola.tesla@example.com
+  password: password
