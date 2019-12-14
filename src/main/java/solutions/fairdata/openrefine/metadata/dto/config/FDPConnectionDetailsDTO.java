@@ -34,4 +34,5 @@ import lombok.Setter;
 public class FDPConnectionDetailsDTO {
     private String name;
     private String baseURI;
+    private Boolean preselected;
 }

@@ -36,8 +36,9 @@ public class FDPConnectionConfigDTO {
     private String baseURI;
     private String email;
     private String password;
+    private Boolean preselected;
 
     public FDPConnectionDetailsDTO toDetails() {
-        return new FDPConnectionDetailsDTO(getName(), getBaseURI());
+        return new FDPConnectionDetailsDTO(getName(), getBaseURI(), getPreselected());
     }
 }

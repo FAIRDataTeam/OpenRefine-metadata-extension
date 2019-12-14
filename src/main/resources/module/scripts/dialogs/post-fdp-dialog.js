@@ -196,10 +196,17 @@ class PostFdpDialog {
         this.elements.fdpCustomSelectForm.removeClass("hidden");
         this.elements.fdpCustomForm.addClass("hidden");
 
+        let preselect = null;
         fdpConnections.forEach((connection, index) => {
             this.elements.fdpConnectionSelect.append(
-                $("<option>").val(index).text(`${connection.name} @ ${connection.baseURI}`)
+                $("<option>")
+                    .val(index)
+                    .text(`${connection.name} @ ${connection.baseURI}`)
             );
+            if (preselect === null && connection.preselected === true) {
+                preselect = index;
+                this.elements.fdpConnectionSelect.val(index);
+            }
         });
     }
 
