@@ -39,6 +39,7 @@ function init() {
         "project/styles",
         module,
         [
+            "styles/metadata-common.less",
             "styles/dialogs/about-dialog.less",
             "styles/dialogs/store-data-dialog.less",
             "styles/dialogs/metadata-form-dialog.less",
