@@ -25,7 +25,7 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.FDPConnectionsResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.config.FDPConnectionsResponse;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 
 import javax.servlet.http.HttpServletRequest;

@@ -20,27 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response;
+package solutions.fairdata.openrefine.metadata.commands;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionDetailsDTO;
+import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class FDPConnectionsResponse {
+public class SettingsCommand extends Command {
 
-    private String status;
-    private List<FDPConnectionDetailsDTO> fdpConnections;
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Writer w = CommandUtils.prepareWriter(response);
 
-    public FDPConnectionsResponse(List<FDPConnectionDetailsDTO> fdpConnections) {
-        this.status = "ok";
-        this.fdpConnections = fdpConnections;
+        try {
+            CommandUtils.objectMapper.writeValue(w, new SettingsResponse(MetadataModuleImpl.getInstance().getSettings()));
+        } catch (Exception e) {
+            logger.error("Error while getting Settings");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
+        } finally {
+            w.flush();
+            w.close();
+        }
     }
 }

@@ -52,6 +52,8 @@ public class AuthCommand extends Command {
                 authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
                 authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
                 fdpUri = fdpConnectionConfigDTO.getBaseURI();
+            } else if (authRequest.isCustomMode() && !MetadataModuleImpl.getInstance().getSettings().getAllowCustomFDP()) {
+                throw new IOException("Custom FDP connection is not allowed!");
             }
 
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);

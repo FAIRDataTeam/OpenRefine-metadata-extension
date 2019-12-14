@@ -86,7 +86,7 @@ public class StoreDataCommand extends Command {
 
         String defaultFilename = project.getMetadata().getName().replaceAll("\\W+", "_");
         String defaultBaseURI = "http://" + request.getServerName() + "/" + defaultFilename;
-        System.out.println(defaultBaseURI);
+
         StoreDataInfoResponse storeDataInfoResponse = new StoreDataInfoResponse(
                 new ArrayList<>(formats.values()),
                 new ArrayList<>(StorageRegistryUtil.getStorages().stream().map(Storage::getStorageDTO).map(StorageDTO::toInfo).collect(Collectors.toList()))

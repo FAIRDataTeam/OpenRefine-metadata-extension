@@ -36,6 +36,10 @@ class MetadataApiClient {
         );
     }
 
+    getSettings(callbacks) {
+        this._ajaxGeneric("settings","GET", {}, callbacks, []);
+    }
+
     getFDPConnections(callbacks, errorCallbacks) {
         this._ajaxGeneric("fdp-connections", "GET", {}, callbacks, errorCallbacks);
     }

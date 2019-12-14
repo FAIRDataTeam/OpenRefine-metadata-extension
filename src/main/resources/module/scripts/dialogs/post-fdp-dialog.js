@@ -16,12 +16,20 @@ class PostFdpDialog {
             distributions: new Map()
         };
         this.newlyCreatedIRIs = new Set();
+        this.settings = {};
 
         this.initBasicTexts();
         this.resetDefault();
 
-        this.bindActions();
-        this.prepareConnections();
+        this.elements.dialogBody.addClass("hidden");
+        this.apiClient.getSettings([
+            (result) => {
+                this.settings = new Map(Object.entries(result.settings));
+                this.bindActions();
+                this.prepareConnections();
+                this.elements.dialogBody.removeClass("hidden");
+            }
+        ]);
     }
 
     launch() {
@@ -181,7 +189,9 @@ class PostFdpDialog {
             .text($.i18n("post-fdp-dialog/connections/custom-option"));
         this.elements.fdpConnectionSelect.empty();
         this.elements.fdpConnectionSelect.append(defaultOption);
-        this.elements.fdpConnectionSelect.append(customOption);
+        if (!this.settings.has("allowCustomFDP") || this.settings.get("allowCustomFDP") === true) {
+            this.elements.fdpConnectionSelect.append(customOption);
+        }
     }
 
     customFDPOnly() {

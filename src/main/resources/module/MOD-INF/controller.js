@@ -9,6 +9,7 @@ function init() {
     const MetadataCommands = Packages.solutions.fairdata.openrefine.metadata.commands;
 
     // Commands
+    RefineServlet.registerCommand(module, "settings", new MetadataCommands.SettingsCommand());
     RefineServlet.registerCommand(module, "fdp-connections", new MetadataCommands.FDPConnectionsCommand());
     RefineServlet.registerCommand(module, "fdp-auth", new MetadataCommands.AuthCommand());
     RefineServlet.registerCommand(module, "fdp-dashboard", new MetadataCommands.DashboardCommand());
