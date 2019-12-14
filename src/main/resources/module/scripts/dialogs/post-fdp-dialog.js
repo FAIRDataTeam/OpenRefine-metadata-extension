@@ -20,8 +20,8 @@ class PostFdpDialog {
         this.initBasicTexts();
         this.resetDefault();
 
-        // TODO: fetch FDP connections and allow people to use them
         this.bindActions();
+        this.prepareConnections();
     }
 
     launch() {
@@ -41,16 +41,36 @@ class PostFdpDialog {
         elmts.closeButton.click(() => { self.dismiss(); });
 
         elmts.connectButton.click(() => {
-            const fdpUri = elmts.baseURI.val();
-            const email = elmts.email.val();
-            const password = elmts.password.val();
+            const fdpConnection = elmts.fdpConnectionSelect.val();
 
             self.resetDefault();
-            self.apiClient.connectFDP(
-                fdpUri, email, password,
-                [this.callbackFDPConnected(), this.callbackErrorResponse()],
-                [this.callbackGeneralError()]
-            );
+
+            if (fdpConnection === "custom") {
+                const fdpUri = elmts.baseURI.val();
+                const email = elmts.email.val();
+                const password = elmts.password.val();
+
+                self.apiClient.connectCustomFDP(
+                    fdpUri, email, password,
+                    [this.callbackFDPConnected(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
+            } else if (Number.isInteger(Number.parseInt(fdpConnection))) {
+                self.apiClient.connectPreConfiguredFDP(
+                    Number.parseInt(fdpConnection),
+                    [this.callbackFDPConnected(), this.callbackErrorResponse()],
+                    [this.callbackGeneralError()]
+                );
+            }
+        });
+
+        elmts.fdpConnectionSelect.on("change", () => {
+            this.resetDefault();
+            if (elmts.fdpConnectionSelect.val() === "custom") {
+                elmts.fdpCustomForm.removeClass("hidden");
+            } else {
+                elmts.fdpCustomForm.addClass("hidden");
+            }
         });
 
         elmts.catalogSelect.on("change", () => {
@@ -133,6 +153,54 @@ class PostFdpDialog {
     initBasicTexts() {
         this.frame.i18n();
         this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
+    }
+
+    // pre-configured connections
+    prepareConnections() {
+        this.apiClient.getFDPConnections(
+            [
+                (result) => {
+                    if (result.status === "ok" && result.fdpConnections.length > 0) {
+                        this.showFDPConnections(result.fdpConnections);
+                    } else {
+                        this.customFDPOnly();
+                    }
+                }
+            ],
+            [ () => { this.customFDPOnly(); } ]
+        );
+    }
+
+    prepareFDPConnectionSelect() {
+        const defaultOption = $("<option>")
+            .prop("selected", true)
+            .prop("disabled", true)
+            .text($.i18n("post-fdp-dialog/connections/default-option"));
+        const customOption = $("<option>")
+            .attr("value", "custom")
+            .text($.i18n("post-fdp-dialog/connections/custom-option"));
+        this.elements.fdpConnectionSelect.empty();
+        this.elements.fdpConnectionSelect.append(defaultOption);
+        this.elements.fdpConnectionSelect.append(customOption);
+    }
+
+    customFDPOnly() {
+        this.prepareFDPConnectionSelect();
+        this.elements.fdpCustomSelectForm.addClass("hidden");
+        this.elements.fdpCustomForm.removeClass("hidden");
+        this.elements.fdpConnectionSelect.val("custom");
+    }
+
+    showFDPConnections(fdpConnections) {
+        this.prepareFDPConnectionSelect();
+        this.elements.fdpCustomSelectForm.removeClass("hidden");
+        this.elements.fdpCustomForm.addClass("hidden");
+
+        fdpConnections.forEach((connection, index) => {
+            this.elements.fdpConnectionSelect.append(
+                $("<option>").val(index).text(`${connection.name} @ ${connection.baseURI}`)
+            );
+        });
     }
 
     // resetting

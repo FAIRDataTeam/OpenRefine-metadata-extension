@@ -26,13 +26,14 @@ import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.FDPConnectionsResponse;
-import solutions.fairdata.openrefine.metadata.dto.FDPConnectionConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FDPConnectionsCommand extends Command {
 
@@ -41,7 +42,7 @@ public class FDPConnectionsCommand extends Command {
 
         try {
             List<FDPConnectionConfigDTO> fdpConnections = MetadataModuleImpl.getInstance().getFdpConnections();
-            CommandUtils.objectMapper.writeValue(w, new FDPConnectionsResponse(fdpConnections));
+            CommandUtils.objectMapper.writeValue(w, new FDPConnectionsResponse(fdpConnections.stream().map(FDPConnectionConfigDTO::toDetails).collect(Collectors.toList())));
         } catch (Exception e) {
             logger.error("Error while processing FDP Connections config");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));

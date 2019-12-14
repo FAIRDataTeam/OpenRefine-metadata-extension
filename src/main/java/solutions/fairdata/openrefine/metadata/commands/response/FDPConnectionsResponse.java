@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.FDPConnectionConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionDetailsDTO;
 
 import java.util.List;
 
@@ -37,9 +37,9 @@ import java.util.List;
 public class FDPConnectionsResponse {
 
     private String status;
-    private List<FDPConnectionConfigDTO> fdpConnections;
+    private List<FDPConnectionDetailsDTO> fdpConnections;
 
-    public FDPConnectionsResponse(List<FDPConnectionConfigDTO> fdpConnections) {
+    public FDPConnectionsResponse(List<FDPConnectionDetailsDTO> fdpConnections) {
         this.status = "ok";
         this.fdpConnections = fdpConnections;
     }

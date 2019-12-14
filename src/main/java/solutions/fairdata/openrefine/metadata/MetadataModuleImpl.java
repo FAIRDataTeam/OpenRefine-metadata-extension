@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import solutions.fairdata.openrefine.metadata.dto.FDPConnectionConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
@@ -44,6 +44,8 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static final String USER_AGENT = "OpenRefine/metadata";
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
+    private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
+
     private static MetadataModuleImpl instance;
 
     private static void setInstance(MetadataModuleImpl metadataModule) {
@@ -53,8 +55,6 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static MetadataModuleImpl getInstance() {
         return instance;
     }
-
-    private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
 
     @Override
     public void init(ServletConfig config) throws Exception {

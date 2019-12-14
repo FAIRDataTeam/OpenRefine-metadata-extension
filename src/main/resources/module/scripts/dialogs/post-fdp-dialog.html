@@ -8,18 +8,24 @@
             <p bind="descriptionText"></p>
             <form id="fdp-post-form" onsubmit="return false;" bind="fdpPostForm" autocomplete="on">
                 <div id="fdp-group">
-                    <div id="uri-group">
-                        <label for="baseURI" data-i18n="post-fdp-dialog/label-uri"></label>
-                        <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" value="http://localhost:8080" />
+                    <div id="fdp-connection-group" bind="fdpCustomSelectForm">
+                        <label for="fdp-connection-select">FDP Connection</label>
+                        <select id="fdp-connection-select" bind="fdpConnectionSelect" required></select>
                     </div>
-                    <div id="credentials-group">
-                        <div id="email-group">
-                            <label for="email" data-i18n="post-fdp-dialog/label-email"></label>
-                            <input type="email" name="email" id="email" bind="email" value="albert.einstein@example.com" />
+                    <div id="fdp-custom" bind="fdpCustomForm">
+                        <div id="uri-group">
+                            <label for="baseURI" data-i18n="post-fdp-dialog/label-uri"></label>
+                            <input type="text" name="baseURI" id="baseURI" bind="baseURI" class="base-uri" />
                         </div>
-                        <div id="password-group">
-                            <label for="password" data-i18n="post-fdp-dialog/label-password"></label>
-                            <input type="password" name="password" id="password" bind="password" value="password" />
+                        <div id="credentials-group">
+                            <div id="email-group">
+                                <label for="email" data-i18n="post-fdp-dialog/label-email"></label>
+                                <input type="email" name="email" id="email" bind="email" />
+                            </div>
+                            <div id="password-group">
+                                <label for="password" data-i18n="post-fdp-dialog/label-password"></label>
+                                <input type="password" name="password" id="password" bind="password" />
+                            </div>
                         </div>
                     </div>
                 </div>

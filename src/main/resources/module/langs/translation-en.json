@@ -19,6 +19,8 @@
   "post-fdp-dialog/layers/dataset-add": "+ Add dataset",
   "post-fdp-dialog/layers/distribution": "Distribution",
   "post-fdp-dialog/layers/distribution-add": "+ Add distribution",
+  "post-fdp-dialog/connections/default-option": "-- select FDP connection --",
+  "post-fdp-dialog/connections/custom-option": "Custom FDP connection",
   "auth-fdp-command/error": "Incorrect authentication credentials.",
   "connect-fdp-command/error": "Cannot connect to entered FAIR Data Point.",
   "connect-fdp-command/success": "Successfully connected to FAIR Data Point.",

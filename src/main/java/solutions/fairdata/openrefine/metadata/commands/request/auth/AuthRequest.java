@@ -34,6 +34,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthRequest {
+    public static final String MODE_CUSTOM = "custom";
+    public static final String MODE_CONFIGURED = "configured";
+
+    private String mode;
+    private Integer configId;
     private String fdpUri;
     private AuthDTO authDTO;
+
+    public boolean isCustomMode() {
+        return MODE_CUSTOM.equalsIgnoreCase(getMode());
+    }
+
+    public boolean isConfiguredMode() {
+        return MODE_CONFIGURED.equalsIgnoreCase(getMode());
+    }
 }

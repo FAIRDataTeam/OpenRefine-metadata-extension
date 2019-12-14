@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto;
+package solutions.fairdata.openrefine.metadata.dto.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,9 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FDPConnectionConfigDTO {
+public class FDPConnectionDetailsDTO {
     private String name;
     private String baseURI;
-    private String email;
-    private String password;
 }
