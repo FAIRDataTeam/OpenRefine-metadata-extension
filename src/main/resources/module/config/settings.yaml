@@ -1,0 +1,5 @@
+# Basic settings configuration for metadata extension
+
+# - Allow users to select "Custom FDP" connection and set baseURI, email, and
+#   password on their own (not just predefined from fdp-connections.yaml)
+allowCustomFDP: true
