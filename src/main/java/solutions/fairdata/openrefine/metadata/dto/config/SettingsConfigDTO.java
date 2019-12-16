@@ -27,14 +27,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class SettingsConfigDTO {
     private Boolean allowCustomFDP;
+    private HashMap<String, String> metadata;
 
     public static SettingsConfigDTO getDefaultSettings() {
-        return new SettingsConfigDTO(true);
+        return new SettingsConfigDTO(true, null);
     }
 }

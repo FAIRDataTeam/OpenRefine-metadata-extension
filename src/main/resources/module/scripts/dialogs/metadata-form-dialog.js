@@ -1,23 +1,23 @@
 /* global $, DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
 
 class MetadataFormDialog {
-    constructor(type, specs, callbackFn, prefill) {
+    constructor(specs, callbackFn, prefill) {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
 
-        this.type = type;
+        this.type = specs.id;
         this.specs = specs; // TODO: in the future, get specs from FDP API (client prepared)
         this.callbackFn = callbackFn;
         this.apiClient = new MetadataApiClient();
 
         this.datalists = new Set();
 
-        const prefillObj = prefill || {};
+        const prefillMap = prefill || new Map();
 
         this.initBasicTexts();
         this.createForm();
-        this.fillForm(prefillObj);
+        this.fillForm(prefillMap);
         this.bindActions();
     }
 
@@ -148,10 +148,10 @@ class MetadataFormDialog {
         this.elements.errorMessage.append($("<span>").addClass("fdp-message").text(mainMsg));
     }
 
-    fillForm(obj) {
+    fillForm(prefill) {
         const elmts = this.elements;
-        Object.entries(obj).forEach(([fieldId, value]) => {
-            const field = elmts.metadataForm.find(`#${fieldId}`);
+        prefill.forEach((value, key) => {
+            const field = elmts.metadataForm.find(`#${key}`);
             if (field) {
                 field.val(value);
             }
@@ -421,8 +421,8 @@ class MetadataFormDialog {
     }
 
     // launcher
-    static createAndLaunch(type, specs, callbackFn, prefill) {
-        const dialog = new MetadataFormDialog(type, specs, callbackFn, prefill);
+    static createAndLaunch(specs, callbackFn, prefill) {
+        const dialog = new MetadataFormDialog(specs, callbackFn, prefill);
         dialog.launch();
     }
 }

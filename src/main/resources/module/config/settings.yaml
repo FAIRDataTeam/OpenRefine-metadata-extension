@@ -3,3 +3,10 @@
 # - Allow users to select "Custom FDP" connection and set baseURI, email, and
 #   password on their own (not just predefined from fdp-connections.yaml)
 allowCustomFDP: true
+
+# - You may pre-configure some metadata to appear prefilled in the metadata forms.
+#   The keys should correspond with metadata form specs
+metadata:
+  language: http://id.loc.gov/vocabulary/iso639-1/en
+  license: http://purl.org/NET/rdflicense/cc-by3.0
+  publisher: http://publisher

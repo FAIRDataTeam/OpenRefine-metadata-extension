@@ -16,7 +16,8 @@ class PostFdpDialog {
             distributions: new Map()
         };
         this.newlyCreatedIRIs = new Set();
-        this.settings = {};
+        this.settings = new Map();
+        this.prefill = new Map();
 
         this.initBasicTexts();
         this.resetDefault();
@@ -25,6 +26,9 @@ class PostFdpDialog {
         this.apiClient.getSettings([
             (result) => {
                 this.settings = new Map(Object.entries(result.settings));
+                if (this.settings.has("metadata") && this.settings.get("metadata") != null) {
+                    this.prefill = new Map(Object.entries(this.settings.get("metadata")));
+                }
                 this.bindActions();
                 this.prepareConnections();
                 this.elements.dialogBody.removeClass("hidden");
@@ -111,7 +115,9 @@ class PostFdpDialog {
         });
 
         elmts.catalogAddButton.click(() => {
-            MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentFDP", elmts.baseURI.val());
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.catalog,
                 (catalog, formDialog) => {
                     this.apiClient.postCatalog(
                         catalog,
@@ -119,15 +125,15 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentFDP: elmts.baseURI.val()
-                }
+                prefill
             );
         });
 
         elmts.datasetAddButton.click(() => {
             const catalogUri = this.elements.catalogSelect.val();
-            MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentCatalog", catalogUri);
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.dataset,
                 (dataset, formDialog) => {
                     this.apiClient.postDataset(
                         dataset,
@@ -135,15 +141,15 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentCatalog: catalogUri
-                }
+                prefill
             );
         });
 
         elmts.distributionAddButton.click(() => {
             const datasetUri = elmts.datasetSelect.val();
-            MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentDataset", datasetUri);
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.distribution,
                 (distribution, formDialog) => {
                     this.apiClient.postDistribution(
                         distribution,
@@ -151,9 +157,7 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentDataset: datasetUri
-                }
+                prefill
             );
         });
     }
