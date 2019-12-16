@@ -8,6 +8,11 @@
   email: albert.einstein@example.com
   password: password
   preselected: true
+  metadata:
+    language: http://id.loc.gov/vocabulary/iso639-1/en
+    license: http://purl.org/NET/rdflicense/BSD2.0
+    publisher: http://publisher-marek
+    publisherName: Marek
 - name: 'My local FDP #01 (Nikola Tesla)'
   baseURI: http://localhost
   email: nikola.tesla@example.com

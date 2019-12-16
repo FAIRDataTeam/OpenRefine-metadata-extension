@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -37,8 +39,9 @@ public class FDPConnectionConfigDTO {
     private String email;
     private String password;
     private Boolean preselected;
+    private HashMap<String, String> metadata;
 
     public FDPConnectionDetailsDTO toDetails() {
-        return new FDPConnectionDetailsDTO(getName(), getBaseURI(), getPreselected());
+        return new FDPConnectionDetailsDTO(getName(), getBaseURI(), getPreselected(), metadata);
     }
 }

@@ -18,6 +18,7 @@ class PostFdpDialog {
         this.newlyCreatedIRIs = new Set();
         this.settings = new Map();
         this.prefill = new Map();
+        this.fdpConnections = [];
 
         this.initBasicTexts();
         this.resetDefault();
@@ -26,9 +27,7 @@ class PostFdpDialog {
         this.apiClient.getSettings([
             (result) => {
                 this.settings = new Map(Object.entries(result.settings));
-                if (this.settings.has("metadata") && this.settings.get("metadata") != null) {
-                    this.prefill = new Map(Object.entries(this.settings.get("metadata")));
-                }
+                this.preparePrefill();
                 this.bindActions();
                 this.prepareConnections();
                 this.elements.dialogBody.removeClass("hidden");
@@ -78,9 +77,19 @@ class PostFdpDialog {
 
         elmts.fdpConnectionSelect.on("change", () => {
             this.resetDefault();
-            if (elmts.fdpConnectionSelect.val() === "custom") {
+            const fdpConnectionId = elmts.fdpConnectionSelect.val();
+            if (fdpConnectionId === "custom") {
                 elmts.fdpCustomForm.removeClass("hidden");
             } else {
+                this.preparePrefill();
+                const prefillConnection = this.fdpConnections[fdpConnectionId].metadata;
+                if (prefillConnection) {
+                    const xmap = new Map(Object.entries(prefillConnection));
+                    xmap.forEach((value, key) => {
+                        this.prefill.set(key, value);
+                    });
+                }
+
                 elmts.fdpCustomForm.addClass("hidden");
             }
         });
@@ -167,13 +176,20 @@ class PostFdpDialog {
         this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
     }
 
+    preparePrefill() {
+        if (this.settings.has("metadata") && this.settings.get("metadata") != null) {
+            this.prefill = new Map(Object.entries(this.settings.get("metadata")));
+        }
+    }
+
     // pre-configured connections
     prepareConnections() {
         this.apiClient.getFDPConnections(
             [
                 (result) => {
                     if (result.status === "ok" && result.fdpConnections.length > 0) {
-                        this.showFDPConnections(result.fdpConnections);
+                        this.fdpConnections = result.fdpConnections;
+                        this.showFDPConnections();
                     } else {
                         this.customFDPOnly();
                     }
@@ -205,13 +221,13 @@ class PostFdpDialog {
         this.elements.fdpConnectionSelect.val("custom");
     }
 
-    showFDPConnections(fdpConnections) {
+    showFDPConnections() {
         this.prepareFDPConnectionSelect();
         this.elements.fdpCustomSelectForm.removeClass("hidden");
         this.elements.fdpCustomForm.addClass("hidden");
 
         let preselect = null;
-        fdpConnections.forEach((connection, index) => {
+        this.fdpConnections.forEach((connection, index) => {
             this.elements.fdpConnectionSelect.append(
                 $("<option>")
                     .val(index)
@@ -220,6 +236,7 @@ class PostFdpDialog {
             if (preselect === null && connection.preselected === true) {
                 preselect = index;
                 this.elements.fdpConnectionSelect.val(index);
+                this.elements.fdpConnectionSelect.trigger("change");
             }
         });
     }
