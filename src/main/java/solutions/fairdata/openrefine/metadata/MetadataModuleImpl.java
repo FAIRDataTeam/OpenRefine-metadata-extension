@@ -28,7 +28,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
@@ -36,7 +35,6 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
@@ -47,8 +45,8 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static final ObjectMapper objectMapper = new ObjectMapper();
     public static final ObjectMapper yamlObjectMapper = new ObjectMapper(new YAMLFactory());
 
-    private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
     private SettingsConfigDTO settings = SettingsConfigDTO.getDefaultSettings();
+    private SettingsConfigDTO settingsDetails = settings.copyDetails();
 
     private static MetadataModuleImpl instance;
 
@@ -71,12 +69,12 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         logger.trace("Metadata Extension module has been initialized");
     }
 
-    public List<FDPConnectionConfigDTO> getFdpConnections() {
-        return fdpConnections;
-    }
-
     public SettingsConfigDTO getSettings() {
         return settings;
+    }
+
+    public SettingsConfigDTO getSettingsDetails() {
+        return settingsDetails;
     }
 
     private void readConfig() {
@@ -84,23 +82,13 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
         readSettingsConfig(new File(configFolderFile, "settings.yaml"));
         readStorageConfig(new File(configFolderFile, "storages.yaml"));
-        readFDPConnectionsConfig(new File(configFolderFile, "fdp-connections.yaml"));
     }
 
     private void readSettingsConfig(File file) {
         try {
             settings = yamlObjectMapper.readValue(file, SettingsConfigDTO.class);
+            settingsDetails = settings.copyDetails();
             logger.trace("Loaded Settings configuration from file");
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.warn("Could not load FDP connections configuration - skipping");
-        }
-    }
-
-    private void readFDPConnectionsConfig(File file) {
-        try {
-            fdpConnections = yamlObjectMapper.readValue(file, new TypeReference<List<FDPConnectionConfigDTO>>(){});
-            logger.trace("Loaded FDP connections configuration with " + fdpConnections.size() + " items");
         } catch (IOException e) {
             e.printStackTrace();
             logger.warn("Could not load FDP connections configuration - skipping");

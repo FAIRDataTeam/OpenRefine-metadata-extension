@@ -38,7 +38,7 @@ public class SettingsCommand extends Command {
         Writer w = CommandUtils.prepareWriter(response);
 
         try {
-            CommandUtils.objectMapper.writeValue(w, new SettingsResponse(MetadataModuleImpl.getInstance().getSettings()));
+            CommandUtils.objectMapper.writeValue(w, new SettingsResponse(MetadataModuleImpl.getInstance().getSettingsDetails()));
         } catch (Exception e) {
             logger.error("Error while getting Settings");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));

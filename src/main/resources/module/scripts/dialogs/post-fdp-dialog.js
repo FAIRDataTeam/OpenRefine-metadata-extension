@@ -16,7 +16,9 @@ class PostFdpDialog {
             distributions: new Map()
         };
         this.newlyCreatedIRIs = new Set();
-        this.settings = {};
+        this.settings = new Map();
+        this.prefill = new Map();
+        this.fdpConnections = [];
 
         this.initBasicTexts();
         this.resetDefault();
@@ -25,6 +27,7 @@ class PostFdpDialog {
         this.apiClient.getSettings([
             (result) => {
                 this.settings = new Map(Object.entries(result.settings));
+                this.preparePrefill();
                 this.bindActions();
                 this.prepareConnections();
                 this.elements.dialogBody.removeClass("hidden");
@@ -74,9 +77,19 @@ class PostFdpDialog {
 
         elmts.fdpConnectionSelect.on("change", () => {
             this.resetDefault();
-            if (elmts.fdpConnectionSelect.val() === "custom") {
+            const fdpConnectionId = elmts.fdpConnectionSelect.val();
+            if (fdpConnectionId === "custom") {
                 elmts.fdpCustomForm.removeClass("hidden");
             } else {
+                this.preparePrefill();
+                const prefillConnection = this.fdpConnections[Number.parseInt(fdpConnectionId)].metadata;
+                if (prefillConnection) {
+                    const xmap = new Map(Object.entries(prefillConnection));
+                    xmap.forEach((value, key) => {
+                        this.prefill.set(key, value);
+                    });
+                }
+
                 elmts.fdpCustomForm.addClass("hidden");
             }
         });
@@ -111,7 +124,9 @@ class PostFdpDialog {
         });
 
         elmts.catalogAddButton.click(() => {
-            MetadataFormDialog.createAndLaunch("catalog", MetadataSpecs.catalog,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentFDP", elmts.baseURI.val());
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.catalog,
                 (catalog, formDialog) => {
                     this.apiClient.postCatalog(
                         catalog,
@@ -119,15 +134,15 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentFDP: elmts.baseURI.val()
-                }
+                prefill
             );
         });
 
         elmts.datasetAddButton.click(() => {
             const catalogUri = this.elements.catalogSelect.val();
-            MetadataFormDialog.createAndLaunch("dataset", MetadataSpecs.dataset,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentCatalog", catalogUri);
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.dataset,
                 (dataset, formDialog) => {
                     this.apiClient.postDataset(
                         dataset,
@@ -135,15 +150,15 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentCatalog: catalogUri
-                }
+                prefill
             );
         });
 
         elmts.distributionAddButton.click(() => {
             const datasetUri = elmts.datasetSelect.val();
-            MetadataFormDialog.createAndLaunch("distribution", MetadataSpecs.distribution,
+            let prefill = new Map(this.prefill);
+            prefill.set("parentDataset", datasetUri);
+            MetadataFormDialog.createAndLaunch(MetadataSpecs.distribution,
                 (distribution, formDialog) => {
                     this.apiClient.postDistribution(
                         distribution,
@@ -151,9 +166,7 @@ class PostFdpDialog {
                         [this.callbackPostError(formDialog)]
                     );
                 },
-                {
-                    parentDataset: datasetUri
-                }
+                prefill
             );
         });
     }
@@ -163,20 +176,18 @@ class PostFdpDialog {
         this.elements.baseURI.attr("title", $.i18n("post-fdp-dialog/description"));
     }
 
+    preparePrefill() {
+        if (this.settings.has("metadata") && this.settings.get("metadata") != null) {
+            this.prefill = new Map(Object.entries(this.settings.get("metadata")));
+        }
+    }
+
     // pre-configured connections
     prepareConnections() {
-        this.apiClient.getFDPConnections(
-            [
-                (result) => {
-                    if (result.status === "ok" && result.fdpConnections.length > 0) {
-                        this.showFDPConnections(result.fdpConnections);
-                    } else {
-                        this.customFDPOnly();
-                    }
-                }
-            ],
-            [ () => { this.customFDPOnly(); } ]
-        );
+        if (this.settings.has("fdpConnections")) {
+            this.fdpConnections = this.settings.get("fdpConnections") || [];
+        }
+        this.showFDPConnections();
     }
 
     prepareFDPConnectionSelect() {
@@ -201,13 +212,13 @@ class PostFdpDialog {
         this.elements.fdpConnectionSelect.val("custom");
     }
 
-    showFDPConnections(fdpConnections) {
+    showFDPConnections() {
         this.prepareFDPConnectionSelect();
         this.elements.fdpCustomSelectForm.removeClass("hidden");
         this.elements.fdpCustomForm.addClass("hidden");
 
         let preselect = null;
-        fdpConnections.forEach((connection, index) => {
+        this.fdpConnections.forEach((connection, index) => {
             this.elements.fdpConnectionSelect.append(
                 $("<option>")
                     .val(index)
@@ -216,8 +227,12 @@ class PostFdpDialog {
             if (preselect === null && connection.preselected === true) {
                 preselect = index;
                 this.elements.fdpConnectionSelect.val(index);
+                this.elements.fdpConnectionSelect.trigger("change");
             }
         });
+        if (this.fdpConnections.length === 0) {
+            this.customFDPOnly();
+        }
     }
 
     // resetting
