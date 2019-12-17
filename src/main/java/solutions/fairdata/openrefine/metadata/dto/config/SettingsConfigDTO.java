@@ -28,6 +28,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,9 +38,22 @@ import java.util.HashMap;
 @Setter
 public class SettingsConfigDTO {
     private Boolean allowCustomFDP;
-    private HashMap<String, String> metadata;
+    private HashMap<String, String> metadata = new HashMap<>();
+    private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
+
+    SettingsConfigDTO(Boolean allowCustomFDP) {
+        this.allowCustomFDP = allowCustomFDP;
+    }
 
     public static SettingsConfigDTO getDefaultSettings() {
-        return new SettingsConfigDTO(true, null);
+        return new SettingsConfigDTO(true);
+    }
+
+    public SettingsConfigDTO copyDetails() {
+        SettingsConfigDTO details = new SettingsConfigDTO();
+        details.setAllowCustomFDP(getAllowCustomFDP());
+        details.setMetadata(getMetadata());
+        details.setFdpConnections(getFdpConnections().stream().map(FDPConnectionConfigDTO::copyDetails).collect(Collectors.toList()));
+        return details;
     }
 }

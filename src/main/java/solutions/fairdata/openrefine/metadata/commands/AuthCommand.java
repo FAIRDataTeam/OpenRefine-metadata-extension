@@ -48,7 +48,7 @@ public class AuthCommand extends Command {
             AuthDTO authDTO = authRequest.getAuthDTO();
             String fdpUri = authRequest.getFdpUri();
             if (authRequest.isConfiguredMode()) {
-                FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getFdpConnections().get(authRequest.getConfigId());
+                FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getSettings().getFdpConnections().get(authRequest.getConfigId());
                 authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
                 authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
                 fdpUri = fdpConnectionConfigDTO.getBaseURI();

@@ -39,9 +39,14 @@ public class FDPConnectionConfigDTO {
     private String email;
     private String password;
     private Boolean preselected;
-    private HashMap<String, String> metadata;
+    private HashMap<String, String> metadata = new HashMap<>();
 
-    public FDPConnectionDetailsDTO toDetails() {
-        return new FDPConnectionDetailsDTO(getName(), getBaseURI(), getPreselected(), metadata);
+    public FDPConnectionConfigDTO copyDetails() {
+        FDPConnectionConfigDTO details = new FDPConnectionConfigDTO();
+        details.setName(getName());
+        details.setBaseURI(getBaseURI());
+        details.setPreselected(getPreselected());
+        details.setMetadata(getMetadata());
+        return details;
     }
 }

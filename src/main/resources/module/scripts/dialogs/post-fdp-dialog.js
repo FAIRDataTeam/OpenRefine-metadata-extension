@@ -184,19 +184,10 @@ class PostFdpDialog {
 
     // pre-configured connections
     prepareConnections() {
-        this.apiClient.getFDPConnections(
-            [
-                (result) => {
-                    if (result.status === "ok" && result.fdpConnections.length > 0) {
-                        this.fdpConnections = result.fdpConnections;
-                        this.showFDPConnections();
-                    } else {
-                        this.customFDPOnly();
-                    }
-                }
-            ],
-            [ () => { this.customFDPOnly(); } ]
-        );
+        if (this.settings.has("fdpConnections")) {
+            this.fdpConnections = this.settings.get("fdpConnections") || [];
+        }
+        this.showFDPConnections();
     }
 
     prepareFDPConnectionSelect() {
@@ -239,6 +230,9 @@ class PostFdpDialog {
                 this.elements.fdpConnectionSelect.trigger("change");
             }
         });
+        if (this.fdpConnections.length === 0) {
+            this.customFDPOnly();
+        }
     }
 
     // resetting
