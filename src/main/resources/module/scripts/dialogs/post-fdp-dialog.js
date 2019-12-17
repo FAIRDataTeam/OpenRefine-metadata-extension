@@ -82,7 +82,7 @@ class PostFdpDialog {
                 elmts.fdpCustomForm.removeClass("hidden");
             } else {
                 this.preparePrefill();
-                const prefillConnection = this.fdpConnections[fdpConnectionId].metadata;
+                const prefillConnection = this.fdpConnections[Number.parseInt(fdpConnectionId)].metadata;
                 if (prefillConnection) {
                     const xmap = new Map(Object.entries(prefillConnection));
                     xmap.forEach((value, key) => {

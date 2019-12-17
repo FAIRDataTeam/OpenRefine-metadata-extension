@@ -28,7 +28,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
@@ -36,7 +35,6 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
