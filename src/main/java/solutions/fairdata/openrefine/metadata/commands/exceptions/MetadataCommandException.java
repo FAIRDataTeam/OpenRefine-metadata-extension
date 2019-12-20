@@ -22,6 +22,9 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.exceptions;
 
+/**
+ * Custom exception for Metadata extension
+ */
 public class MetadataCommandException extends Exception {
     public MetadataCommandException(String message) {
         super(message);

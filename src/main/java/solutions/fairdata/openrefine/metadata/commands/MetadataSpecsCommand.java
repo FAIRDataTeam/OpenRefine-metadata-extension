@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Command for getting Metadata Specs of forms
+ */
 public class MetadataSpecsCommand extends Command {
 
     @Override

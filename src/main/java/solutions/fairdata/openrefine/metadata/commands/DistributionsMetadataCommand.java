@@ -37,6 +37,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
+/**
+ * Command for handling Distribution metadata layer
+ *
+ * It can list all visible distribution (GET) or create a new distribution (POST)
+ * in Dataset (of some Catalog) specified by its URI.
+ */
 public class DistributionsMetadataCommand extends Command {
 
     @Override

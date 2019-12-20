@@ -22,6 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
+
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -32,6 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Command for getting the extension settings
+ */
 public class SettingsCommand extends Command {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

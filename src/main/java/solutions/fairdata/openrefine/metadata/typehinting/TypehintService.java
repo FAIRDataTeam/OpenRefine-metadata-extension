@@ -29,7 +29,17 @@ import java.util.List;
 
 public interface TypehintService {
 
+    /**
+     * Get typehints from the service based on query
+     *
+     * @param query query for filtering the typehints
+     * @return list of typehints according to the query
+     * @throws IOException in case of communication error
+     */
     List<TypehintDTO> getTypehints(String query) throws IOException;
 
+    /**
+     * @return typehints source name
+     */
     String getSource();
 }

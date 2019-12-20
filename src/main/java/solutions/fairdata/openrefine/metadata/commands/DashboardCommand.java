@@ -34,6 +34,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+/**
+ * Command for FAIR Data Point dashboard
+ *
+ * It can return dashboard for FDP specified by URI and user authenticated
+ * by the token.
+ */
 public class DashboardCommand extends Command {
 
     @Override

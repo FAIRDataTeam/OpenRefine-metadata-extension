@@ -37,6 +37,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Command handling POST request to authorize with selected FAIR Data Point
+ *
+ * If it uses "configured" mode, then the request comes only with id to local
+ * predefined FDP connections list from which URI, username, and password is used.
+ * Otherwise, the request must come with URI, username, and password entered by
+ * the user. Using FDP client, token is retrieved and returned in response together
+ * with the FDP URI.
+ */
 public class AuthCommand extends Command {
 
     @Override

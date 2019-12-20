@@ -37,6 +37,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
+/**
+ * Command for handling Dataset metadata layer
+ *
+ * It can list all visible dataset (GET) or create a new dataset (POST)
+ * in Catalog (of some FDP) specified by its URI.
+ */
 public class DatasetsMetadataCommand extends Command {
 
     @Override

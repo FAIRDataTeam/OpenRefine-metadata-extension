@@ -30,6 +30,9 @@ import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Simple utils for various commands
+ */
 public class CommandUtils {
 
     public static final ObjectMapper objectMapper = MetadataModuleImpl.objectMapper;

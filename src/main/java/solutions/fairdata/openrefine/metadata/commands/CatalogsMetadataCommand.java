@@ -37,6 +37,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
+/**
+ * Command for handling Catalog metadata layer
+ *
+ * It can list all visible catalogs (GET) or create a new catalog (POST)
+ * in FAIR Data Point specified by its URI.
+ */
 public class CatalogsMetadataCommand extends Command {
 
     @Override

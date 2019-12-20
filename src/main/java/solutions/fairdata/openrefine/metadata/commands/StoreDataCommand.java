@@ -49,6 +49,14 @@ import java.util.stream.Collectors;
 
 import static com.google.refine.commands.project.ExportRowsCommand.getRequestParameters;
 
+/**
+ * Command handling storing the FAIR data
+ *
+ * It holds the information about supported export formats. This information
+ * together with possible configured storages can be retrieved (GET). Then
+ * data/project can be stored using selected format to selected storage or
+ * returned in response for preview (POST).
+ */
 public class StoreDataCommand extends Command {
 
     private static HashMap<String, ExportFormatDTO> formats = new HashMap<>();
@@ -116,7 +124,7 @@ public class StoreDataCommand extends Command {
             else if (storage == null) {
                 throw new MetadataCommandException("store-data-dialog/error/unknown-storage");
             }
-            else if (!storage.allowsContentType(exporter.getContentType())) {
+            else if (storage.forbidsContentType(exporter.getContentType())) {
                 throw new MetadataCommandException("store-data-dialog/error/unsupported-type");
             }
 
