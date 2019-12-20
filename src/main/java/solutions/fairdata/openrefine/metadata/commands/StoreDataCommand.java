@@ -28,7 +28,6 @@ import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
-import com.google.refine.model.Project;
 import solutions.fairdata.openrefine.metadata.commands.exceptions.MetadataCommandException;
 import solutions.fairdata.openrefine.metadata.commands.request.storage.StoreDataRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -81,10 +80,9 @@ public class StoreDataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
-        Project project = getProject(request);
         updateFormats();
 
-        String defaultFilename = project.getMetadata().getName().replaceAll("\\W+", "_");
+        String defaultFilename = getProject(request).getMetadata().getName().replaceAll("\\W+", "_");
         String defaultBaseURI = "http://" + request.getServerName() + "/" + defaultFilename;
 
         StoreDataInfoResponse storeDataInfoResponse = new StoreDataInfoResponse(
@@ -105,12 +103,9 @@ public class StoreDataCommand extends Command {
         Writer w = CommandUtils.prepareWriter(response);
 
         try {
-            Project project = getProject(request);
-            Engine engine = getEngine(request, project);
+            Engine engine = getEngine(request, getProject(request));
             Properties params = getRequestParameters(request);
-            String defaultFilename = project.getMetadata().getName().replaceAll("\\W+", "_");
-
-            // TODO: rectify metadata
+            String defaultFilename = getProject(request).getMetadata().getName().replaceAll("\\W+", "_");
 
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
@@ -125,17 +120,16 @@ public class StoreDataCommand extends Command {
                 throw new MetadataCommandException("store-data-dialog/error/unsupported-type");
             }
 
-            // Ugly but that's OpenRefine ...
             try (
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)
             ) {
                 if (exporter instanceof WriterExporter) {
                     WriterExporter writerExporter = (WriterExporter) exporter;
-                    writerExporter.export(project, params, engine, writer);
+                    writerExporter.export(getProject(request), params, engine, writer);
                 } else if (exporter instanceof StreamExporter) {
                     StreamExporter streamExporter = (StreamExporter) exporter;
-                    streamExporter.export(project, params, engine, stream);
+                    streamExporter.export(getProject(request), params, engine, stream);
                 } else {
                     throw new MetadataCommandException("store-data-dialog/error/unusable-exporter");
                 }
