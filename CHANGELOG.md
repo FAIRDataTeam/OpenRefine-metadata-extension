@@ -1,0 +1,21 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+Initial version based on reproducing functionality of deprecated [FAIRifier](https://github.com/FAIRDataTeam/FAIRifier).
+
+### Added
+
+- Create metadata dialog that handles connection with a FAIR Data Point and allows metadata selection and creation
+  with possibility to predefine connections in the configuration
+- Metadata forms to create metadata in the selected FAIR Data Point, with typehints and ability to predefine value
+  in the configuration
+- Store data dialog that allows to export project in the selected format (using OpenRefine's exported) and send it
+  to the selected storage which are configured - currently supports: FTP, Virtuoso, and Triple Stores with HTTP API
+- About dialog with basic information about the extension and its compatibility
+- Report a bug link to create easily a GitHub issue
