@@ -80,7 +80,6 @@ public class TypehintsCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new TypehintsResponse(source, typehints));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error while preparing typehints of name: " + name + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {

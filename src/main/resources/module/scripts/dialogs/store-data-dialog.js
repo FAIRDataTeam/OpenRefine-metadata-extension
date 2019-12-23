@@ -47,46 +47,61 @@ class StoreDataDialog {
             metadata.set(key, value.val());
         });
 
-        return JSON.stringify({
+        return {
             mode,
             format: elmts.fileFormatSelect.val(),
             storage: elmts.storageSelect.val(),
             metadata: Object.fromEntries(metadata.entries())
-        });
+        };
+    }
+
+    validateStoreDataRequest(request) {
+        console.log(request);
+        if (request.format === null || request.storage === null) {
+            this.elements.errorMessage.text($.i18n("store-data-dialog/error/select-storage-format"));
+            return false;
+        }
+        return true;
+    }
+
+    sendStoreDataRequest(request, okCallback) {
+        this.elements.errorMessage.empty();
+        if (this.validateStoreDataRequest(request)) {
+            MetadataHelpers.ajax("store-data", "POST", JSON.stringify(request), (data) => {
+                if (!data) {
+                    this.elements.errorMessage.text($.i18n("store-data-dialog/error/cannot-export"));
+                } else if (data.status === "ok") {
+                    okCallback(data);
+                } else {
+                    this.elements.errorMessage.text($.i18n(data.message, data.exception));
+                }
+            });
+        }
     }
 
     bindActions() {
-        const self = this;
         const elmts = this.elements;
 
-        elmts.closeButton.click(() => { self.dismiss(); });
+        elmts.closeButton.click(() => { this.dismiss(); });
 
         elmts.previewButton.click(() => {
-            elmts.errorMessage.empty();
-            const storeDataRequest = this.prepareStoreDataRequest("preview");
-
-            MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
-                if (data.status === "ok") {
+            event.preventDefault();
+            this.sendStoreDataRequest(
+                this.prepareStoreDataRequest("preview"),
+                (data) => {
                     MetadataHelpers.download(data.data, data.filename, data.contentType);
-                } else {
-                    elmts.errorMessage.text($.i18n(data.message, data.exception));
                 }
-            });
+            );
         });
 
         elmts.storeButton.click((event) => {
-            elmts.errorMessage.empty();
             event.preventDefault();
-            const storeDataRequest = this.prepareStoreDataRequest("store");
-
-            MetadataHelpers.ajax("store-data", "POST", storeDataRequest, (data) => {
-                if (data.status === "ok") {
-                    self.storeCallback(data.url);
-                } else {
-                    elmts.errorMessage.text($.i18n(data.message, data.exception));
+            this.sendStoreDataRequest(
+                this.prepareStoreDataRequest("store"),
+                (data) => {
+                    this.storeCallback(data.url);
                 }
-
-            });
+            );
         });
 
         elmts.storageSelect.on("change", () => {

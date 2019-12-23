@@ -138,6 +138,8 @@
   "store-data-dialog/error/unsupported-type": "Unsupported content type for selected storage",
   "store-data-dialog/error/unusable-exporter": "Unusable exporter given by OpenRefine",
   "store-data-dialog/error/exporting": "Error while exporting to storage: \"$1\"",
+  "store-data-dialog/error/select-storage-format": "You must select the desired storage and format",
+  "store-data-dialog/error/cannot-export": "Currently cannot export data in selected format",
   "about-dialog/title": "About metadata extension",
   "about-dialog/name": "Name",
   "about-dialog/version": "Version",

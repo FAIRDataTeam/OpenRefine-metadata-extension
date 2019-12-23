@@ -90,7 +90,6 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
             settingsDetails = settings.copyDetails();
             logger.trace("Loaded Settings configuration from file");
         } catch (IOException e) {
-            e.printStackTrace();
             logger.warn("Could not load FDP connections configuration - skipping");
         }
     }
@@ -107,7 +106,6 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
             }
             logger.trace("Loaded storage configuration with " + configuredStorages.size() + " items");
         } catch (IOException e) {
-            e.printStackTrace();
             logger.warn("Could not load storages configuration - skipping");
         }
     }
