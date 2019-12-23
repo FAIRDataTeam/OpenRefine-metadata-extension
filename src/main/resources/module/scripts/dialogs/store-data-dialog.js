@@ -56,7 +56,6 @@ class StoreDataDialog {
     }
 
     validateStoreDataRequest(request) {
-        console.log(request);
         if (request.format === null || request.storage === null) {
             this.elements.errorMessage.text($.i18n("store-data-dialog/error/select-storage-format"));
             return false;

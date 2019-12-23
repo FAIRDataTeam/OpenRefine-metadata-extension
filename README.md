@@ -7,8 +7,7 @@
 [![Documentation](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/openrefine/usage.html)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aca649b193144fb68428ba3039a49ad5)](https://www.codacy.com/manual/MarekSuchanek/OpenRefine-metadata-extension?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FAIRDataTeam/OpenRefine-metadata-extension&amp;utm_campaign=Badge_Grade)
 
-
-[OpenRefine](http://openrefine.org) extension to support **FAIR Metadata**
+[OpenRefine](http://openrefine.org) extension to support **FAIR Metadata** with use of [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint)
 
 ## Installation
 
@@ -62,6 +61,8 @@ $ mvn package
 ```
 
 After issuing these commands, prepared ZIP/TGZ files should be located in `target` directory according to the Maven output.
+
+We maintain a [CHANGELOG](CHANGELOG.md) and you should look at our [Contributin guidelines](CONTRIBUTING.md).
 
 ### Build with Docker
 
