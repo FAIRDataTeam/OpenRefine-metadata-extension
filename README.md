@@ -4,9 +4,10 @@
 ![GitHub All Releases](https://img.shields.io/github/downloads/FAIRDataTeam/OpenRefine-metadata-extension/total)
 [![Docker Pulls](https://img.shields.io/docker/pulls/fairdata/openrefine-metadata-extension)](https://hub.docker.com/r/fairdata/openrefine-metadata-extension)
 [![License](https://img.shields.io/github/license/FAIRDataTeam/OpenRefine-metadata-extension)](LICENSE)
+[![Documentation](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/openrefine/usage.html)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aca649b193144fb68428ba3039a49ad5)](https://www.codacy.com/manual/MarekSuchanek/OpenRefine-metadata-extension?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FAIRDataTeam/OpenRefine-metadata-extension&amp;utm_campaign=Badge_Grade)
 
-[OpenRefine](http://openrefine.org) extension to support **FAIR Metadata**
+[OpenRefine](http://openrefine.org) extension to support **FAIR Metadata** with use of [FAIR Data Point](https://github.com/FAIRDataTeam/FAIRDataPoint)
 
 ## Installation
 
@@ -39,6 +40,12 @@ $ docker run -p 3333:3333 -v /home/me/openrefine-data:/data:z fairdata/openrefin
 
 To add other extensions (e.g. [RDF extension](https://github.com/stkenny/grefine-rdf-extension)), you can just put them into the mounted folder according to the official [documentation](https://github.com/OpenRefine/OpenRefine/wiki/Installing-Extensions). Always also check installation instruction of the desired extension. For the previous example, you should place your extensions to the directory `/home/me/openrefine-data/extensions`.
 
+### Configuration
+
+Configuration files are located in `extensions/metadata/module/config` folder and examples are provided. In case of Dockerized instance, you need to mount this folder with your configuration files as volume similarly to `data` folder.
+
+For more information, visit [our documentation](https://fairdatapoint.readthedocs.io/en/latest/openrefine/setup.html#configuration).
+
 ## Development
 
 You are required to have Maven installed with other necessary tools for building Java (see [OpenRefine - Documentation for Developers](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)):
@@ -54,6 +61,8 @@ $ mvn package
 ```
 
 After issuing these commands, prepared ZIP/TGZ files should be located in `target` directory according to the Maven output.
+
+We maintain a [CHANGELOG](CHANGELOG.md) and you should look at our [Contributin guidelines](CONTRIBUTING.md).
 
 ### Build with Docker
 

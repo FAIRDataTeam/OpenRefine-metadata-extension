@@ -43,13 +43,45 @@ abstract public class Storage {
         return getStorageDTO().getName();
     }
 
+    /**
+     * @return storage type name
+     */
     public abstract String getType();
+
+    /**
+     * Get file path (in the storage) for reference stored daty
+     *
+     * @param metadata metadata about the data to be stored
+     * @return file path of data (if stored)
+     */
     public abstract String getFilePath(HashMap<String, String> metadata);
+
+    /**
+     * Get URL for reference stored data
+     *
+     * @param metadata metadata about the data to be stored
+     * @return URL of data (if stored)
+     */
     public abstract String getURL(HashMap<String, String> metadata);
+
+    /**
+     * Store given data described by metadata and in given content type to the storage
+     *
+     * @param data data to be stored
+     * @param metadata metadata about the given data
+     * @param contentType content type of the given data
+     * @throws IOException in case of communication error
+     */
     public abstract void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException;
 
-    public boolean allowsContentType(String contentType) {
-        return storageDTO != null && (storageDTO.getContentTypes() == null || storageDTO.getContentTypes().contains(contentType));
+    /**
+     * Check whether the storage forbids (or allows) the content type
+     *
+     * @param contentType content type of data
+     * @return if is forbidden
+     */
+    public boolean forbidsContentType(String contentType) {
+        return storageDTO == null || (storageDTO.getContentTypes() != null && !storageDTO.getContentTypes().contains(contentType));
     }
 
 }

@@ -2,6 +2,7 @@
 
 # - Allow users to select "Custom FDP" connection and set baseURI, email, and
 #   password on their own (not just from predefined list)
+#   Do not set this to "false" when no fdpConnections are specified!
 allowCustomFDP: true
 
 # - You may pre-configure some metadata to appear prefilled in the metadata forms.

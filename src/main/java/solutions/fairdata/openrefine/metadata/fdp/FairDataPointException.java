@@ -22,6 +22,9 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp;
 
+/**
+ * Custom exception for the FDP client purposes
+ */
 public class FairDataPointException extends Exception {
 
     private int responseCode;

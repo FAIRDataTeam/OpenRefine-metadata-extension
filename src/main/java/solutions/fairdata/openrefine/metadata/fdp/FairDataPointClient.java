@@ -66,6 +66,12 @@ import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTrans
 import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.MetadataTransformerUtils;
 
+/**
+ * Simple client for communication with FAIR Data Point API
+ *
+ * It transforms various types returned by FDP API into DTOs (POJOs) to
+ * provide simple data manipulation in the extension.
+ */
 public class FairDataPointClient {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -101,8 +107,14 @@ public class FairDataPointClient {
         this.logger = logger;
     }
 
-    // AUTH TOKEN
-
+    /**
+     * Authenticate with FDP using username and password
+     *
+     * @param auth DTO with username and password
+     * @return token in DTO
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public TokenDTO postAuthentication(AuthDTO auth) throws IOException, FairDataPointException {
         HttpURLConnection conn = createConnection(fdpBaseURI + AUTH_PART, "POST", "application/json");
         conn.addRequestProperty("Content-Type", "application/json; utf-8");
@@ -116,8 +128,13 @@ public class FairDataPointClient {
         }
     }
 
-    // DASHBOARD
-
+    /**
+     * Get dashboard for user authenticated by the token
+     *
+     * @return list of dashboard catalogs
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public List<DashboardCatalogDTO> getDashboard() throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpBaseURI + DASHBOARD_PART, "GET", "application/json", true);
 
@@ -128,8 +145,13 @@ public class FairDataPointClient {
         }
     }
 
-    // GET (single)
-
+    /**
+     * Get metadata about FAIR Data Point (Repository)
+     *
+     * @return FAIR Data Point (Repository) metadata
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public FDPMetadataDTO getFairDataPointMetadata() throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpBaseURI, "GET", "text/turtle", true);
 
@@ -147,6 +169,14 @@ public class FairDataPointClient {
         }
     }
 
+    /**
+     * Get metadata about Catalog
+     *
+     * @param catalogURI URI of the catalog to be retrieved
+     * @return Catalog metadata
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public CatalogDTO getCatalogMetadata(String catalogURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(catalogURI, "GET", "text/turtle", true);
 
@@ -164,6 +194,14 @@ public class FairDataPointClient {
         }
     }
 
+    /**
+     * Get metadata about Dataset
+     *
+     * @param datasetURI URI of the dataset to be retrieved
+     * @return Dataset metadata
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public DatasetDTO getDatasetMetadata(String datasetURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(datasetURI, "GET", "text/turtle", true);
 
@@ -181,6 +219,14 @@ public class FairDataPointClient {
         }
     }
 
+    /**
+     * Get metadata about Distribution
+     *
+     * @param distributionURI URI of the distribution to be retrieved
+     * @return Distribution metadata
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public DistributionDTO getDistributionMetadata(String distributionURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(distributionURI, "GET", "text/turtle", true);
 
@@ -198,20 +244,50 @@ public class FairDataPointClient {
         }
     }
 
-    // GET Spects
-
+    /**
+     * Get specs of catalog layer (form specs)
+     *
+     * @return form specs as generic object
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public Object getCatalogSpec() throws IOException, FairDataPointException {
         return getMetadataSpec(CATALOG_PART);
     }
 
+
+    /**
+     * Get specs of dataset layer (form specs)
+     *
+     * @return form specs as generic object
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public Object getDatasetSpec() throws IOException, FairDataPointException {
         return getMetadataSpec(DATASET_PART);
     }
 
+
+    /**
+     * Get specs of distribution layer (form specs)
+     *
+     * @return form specs as generic object
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public Object getDistributionSpec() throws IOException, FairDataPointException {
         return getMetadataSpec(DISTRIBUTION_PART);
     }
 
+
+    /**
+     * Get form specs
+     *
+     * @param metadataPart specification of layer (catalog, dataset, or distribution)
+     * @return form specs as generic object
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     private Object getMetadataSpec(String metadataPart) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpBaseURI + metadataPart + SPEC_PART, "GET", "application/json", true);
 
@@ -222,8 +298,14 @@ public class FairDataPointClient {
         }
     }
 
-    // POST
-
+    /**
+     * Create a new catalog in FDP
+     *
+     * @param catalogDTO catalog to be created
+     * @return created catalog
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
         HttpURLConnection conn = createConnection(fdpBaseURI + CATALOG_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
@@ -257,6 +339,14 @@ public class FairDataPointClient {
         }
     }
 
+    /**
+     * Create a new dataset in FDP
+     *
+     * @param datasetDTO dataset to be created
+     * @return created dataset
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, MetadataException, FairDataPointException {
         HttpURLConnection conn = createConnection(fdpBaseURI + DATASET_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
@@ -290,6 +380,14 @@ public class FairDataPointClient {
         }
     }
 
+    /**
+     * Create a new distribution in FDP
+     *
+     * @param distributionDTO distribution to be created
+     * @return created distribution
+     * @throws IOException in case of a communication error
+     * @throws FairDataPointException in case that FDP responds with an unexpected code
+     */
     public DistributionDTO postDistribution(DistributionDTO distributionDTO) throws IOException, MetadataException, FairDataPointException {
         HttpURLConnection conn = createConnection(fdpBaseURI + DISTRIBUTION_PART, "POST", "text/turtle");
         conn.addRequestProperty("Content-Type", "text/turtle");
@@ -323,8 +421,14 @@ public class FairDataPointClient {
         }
     }
 
-    // HELPERS
-
+    /**
+     * Helper for parsing RDF statements from connection
+     *
+     * @param conn connection with FAIR Data Point
+     * @param uri base URI to be retrieved
+     * @return list of statements for given URI
+     * @throws IOException in case of communication error with FDP
+     */
     private ArrayList<Statement> parseStatements(HttpURLConnection conn, String uri) throws IOException {
         TurtleParser parser = new TurtleParser();
         StatementCollector collector = new StatementCollector();
@@ -334,6 +438,15 @@ public class FairDataPointClient {
         return new ArrayList<>(collector.getStatements());
     }
 
+    /**
+     * Helper for creating a connection to FAIR Data Point with prepared headers
+     *
+     * @param url target requested URL
+     * @param method HTTP method (e.g. GET, POST, PUT)
+     * @param accept accepted response media type
+     * @return connection
+     * @throws IOException in case of communication error
+     */
     private HttpURLConnection createConnection(String url, String method, String accept) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod(method);
@@ -344,6 +457,17 @@ public class FairDataPointClient {
         }
         return conn;
     }
+
+    /**
+     * Helper for creating a single HTTP request to FDP
+     *
+     * @param url target requested URL
+     * @param method HTTP method (e.g. GET, POST, PUT)
+     * @param accept accepted response media type
+     * @param followRedirects flag if should follow redirects (defined REDIRECTS codes)
+     * @return connection
+     * @throws IOException in case of communication error
+     */
     private HttpURLConnection request(String url, String method, String accept, boolean followRedirects) throws IOException {
         HttpURLConnection conn = createConnection(url, method, accept);
 

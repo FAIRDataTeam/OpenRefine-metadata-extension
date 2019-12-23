@@ -34,6 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Command for handling Repository/FDP metadata layer
+ *
+ * It can return metadata (GET) of FAIR Data Point (Repository) itself specified
+ * by its URI.
+ */
 public class FDPMetadataCommand extends Command {
 
     @Override

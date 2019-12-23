@@ -60,7 +60,7 @@ public class VirtuosoStorage extends Storage {
         if (filename == null) {
             throw new IOException("Filename not given");
         }
-        if (!allowsContentType(contentType)) {
+        if (forbidsContentType(contentType)) {
             throw new IOException("Bad content type for selected storage");
         }
         makeVirtuosoPut(getURL(metadata), new String(data, StandardCharsets.UTF_8), contentType + "; charset=\"UTF-8\"");

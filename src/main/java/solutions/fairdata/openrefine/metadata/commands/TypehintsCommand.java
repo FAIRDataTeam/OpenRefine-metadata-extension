@@ -41,6 +41,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Command for getting typehints of certain type
+ *
+ * It holds information about defined typehint services. Then can return a list
+ * of typehints based on the name specifying the type and user query for filtering
+ * the typehints.
+ */
 public class TypehintsCommand extends Command {
 
     private static HashMap<String, TypehintService> typehintServices = new HashMap<>();
@@ -73,7 +80,6 @@ public class TypehintsCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new TypehintsResponse(source, typehints));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error while preparing typehints of name: " + name + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
