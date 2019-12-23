@@ -71,7 +71,7 @@
         <fairmetadata4j.version>0.1-beta</fairmetadata4j.version>
         <!-- Core - other -->
         <rdf4j.version>3.0.3</rdf4j.version>
-        <jackson.version>2.9.10</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
         <commons.net.version>3.6</commons.net.version>
         <lombok.version>1.18.10</lombok.version>
 
