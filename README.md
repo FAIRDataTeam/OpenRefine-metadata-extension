@@ -26,7 +26,6 @@ $ tar xzvf metadata-X.Y.Z-OpenRefine-3.2.tgz -C path/to/openrefine-3.2/webapp/ex
 We publish [Docker images](https://hub.docker.com/r/fairdata/openrefine-metadata-extension) that contains OpenRefine 3.2 together with the **metadata** extension. Only requirement is having Docker service running:
 
 ```console
-$ docker pull fairdata/openrefine-metadata-extension
 $ docker run -p 3333:3333 fairdata/openrefine-metadata-extension
 ```
 
@@ -72,8 +71,8 @@ that builds the extension and then runs it in OpenRefine. Therefore, you don't n
 any Java dependencies locally, just Docker:
 
 ```console
-$ docker build -t openrefine-metadata .
-$ docker run -p 3333:3333 openrefine-metadata
+$ docker build -t openrefine-metadata:local-tag .
+$ docker run -p 3333:3333 openrefine-metadata:local-tag
 ```
 
 Then open [http://localhost:3333](http://localhost:3333) in your favorite web browser.
