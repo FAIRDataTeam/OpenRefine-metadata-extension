@@ -1,5 +1,5 @@
 # Build image
-FROM maven:3.6-jdk-11-slim as builder
+FROM maven:3.6-jdk-8-slim as builder
 
 WORKDIR /usr/src/app/
 
@@ -15,12 +15,7 @@ RUN tar xzf target/metadata-OpenRefine-3.2.tgz --directory openrefine-3.2/webapp
 
 # ===================================================================
 # Main image
-FROM openjdk:11-jre-slim
-
-LABEL maintainer="marek.suchanek@fit.cvut.cz" \
-      version="vX.Y.Z" \
-      jdk-version="11" \
-      opernrefine-version="3.2"
+FROM openjdk:8-jre-slim
 
 # Dependencies for running OpenRefine
 RUN apt-get -qq update \
