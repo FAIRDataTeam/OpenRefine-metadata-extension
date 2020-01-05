@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs, MetadataApiClient */
 
 class PostFdpDialog {
 
@@ -177,7 +177,7 @@ class PostFdpDialog {
     }
 
     preparePrefill() {
-        if (this.settings.has("metadata") && this.settings.get("metadata") != null) {
+        if (this.settings.has("metadata") && this.settings.get("metadata") !== null) {
             this.prefill = new Map(Object.entries(this.settings.get("metadata")));
         }
     }
@@ -392,7 +392,7 @@ class PostFdpDialog {
             } else {
                 formDialog.displayError(result.exceptionName, result.exception);
             }
-        }
+        };
     }
 
     // show parts

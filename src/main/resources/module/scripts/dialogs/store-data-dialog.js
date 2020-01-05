@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs */
 
 class StoreDataDialog {
 
