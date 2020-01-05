@@ -26,13 +26,12 @@ $ tar xzvf metadata-X.Y.Z-OpenRefine-3.2.tgz -C path/to/openrefine-3.2/webapp/ex
 We publish [Docker images](https://hub.docker.com/r/fairdata/openrefine-metadata-extension) that contains OpenRefine 3.2 together with the **metadata** extension. Only requirement is having Docker service running:
 
 ```console
-$ docker pull fairdata/openrefine-metadata-extension
 $ docker run -p 3333:3333 fairdata/openrefine-metadata-extension
 ```
 
 Then just open [localhost:3333](http://localhost:3333) in your favorite web browser. Optionally you can change the port binding or run it "detached". Visit Docker `run` [documentation](https://docs.docker.com/engine/reference/run/) for more information.
 
-To persist data and eventually be able to share them across multiple instances of OpenRefine you need to mount `/data` directory, for example:
+To persist data and eventually be able to share them across multiple instances of OpenRefine, you need to mount `/data` directory, for example:
 
 ```console
 $ docker run -p 3333:3333 -v /home/me/openrefine-data:/data:z fairdata/openrefine-metadata-extension
@@ -62,7 +61,8 @@ $ mvn package
 
 After issuing these commands, prepared ZIP/TGZ files should be located in `target` directory according to the Maven output.
 
-We maintain a [CHANGELOG](CHANGELOG.md) and you should look at our [Contributin guidelines](CONTRIBUTING.md).
+We maintain a [CHANGELOG](CHANGELOG.md), you should also take a look at our [Contributing guidelines](CONTRIBUTING.md) and
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Build with Docker
 
@@ -71,13 +71,13 @@ that builds the extension and then runs it in OpenRefine. Therefore, you don't n
 any Java dependencies locally, just Docker:
 
 ```console
-$ docker build -t openrefine-metadata .
-$ docker run -p 3333:3333 openrefine-metadata
+$ docker build -t openrefine-metadata:local-tag .
+$ docker run -p 3333:3333 openrefine-metadata:local-tag
 ```
 
 Then open [http://localhost:3333](http://localhost:3333) in your favorite web browser.
 
-Note that we are using Java SE 11 (LTS), concretely OpenJDK 11 in Docker images.
+Note that we are using Java SE 8 (LTS), concretely OpenJDK 8 in Docker images (to comply with OpenRefine requirements).
 
 ## License
 

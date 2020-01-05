@@ -22,9 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.request.storage;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +35,7 @@ import lombok.Setter;
 @Setter
 public class StoreDataRequest {
     public static final Set<String> MODES = Collections.unmodifiableSet(
-            Set.of("preview", "store")
+            new HashSet<>(Arrays.asList("preview", "store"))
     );
 
     private String mode;

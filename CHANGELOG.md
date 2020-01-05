@@ -11,11 +11,13 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 
 ### Added
 
-- Create metadata dialog that handles connection with a FAIR Data Point and allows metadata selection and creation
-  with possibility to predefine connections in the configuration
-- Metadata forms to create metadata in the selected FAIR Data Point, with typehints and ability to predefine value
-  in the configuration
-- Store data dialog that allows to export project in the selected format (using OpenRefine's exported) and send it
-  to the selected storage which are configured - currently supports: FTP, Virtuoso, and Triple Stores with HTTP API
+- Create metadata dialog that handles the connection with a FAIR Data Point and allows 
+  metadata selection and creation with a possibility to predefine connections in the 
+  configuration
+- Metadata forms to create metadata in the selected FAIR Data Point, with typehints and 
+  ability to predefine value in the configuration
+- Store data dialog that allows to export project in the selected format (using OpenRefine's 
+  exported) and send it to the selected storage from those which are configured - currently 
+  supports: FTP, Virtuoso, and Triple Stores with HTTP API
 - About dialog with basic information about the extension and its compatibility
-- Report a bug link to create easily a GitHub issue
+- Report a bug link to create a GitHub issue easily
