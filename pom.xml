@@ -68,7 +68,7 @@
         <servlet.version>2.5</servlet.version>
         <butterfly.version>1.0.2</butterfly.version>
         <slf4j.version>1.7.18</slf4j.version>
-        <fairmetadata4j.version>0.1-beta</fairmetadata4j.version>
+        <fairmetadata4j.version>1.0.0</fairmetadata4j.version>
         <!-- Core - other -->
         <rdf4j.version>3.0.3</rdf4j.version>
         <jackson.version>2.10.1</jackson.version>

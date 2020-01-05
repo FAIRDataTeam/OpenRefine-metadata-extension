@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>nl.dtl</groupId>
     <artifactId>fairmetadata4j</artifactId>
-    <version>0.1-beta</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    
+
     <name>fairmetadata4j</name>
-    <inceptionYear>2017</inceptionYear>
-    <description>
-        A reference implementation of FAIR metadata library
-    </description>
-    
+    <description>A reference implementation of FAIR metadata library</description>
+    <inceptionYear>2019</inceptionYear>
     <licenses>
         <license>
             <name>The MIT License</name>
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-    
+
     <developers>
         <developer>
             <name>Rajaram Kaliyaperumal</name>
@@ -35,26 +31,31 @@
             <organizationUrl>http://www.dtls.nl/</organizationUrl>
         </developer>
     </developers>
-    
+
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>        
-        <jackson.version>2.8.6</jackson.version>
-        <rdf4j.version>2.1.4</rdf4j.version>
-        <junit.version>4.12</junit.version>
-        <mockit-core.version>2.6.2</mockit-core.version>
-        <logging_log4j.version>2.7</logging_log4j.version>
-        <jsr305.version>3.0.1</jsr305.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        
+        <jackson.version>2.10.0.pr1</jackson.version>
+        <rdf4j.version>3.0.0</rdf4j.version>
+        <junit.version>4.12</junit.version>
+        <mockit-core.version>3.0.0</mockit-core.version>
+        <logging_log4j.version>2.12.1</logging_log4j.version>
+        <jsr305.version>3.0.2</jsr305.version>
+        <rdf4j-generator.version>0.2.0</rdf4j-generator.version>
+        <javax_xml_bind.version>2.3.1</javax_xml_bind.version>
+        <coveralls-maven.version>4.3.0</coveralls-maven.version>
+        <license-maven-plugin-version>3.0</license-maven-plugin-version>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${logging_log4j.version}</version>
         </dependency>
-        <dependency>            
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${logging_log4j.version}</version>
@@ -106,13 +107,13 @@
             <version>${jsr305.version}</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>${license-maven-plugin-version}</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
                     <properties>
@@ -122,6 +123,7 @@
                         <exclude>pom.xml</exclude>
                         <exclude>**/*.ttl</exclude>
                         <exclude>**/*.xml</exclude>
+                        <exclude>**/*.yml</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -134,9 +136,55 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.github.kburger</groupId>
+                <artifactId>rdf4j-generator-maven-plugin</artifactId>
+                <version>${rdf4j-generator.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <package>nl.dtl.fairmetadata4j.utils.vocabulary</package>
+                    <addGeneratedAnnotation>false</addGeneratedAnnotation>
+                    <vocabularies>
+                        <vocabulary>
+                            <url>https://sparontologies.github.io/datacite/current/datacite.ttl</url>
+                            <prefix>datacite</prefix>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/re3data/ontology/master/r3dOntology.ttl</url>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/DTL-FAIRData/FDP-O/develop/fdp-ontology.owl</url>
+                            <namespace>http://rdf.biosemantics.org/ontologies/fdp-o#</namespace>
+                            <prefix>fdp</prefix>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/master/data/releases/3.4/schema.ttl</url>
+                            <namespace>http://schema.org/</namespace>
+                            <prefix>schemaOrg</prefix>
+                        </vocabulary>
+                    </vocabularies>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <version>${coveralls-maven.version}</version>
+                <dependencies>
+                    <!--
+                    hardcoded dependency and version, 
+                    see https://github.com/trautonen/coveralls-maven-plugin/issues/112 
+                    -->
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>${javax_xml_bind.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

@@ -1,4 +1,4 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Tue Sep 24 16:45:27 CEST 2019
-fairmetadata4j-0.1-beta.pom>=
-fairmetadata4j-0.1-beta.jar>=
+#Sun Jan 05 10:07:26 CET 2020
+fairmetadata4j-1.0.0.pom>=
+fairmetadata4j-1.0.0.jar>=
