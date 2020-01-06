@@ -28,7 +28,7 @@
 
     <groupId>solutions.fairdata.openrefine</groupId>
     <artifactId>metadata</artifactId>
-    <version>1.0.0-rc.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>OpenRefine - FAIR Metadata extension</name>
