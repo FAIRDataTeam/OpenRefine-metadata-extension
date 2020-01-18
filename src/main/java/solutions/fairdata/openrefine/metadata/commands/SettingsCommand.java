@@ -24,9 +24,12 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import lombok.SneakyThrows;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
+import solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,9 +41,12 @@ import java.io.Writer;
  */
 public class SettingsCommand extends Command {
 
+    @SneakyThrows
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Writer w = CommandUtils.prepareWriter(response);
-
+        Project project = getProject(request);
+        MetadataOverlayModel metadataOverlayModel = MetadataModuleImpl.getModelForProject(project);
+        System.out.println("Model value: " + metadataOverlayModel.getMyValue());
         try {
             CommandUtils.objectMapper.writeValue(w, new SettingsResponse(MetadataModuleImpl.getInstance().getSettingsDetails()));
         } catch (Exception e) {

@@ -6,6 +6,7 @@
 
 function init() {
     const RefineServlet = Packages.com.google.refine.RefineServlet;
+    const Project = Packages.com.google.refine.model.Project;
     const MetadataCommands = Packages.solutions.fairdata.openrefine.metadata.commands;
 
     // Commands
@@ -19,6 +20,9 @@ function init() {
     RefineServlet.registerCommand(module, "metadata-specs", new MetadataCommands.MetadataSpecsCommand());
     RefineServlet.registerCommand(module, "typehints", new MetadataCommands.TypehintsCommand());
     RefineServlet.registerCommand(module, "store-data", new MetadataCommands.StoreDataCommand());
+
+    // Overlay model
+    Project.registerOverlayModel("metadataOverlayModel", Packages.solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel);
 
     // Resources
     ClientSideResourceManager.addPaths(

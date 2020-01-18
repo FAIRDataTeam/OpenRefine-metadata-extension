@@ -25,16 +25,20 @@ package solutions.fairdata.openrefine.metadata;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.refine.model.Project;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
+import solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
@@ -108,6 +112,13 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         } catch (IOException e) {
             logger.warn("Could not load storages configuration - skipping");
         }
+    }
+
+    public static MetadataOverlayModel getModelForProject(Project project) {
+        if (project.overlayModels.get("metadataOverlayModel") == null) {
+            project.overlayModels.put("metadataOverlayModel", new MetadataOverlayModel(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())));
+        }
+        return (MetadataOverlayModel) project.overlayModels.get("metadataOverlayModel");
     }
 
     public static Logger getLogger() {
