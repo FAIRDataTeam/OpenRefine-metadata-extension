@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 1.0.0
+## [1.0.0]
 
 Initial version based on reproducing functionality of deprecated [FAIRifier](https://github.com/FAIRDataTeam/FAIRifier).
 
@@ -23,3 +23,6 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
   supports: FTP, Virtuoso, and Triple Stores with HTTP API
 - About dialog with basic information about the extension and its compatibility
 - Report a bug link to create a GitHub issue easily
+
+[Unreleased]: /../../compare/v1.0.0...develop
+[1.0.0]: /../../tree/v1.0.0
