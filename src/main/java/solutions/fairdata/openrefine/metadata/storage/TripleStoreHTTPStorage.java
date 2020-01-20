@@ -30,7 +30,9 @@ import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TripleStoreHTTPStorage extends Storage {
 
@@ -39,9 +41,12 @@ public class TripleStoreHTTPStorage extends Storage {
     private final HTTPRepository repository;
 
     static {
-        formats.put("application/x-turtle", RDFFormat.TURTLE);
-        formats.put("text/turtle", RDFFormat.TURTLE);
-        formats.put("application/rdf+xml", RDFFormat.RDFXML);
+        List<RDFFormat> rdfFormats = Arrays.asList(RDFFormat.TURTLE, RDFFormat.RDFXML);
+        for (RDFFormat rdfFormat: rdfFormats) {
+            for (String mimeType: rdfFormat.getMIMETypes()) {
+                formats.put(mimeType, rdfFormat);
+            }
+        }
     }
 
     public TripleStoreHTTPStorage(StorageDTO storageDTO) {

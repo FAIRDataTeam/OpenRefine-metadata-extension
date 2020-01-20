@@ -1,4 +1,4 @@
-/* global $, MetadataHelpers */
+/* global MetadataHelpers */
 
 class MetadataApiClient {
 

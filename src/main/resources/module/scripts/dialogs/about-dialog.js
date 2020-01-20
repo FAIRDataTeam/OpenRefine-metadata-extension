@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem */
+/* global DOM, DialogSystem */
 
 class MetadataAboutDialog {
     constructor(type, specs, callbackFn, prefill) {

@@ -1,4 +1,4 @@
-/* global $, DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
+/* global DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
 
 class MetadataFormDialog {
     constructor(specs, callbackFn, prefill) {
@@ -65,7 +65,7 @@ class MetadataFormDialog {
 
     setValue(fieldId, value) {
         const input = this.elements.metadataForm.find(`#${fieldId}`);
-        if (input != null) {
+        if (input !== null) {
             if (input.is(":radio") && value === true) {
                 input.prop("checked", true);
             } else {
@@ -226,14 +226,7 @@ class MetadataFormDialog {
         });
     }
 
-    makeInputField(field) {
-        const input = $(field.type === "text" ? "<textarea>" : "<input>")
-            .attr("id", field.id)
-            .attr("name", field.id)
-            .attr("type", "text")
-            .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
-            .prop("required", field.required);
-
+    handleInputType(field, input) {
         if (field.hidden) {
             input.attr("type", "hidden");
         } else if (field.type === "iri") {
@@ -241,9 +234,23 @@ class MetadataFormDialog {
                 .attr("type", "uri")
                 .attr("placeholder", "http://");
         }
+    }
+
+    handleTypehints(field, input) {
         if (field.typehints) {
             this.makeDataList(field, input);
         }
+    }
+
+    makeInputField(field) {
+        let input = $(field.type === "text" ? "<textarea>" : "<input>")
+            .attr("id", field.id)
+            .attr("name", field.id)
+            .attr("type", "text")
+            .attr("title", $.i18n(`metadata/${this.specs.id}/${field.id}/description`))
+            .prop("required", field.required);
+        this.handleInputType(field, input);
+        this.handleTypehints(field, input);
         return input;
     }
 

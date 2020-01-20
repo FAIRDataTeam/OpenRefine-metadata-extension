@@ -1,7 +1,7 @@
 /*
  * Main JS file for FAIR Metadata extension of OpenRefine
  */
-/* global importPackage, module, Packages, ClientSideResourceManager */
+/* global importPackage, Packages, ClientSideResourceManager */
 /* eslint-disable no-unused-vars */
 
 function init() {
