@@ -17,6 +17,7 @@ class PostFdpDialog {
         };
         this.newlyCreatedIRIs = new Set();
         this.settings = new Map();
+        this.projectData = null;
         this.prefill = new Map();
         this.fdpConnections = [];
 
@@ -26,6 +27,7 @@ class PostFdpDialog {
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
             (result) => {
+                this.projectData = result.projectData;
                 this.settings = new Map(Object.entries(result.settings));
                 this.preparePrefill();
                 this.bindActions();
@@ -42,6 +44,14 @@ class PostFdpDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
+    }
+
+    persistProjectData() {
+        this.apiClient.postSettings(this.projectData, [
+            (result) => {
+                this.projectData = result.projectData;
+            }
+        ]);
     }
 
     bindActions() {
@@ -95,7 +105,7 @@ class PostFdpDialog {
         });
 
         elmts.catalogSelect.on("change", () => {
-            self.resetDatasetLayer();
+            this.resetDatasetLayer();
             const catalogUri = elmts.catalogSelect.val();
             const catalog = this.metadata.catalogs.get(catalogUri);
             if (catalog) {
@@ -105,14 +115,18 @@ class PostFdpDialog {
                 });
                 const canCreate = catalog.membership && catalog.membership.permissions.some(isCreatePermission);
                 this.showDatasets(canCreate);
+
+                if (this.projectData.lastCatalog !== catalogUri) {
+                    this.projectData.lastCatalog = catalogUri;
+                    this.persistProjectData();
+                }
             }
         });
 
         elmts.datasetSelect.on("change", () => {
-            self.resetDistributionLayer();
+            this.resetDistributionLayer();
             const datasetUri = elmts.datasetSelect.val();
             const dataset = this.metadata.datasets.get(datasetUri);
-
             if (dataset) {
                 this.metadata.distributions.clear();
                 dataset.distributions.forEach((distribution) => {
@@ -120,6 +134,10 @@ class PostFdpDialog {
                 });
                 const canCreate = dataset.membership.permissions && dataset.membership.permissions.some(isCreatePermission);
                 this.showDistributions(canCreate);
+                if (this.projectData.lastDataset !== datasetUri) {
+                    this.projectData.lastDataset = datasetUri;
+                    this.persistProjectData();
+                }
             }
         });
 
@@ -418,7 +436,7 @@ class PostFdpDialog {
         );
     }
 
-    showMetadataSelect(select, metadatas) {
+    showMetadataSelect(select, metadatas, toSelect) {
         metadatas.forEach((metadata) => {
             const isNew = this.newlyCreatedIRIs.has(metadata.uri);
             select.append(
@@ -429,13 +447,17 @@ class PostFdpDialog {
                     .text(isNew ? `${metadata.title} [new]` : metadata.title)
             );
         });
+        if (metadatas.has(toSelect)) {
+            select.val(toSelect).trigger("change");
+        }
     }
 
     showCatalogs() {
         this.constructor.resetSelect(this.elements.catalogSelect, "catalog");
         this.showMetadataSelect(
             this.elements.catalogSelect,
-            this.metadata.catalogs
+            this.metadata.catalogs,
+            this.projectData.lastCatalog
         );
         this.elements.catalogLayer.removeClass("hidden");
     }
@@ -444,7 +466,8 @@ class PostFdpDialog {
         this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
         this.showMetadataSelect(
             this.elements.datasetSelect,
-            this.metadata.datasets
+            this.metadata.datasets,
+            this.projectData.lastDataset
         );
         this.elements.datasetLayer.removeClass("hidden");
         if (canCreate) {

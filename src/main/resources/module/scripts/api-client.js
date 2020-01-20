@@ -42,7 +42,7 @@ class MetadataApiClient {
 
     postSettings(projectData, callbacks) {
         const settingsPostRequest = JSON.stringify({ projectData });
-        this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, []);
+        this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, [], true);
     }
 
     getDashboard(callbacks, errorCallbacks) {
