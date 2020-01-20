@@ -40,6 +40,11 @@ class MetadataApiClient {
         this._ajaxGeneric("settings","GET", {}, callbacks, []);
     }
 
+    postSettings(projectData, callbacks) {
+        const settingsPostRequest = JSON.stringify({ projectData });
+        this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, []);
+    }
+
     getDashboard(callbacks, errorCallbacks) {
         const params = { fdpUri: this.fdpUri, token: this.token };
         this._ajaxGeneric("fdp-dashboard", "GET", params, callbacks, errorCallbacks);

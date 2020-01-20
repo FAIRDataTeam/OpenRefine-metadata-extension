@@ -20,28 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response.config;
+package solutions.fairdata.openrefine.metadata.commands.request.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class SettingsResponse {
-
-    private String status;
-    private SettingsConfigDTO settings;
+public class SettingsRequest {
     private ProjectConfigDTO projectData;
-
-    public SettingsResponse(SettingsConfigDTO settings, ProjectConfigDTO projectData) {
-        this.status = "ok";
-        this.settings = settings;
-        this.projectData = projectData;
-    }
 }

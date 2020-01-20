@@ -25,12 +25,14 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import lombok.SneakyThrows;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.commands.request.config.SettingsRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
-import solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel;
+import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,17 +43,40 @@ import java.io.Writer;
  */
 public class SettingsCommand extends Command {
 
-    @SneakyThrows
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private SettingsResponse createSettingsResponse(Project project) {
+        SettingsConfigDTO settings = MetadataModuleImpl.getInstance().getSettingsDetails();
+        ProjectConfigDTO projectData = MetadataModuleImpl.getProjectConfigDTO(project);
+        return new SettingsResponse(settings, projectData);
+    }
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Writer w = CommandUtils.prepareWriter(response);
         Project project = getProject(request);
-        MetadataOverlayModel metadataOverlayModel = MetadataModuleImpl.getModelForProject(project);
-        System.out.println("Model value: " + metadataOverlayModel.getMyValue());
         try {
-            CommandUtils.objectMapper.writeValue(w, new SettingsResponse(MetadataModuleImpl.getInstance().getSettingsDetails()));
+            CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
         } catch (Exception e) {
             logger.error("Error while getting Settings");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        SettingsRequest settingsRequest = CommandUtils.objectMapper.readValue(request.getReader(), SettingsRequest.class);
+        Project project = getProject(request);
+        Writer w = CommandUtils.prepareWriter(response);
+
+        try {
+            MetadataModuleImpl.setProjectConfigDTO(project, settingsRequest.getProjectData());
+
+            CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
+        } catch (Exception e) {
+            logger.error("Error while persisting Settings");
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
