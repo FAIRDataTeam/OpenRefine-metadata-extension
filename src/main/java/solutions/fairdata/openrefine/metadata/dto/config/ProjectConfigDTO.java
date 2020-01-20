@@ -27,11 +27,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ProjectConfigDTO {
-    private String lastCatalog;
-    private String lastDataset;
+    private HashMap<String, String> lastCatalog = new HashMap<>();
+    private HashMap<String, String> lastDataset = new HashMap<>();
 }

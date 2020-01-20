@@ -27,14 +27,24 @@ class PostFdpDialog {
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
             (result) => {
-                this.projectData = result.projectData;
                 this.settings = new Map(Object.entries(result.settings));
+                this.loadProjectData(result.projectData);
                 this.preparePrefill();
                 this.bindActions();
                 this.prepareConnections();
                 this.elements.dialogBody.removeClass("hidden");
             }
         ]);
+    }
+
+    getCurrentRepositoryUri() {
+        return this.apiClient.fdpUri;
+    }
+
+    loadProjectData(projectData) {
+        this.projectData = projectData;
+        this.projectData.lastCatalog = new Map(Object.entries(projectData.lastCatalog));
+        this.projectData.lastDataset = new Map(Object.entries(projectData.lastDataset));
     }
 
     launch() {
@@ -47,9 +57,12 @@ class PostFdpDialog {
     }
 
     persistProjectData() {
-        this.apiClient.postSettings(this.projectData, [
+        const projectData = this.projectData;
+        projectData.lastCatalog = Object.fromEntries(this.projectData.lastCatalog.entries());
+        projectData.lastDataset = Object.fromEntries(this.projectData.lastDataset.entries());
+        this.apiClient.postSettings(projectData, [
             (result) => {
-                this.projectData = result.projectData;
+                this.loadProjectData(result.projectData);
             }
         ]);
     }
@@ -116,8 +129,9 @@ class PostFdpDialog {
                 const canCreate = catalog.membership && catalog.membership.permissions.some(isCreatePermission);
                 this.showDatasets(canCreate);
 
-                if (this.projectData.lastCatalog !== catalogUri) {
-                    this.projectData.lastCatalog = catalogUri;
+                const repositoryUri = this.getCurrentRepositoryUri();
+                if (!this.projectData.lastCatalog.get(repositoryUri) !== catalogUri) {
+                    this.projectData.lastCatalog.set(repositoryUri, catalogUri);
                     this.persistProjectData();
                 }
             }
@@ -134,8 +148,10 @@ class PostFdpDialog {
                 });
                 const canCreate = dataset.membership.permissions && dataset.membership.permissions.some(isCreatePermission);
                 this.showDistributions(canCreate);
-                if (this.projectData.lastDataset !== datasetUri) {
-                    this.projectData.lastDataset = datasetUri;
+
+                const repositoryUri = this.getCurrentRepositoryUri();
+                if (this.projectData.lastDataset.get(repositoryUri) !== datasetUri) {
+                    this.projectData.lastDataset.set(repositoryUri, datasetUri);
                     this.persistProjectData();
                 }
             }
@@ -457,7 +473,7 @@ class PostFdpDialog {
         this.showMetadataSelect(
             this.elements.catalogSelect,
             this.metadata.catalogs,
-            this.projectData.lastCatalog
+            this.projectData.lastCatalog.get(this.getCurrentRepositoryUri())
         );
         this.elements.catalogLayer.removeClass("hidden");
     }
@@ -467,7 +483,7 @@ class PostFdpDialog {
         this.showMetadataSelect(
             this.elements.datasetSelect,
             this.metadata.datasets,
-            this.projectData.lastDataset
+            this.projectData.lastDataset.get(this.getCurrentRepositoryUri())
         );
         this.elements.datasetLayer.removeClass("hidden");
         if (canCreate) {
