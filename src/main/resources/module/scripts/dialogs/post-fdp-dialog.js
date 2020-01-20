@@ -17,6 +17,7 @@ class PostFdpDialog {
         };
         this.newlyCreatedIRIs = new Set();
         this.settings = new Map();
+        this.projectData = null;
         this.prefill = new Map();
         this.fdpConnections = [];
 
@@ -27,12 +28,23 @@ class PostFdpDialog {
         this.apiClient.getSettings([
             (result) => {
                 this.settings = new Map(Object.entries(result.settings));
+                this.loadProjectData(result.projectData);
                 this.preparePrefill();
                 this.bindActions();
                 this.prepareConnections();
                 this.elements.dialogBody.removeClass("hidden");
             }
         ]);
+    }
+
+    getCurrentRepositoryUri() {
+        return this.apiClient.fdpUri;
+    }
+
+    loadProjectData(projectData) {
+        this.projectData = projectData;
+        this.projectData.lastCatalog = new Map(Object.entries(projectData.lastCatalog));
+        this.projectData.lastDataset = new Map(Object.entries(projectData.lastDataset));
     }
 
     launch() {
@@ -42,6 +54,17 @@ class PostFdpDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
+    }
+
+    persistProjectData() {
+        const projectData = this.projectData;
+        projectData.lastCatalog = Object.fromEntries(this.projectData.lastCatalog.entries());
+        projectData.lastDataset = Object.fromEntries(this.projectData.lastDataset.entries());
+        this.apiClient.postSettings(projectData, [
+            (result) => {
+                this.loadProjectData(result.projectData);
+            }
+        ]);
     }
 
     bindActions() {
@@ -95,7 +118,7 @@ class PostFdpDialog {
         });
 
         elmts.catalogSelect.on("change", () => {
-            self.resetDatasetLayer();
+            this.resetDatasetLayer();
             const catalogUri = elmts.catalogSelect.val();
             const catalog = this.metadata.catalogs.get(catalogUri);
             if (catalog) {
@@ -105,14 +128,19 @@ class PostFdpDialog {
                 });
                 const canCreate = catalog.membership && catalog.membership.permissions.some(isCreatePermission);
                 this.showDatasets(canCreate);
+
+                const repositoryUri = this.getCurrentRepositoryUri();
+                if (!this.projectData.lastCatalog.get(repositoryUri) !== catalogUri) {
+                    this.projectData.lastCatalog.set(repositoryUri, catalogUri);
+                    this.persistProjectData();
+                }
             }
         });
 
         elmts.datasetSelect.on("change", () => {
-            self.resetDistributionLayer();
+            this.resetDistributionLayer();
             const datasetUri = elmts.datasetSelect.val();
             const dataset = this.metadata.datasets.get(datasetUri);
-
             if (dataset) {
                 this.metadata.distributions.clear();
                 dataset.distributions.forEach((distribution) => {
@@ -120,6 +148,12 @@ class PostFdpDialog {
                 });
                 const canCreate = dataset.membership.permissions && dataset.membership.permissions.some(isCreatePermission);
                 this.showDistributions(canCreate);
+
+                const repositoryUri = this.getCurrentRepositoryUri();
+                if (this.projectData.lastDataset.get(repositoryUri) !== datasetUri) {
+                    this.projectData.lastDataset.set(repositoryUri, datasetUri);
+                    this.persistProjectData();
+                }
             }
         });
 
@@ -418,7 +452,7 @@ class PostFdpDialog {
         );
     }
 
-    showMetadataSelect(select, metadatas) {
+    showMetadataSelect(select, metadatas, toSelect) {
         metadatas.forEach((metadata) => {
             const isNew = this.newlyCreatedIRIs.has(metadata.uri);
             select.append(
@@ -429,13 +463,17 @@ class PostFdpDialog {
                     .text(isNew ? `${metadata.title} [new]` : metadata.title)
             );
         });
+        if (metadatas.has(toSelect)) {
+            select.val(toSelect).trigger("change");
+        }
     }
 
     showCatalogs() {
         this.constructor.resetSelect(this.elements.catalogSelect, "catalog");
         this.showMetadataSelect(
             this.elements.catalogSelect,
-            this.metadata.catalogs
+            this.metadata.catalogs,
+            this.projectData.lastCatalog.get(this.getCurrentRepositoryUri())
         );
         this.elements.catalogLayer.removeClass("hidden");
     }
@@ -444,7 +482,8 @@ class PostFdpDialog {
         this.constructor.resetSelect(this.elements.datasetSelect, "dataset");
         this.showMetadataSelect(
             this.elements.datasetSelect,
-            this.metadata.datasets
+            this.metadata.datasets,
+            this.projectData.lastDataset.get(this.getCurrentRepositoryUri())
         );
         this.elements.datasetLayer.removeClass("hidden");
         if (canCreate) {

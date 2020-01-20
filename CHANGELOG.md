@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Remembering the last used catalog and dataset per repository (FDP) persistently for the
+  OpenRefine project
+
 ## [1.0.0]
 
 Initial version based on reproducing functionality of deprecated [FAIRifier](https://github.com/FAIRDataTeam/FAIRifier).

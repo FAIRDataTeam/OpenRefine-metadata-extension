@@ -25,11 +25,14 @@ package solutions.fairdata.openrefine.metadata;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.refine.model.Project;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
+import solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel;
 import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 
 import javax.servlet.ServletConfig;
@@ -44,6 +47,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static final String USER_AGENT = "OpenRefine/metadata";
     public static final ObjectMapper objectMapper = new ObjectMapper();
     public static final ObjectMapper yamlObjectMapper = new ObjectMapper(new YAMLFactory());
+    private static final String OVERLAY_MODEL = "metadataOverlayModel";
 
     private SettingsConfigDTO settings = SettingsConfigDTO.getDefaultSettings();
     private SettingsConfigDTO settingsDetails = settings.copyDetails();
@@ -108,6 +112,25 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         } catch (IOException e) {
             logger.warn("Could not load storages configuration - skipping");
         }
+    }
+
+    public static ProjectConfigDTO getProjectConfigDTO(Project project) {
+        MetadataOverlayModel metadataOverlayModel = (MetadataOverlayModel) project.overlayModels.get(OVERLAY_MODEL);
+        if (metadataOverlayModel == null) {
+            metadataOverlayModel = new MetadataOverlayModel();
+            metadataOverlayModel.setProjectData(new ProjectConfigDTO());
+            project.overlayModels.put(OVERLAY_MODEL, metadataOverlayModel);
+        }
+        return metadataOverlayModel.getProjectData();
+    }
+
+    public static void setProjectConfigDTO(Project project, ProjectConfigDTO projectData) {
+        MetadataOverlayModel metadataOverlayModel = (MetadataOverlayModel) project.overlayModels.get(OVERLAY_MODEL);
+        if (metadataOverlayModel == null) {
+            metadataOverlayModel = new MetadataOverlayModel();
+            project.overlayModels.put(OVERLAY_MODEL, metadataOverlayModel);
+        }
+        metadataOverlayModel.setProjectData(projectData);
     }
 
     public static Logger getLogger() {
