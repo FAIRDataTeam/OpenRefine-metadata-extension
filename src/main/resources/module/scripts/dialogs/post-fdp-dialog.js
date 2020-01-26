@@ -449,6 +449,15 @@ class PostFdpDialog {
             .append(" \"" + title + "\" ")
             .append($.i18n("post-fdp-dialog/published-by"))
             .append(" " + publisher + ".")
+            .append($("<button>")
+                .addClass("fdp-info")
+                .addClass("button button-primary")
+                .text("?")
+                .attr("title", $.i18n("post-fdp-dialog/fdp-info"))
+                .click(() => {
+                    FDPInfoDialog.createAndLaunch(fdpMetadata.title, this.apiClient);
+                })
+            )
         );
     }
 

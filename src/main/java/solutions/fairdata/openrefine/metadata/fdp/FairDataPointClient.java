@@ -57,6 +57,8 @@ import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPInfoDTO;
 import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardCatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
@@ -86,6 +88,8 @@ public class FairDataPointClient {
             308   // HTTP Permanent Redirect
     ));
 
+    private static final String INFO_PART = "actuator/info";
+    private static final String CONFIG_PART = "configuration";
     private static final String CATALOG_PART = "catalog";
     private static final String DATASET_PART = "dataset";
     private static final String DISTRIBUTION_PART = "distribution";
@@ -171,6 +175,38 @@ public class FairDataPointClient {
             return FDPMetadataTransformerUtils.metadata2DTO(fdpMetadata);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
+        }
+    }
+
+    /**
+     * Get information about FAIR Data Point (API server)
+     *
+     * @return FAIR Data Point (API server) info or null if endpoint not operable
+     * @throws IOException in case of a communication error
+     */
+    public FDPInfoDTO getFairDataPointInfo() throws IOException {
+        HttpURLConnection conn = request(url(fdpBaseURI, INFO_PART), "GET", MEDIA_TYPE_JSON, true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return objectMapper.readValue(conn.getInputStream(), FDPInfoDTO.class);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get configuration details of FAIR Data Point (API server)
+     *
+     * @return FAIR Data Point (API server) config or null if endpoint not operable
+     * @throws IOException in case of a communication error
+     */
+    public FDPConfigDTO getFairDataPointConfig() throws IOException {
+        HttpURLConnection conn = request(url(fdpBaseURI, CONFIG_PART), "GET", MEDIA_TYPE_JSON, true);
+
+        if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return objectMapper.readValue(conn.getInputStream(), FDPConfigDTO.class);
+        } else {
+            return null;
         }
     }
 

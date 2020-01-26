@@ -29,7 +29,9 @@ import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthRespons
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.config.FDPInfoDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,8 +69,10 @@ public class AuthCommand extends Command {
 
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             TokenDTO tokenDTO = fdpClient.postAuthentication(authDTO);
+            FDPInfoDTO fdpInfoDTO = fdpClient.getFairDataPointInfo();
+            FDPConfigDTO fdpConfigDTO = fdpClient.getFairDataPointConfig();
 
-            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpUri));
+            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpUri, fdpInfoDTO, fdpConfigDTO));
         } catch (Exception e) {
             logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));

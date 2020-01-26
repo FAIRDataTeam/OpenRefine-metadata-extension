@@ -5,6 +5,8 @@ class MetadataApiClient {
     constructor() {
         this.fdpUri = null;
         this.token = null;
+        this.fdpConfig = null;
+        this.fdpInfo = null;
     }
 
     connectCustomFDP(fdpUri, email, password, callbacks, errorCallbacks) {
@@ -28,8 +30,11 @@ class MetadataApiClient {
                 }
             }),
             [(result) => {
+                console.log(result);
                 this.fdpUri = result.fdpUri;
                 this.token = result.token;
+                this.fdpConfig = result.fdpConfig;
+                this.fdpInfo = result.fdpInfo;
                 this.getFDPMetadata(callbacks, errorCallbacks);
             }],
             errorCallbacks

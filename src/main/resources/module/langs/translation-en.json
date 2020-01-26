@@ -13,6 +13,7 @@
   "post-fdp-dialog/description": "Fill in the base URI of your desired FAIR Data Point.",
   "post-fdp-dialog/connected-to-fdp": "You are now using FAIR Data Point",
   "post-fdp-dialog/published-by": "published by",
+  "post-fdp-dialog/fdp-info": "More details about FDP API",
   "post-fdp-dialog/layers/catalog": "Catalog",
   "post-fdp-dialog/layers/catalog-add": "+ Add catalog",
   "post-fdp-dialog/layers/dataset": "Dataset",
@@ -152,5 +153,11 @@
   "about-dialog/description-text": "Extension for OpenRefine to support FAIR metadata. It allows to store layered FAIR metadata to selected FAIR Data Point as well as upload data to supported storage in selected format. For more information about FAIR data, visit the homepage above.",
   "common/select-option": "-- select $1 --",
   "common/select-option/storage": "-- select storage --",
-  "common/select-option/format": "-- select format --"
+  "common/select-option/format": "-- select format --",
+  "fdp-info-dialog/name": "Service name",
+  "fdp-info-dialog/version": "Version",
+  "fdp-info-dialog/builtAt": "Built at",
+  "fdp-info-dialog/baseUri": "Base URI",
+  "fdp-info-dialog/instanceUrl": "Instance URI",
+  "fdp-info-dialog/unknown": "(unknown)"
 }
