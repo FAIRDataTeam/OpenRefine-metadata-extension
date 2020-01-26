@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remembering the last used catalog and dataset per repository (FDP) persistently for the
   OpenRefine project
+- Display version and build info of the connected FAIR Data Point if present
+- Use `instanceUrl` of FAIR Data Point if present to allow different domains for FDP and for 
+  its repository metadata
 
 ## [1.0.0]
 

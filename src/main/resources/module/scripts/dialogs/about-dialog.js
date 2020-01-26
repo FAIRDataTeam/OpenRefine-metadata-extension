@@ -1,7 +1,7 @@
 /* global DOM, DialogSystem */
 
 class MetadataAboutDialog {
-    constructor(type, specs, callbackFn, prefill) {
+    constructor() {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/about-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;

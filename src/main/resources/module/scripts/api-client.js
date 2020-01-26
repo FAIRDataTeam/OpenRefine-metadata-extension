@@ -5,6 +5,8 @@ class MetadataApiClient {
     constructor() {
         this.fdpUri = null;
         this.token = null;
+        this.fdpConfig = null;
+        this.fdpInfo = null;
     }
 
     connectCustomFDP(fdpUri, email, password, callbacks, errorCallbacks) {
@@ -30,6 +32,8 @@ class MetadataApiClient {
             [(result) => {
                 this.fdpUri = result.fdpUri;
                 this.token = result.token;
+                this.fdpConfig = result.fdpConfig;
+                this.fdpInfo = result.fdpInfo;
                 this.getFDPMetadata(callbacks, errorCallbacks);
             }],
             errorCallbacks
@@ -110,6 +114,10 @@ class MetadataApiClient {
             fdpUri: this.fdpUri, token: this.token, distribution
         });
         this._ajaxGeneric("distributions-metadata", "POST", distributionPostRequest, callbacks, errorCallbacks);
+    }
+
+    hasFDPInfo() {
+        return this.fdpUri !== null && (this.fdpConfig !== null || this.fdpInfo !== null);
     }
 
     // helpers
