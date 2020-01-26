@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, MetadataSpecs, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, FDPInfoDialog, MetadataSpecs, MetadataApiClient */
 
 class PostFdpDialog {
 
@@ -443,13 +443,13 @@ class PostFdpDialog {
             .attr("target", "_blank")
             .text(fdpMetadata.publisherName)
             .get(0).outerHTML;
-
-        this.elements.fdpMetadata.append($("<p>")
+        let infop = $("<p>")
             .append($.i18n("post-fdp-dialog/connected-to-fdp"))
-            .append(" \"" + title + "\" ")
+            .append(` "${title}" `)
             .append($.i18n("post-fdp-dialog/published-by"))
-            .append(" " + publisher + ".")
-            .append($("<button>")
+            .append(` ${publisher}.`);
+        if (this.apiClient.hasFDPInfo()) {
+            infop.append($("<button>")
                 .addClass("fdp-info")
                 .addClass("button button-primary")
                 .text("?")
@@ -457,8 +457,9 @@ class PostFdpDialog {
                 .click(() => {
                     FDPInfoDialog.createAndLaunch(fdpMetadata.title, this.apiClient);
                 })
-            )
-        );
+            );
+        }
+        this.elements.fdpMetadata.append(infop);
     }
 
     showMetadataSelect(select, metadatas, toSelect) {

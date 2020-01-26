@@ -30,7 +30,6 @@ class MetadataApiClient {
                 }
             }),
             [(result) => {
-                console.log(result);
                 this.fdpUri = result.fdpUri;
                 this.token = result.token;
                 this.fdpConfig = result.fdpConfig;
@@ -115,6 +114,10 @@ class MetadataApiClient {
             fdpUri: this.fdpUri, token: this.token, distribution
         });
         this._ajaxGeneric("distributions-metadata", "POST", distributionPostRequest, callbacks, errorCallbacks);
+    }
+
+    hasFDPInfo() {
+        return this.fdpUri !== null && (this.fdpConfig !== null || this.fdpInfo !== null);
     }
 
     // helpers
