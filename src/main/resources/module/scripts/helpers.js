@@ -1,7 +1,8 @@
 /* global theProject, Refine, DialogSystem */
 
 let MetadataHelpers = {
-    moduleName: "metadata"
+    moduleName: "metadata",
+    tempStorage: new Map()
 };
 
 MetadataHelpers.bugReport = () => {
