@@ -23,6 +23,7 @@ class PostFdpDialog {
 
         this.initBasicTexts();
         this.resetDefault();
+        this.recallCredentials();
 
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
@@ -67,6 +68,12 @@ class PostFdpDialog {
         ]);
     }
 
+    recallCredentials() {
+        this.elements.baseURI.val(MetadataHelpers.tempStorage.get("fdpUri") || "");
+        this.elements.email.val(MetadataHelpers.tempStorage.get("email") || "");
+        this.elements.password.val(MetadataHelpers.tempStorage.get("password") || "");
+    }
+
     bindActions() {
         const self = this;
         const elmts = this.elements;
@@ -83,6 +90,10 @@ class PostFdpDialog {
                 const fdpUri = elmts.baseURI.val();
                 const email = elmts.email.val();
                 const password = elmts.password.val();
+
+                MetadataHelpers.tempStorage.set("fdpUri", fdpUri);
+                MetadataHelpers.tempStorage.set("email", email);
+                MetadataHelpers.tempStorage.set("password", password);
 
                 self.apiClient.connectCustomFDP(
                     fdpUri, email, password,
