@@ -23,7 +23,6 @@ class PostFdpDialog {
 
         this.initBasicTexts();
         this.resetDefault();
-        this.recallCredentials();
 
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
@@ -33,6 +32,7 @@ class PostFdpDialog {
                 this.preparePrefill();
                 this.bindActions();
                 this.prepareConnections();
+                this.recallCredentials();
                 this.elements.dialogBody.removeClass("hidden");
             }
         ]);
@@ -69,9 +69,14 @@ class PostFdpDialog {
     }
 
     recallCredentials() {
-        this.elements.baseURI.val(MetadataHelpers.tempStorage.get("fdpUri") || "");
-        this.elements.email.val(MetadataHelpers.tempStorage.get("email") || "");
-        this.elements.password.val(MetadataHelpers.tempStorage.get("password") || "");
+        if (MetadataHelpers.tempStorage.has("fdpConnection")) {
+            this.elements.fdpConnectionSelect.val(MetadataHelpers.tempStorage.get("fdpConnection"));
+        }
+        if (this.elements.fdpConnectionSelect.val() === "custom") {
+            this.elements.baseURI.val(MetadataHelpers.tempStorage.get("fdpUri") || "");
+            this.elements.email.val(MetadataHelpers.tempStorage.get("email") || "");
+            this.elements.password.val(MetadataHelpers.tempStorage.get("password") || "");
+        }
     }
 
     bindActions() {
@@ -86,6 +91,7 @@ class PostFdpDialog {
 
             self.resetDefault();
 
+            MetadataHelpers.tempStorage.set("fdpConnection", fdpConnection);
             if (fdpConnection === "custom") {
                 const fdpUri = elmts.baseURI.val();
                 const email = elmts.email.val();
