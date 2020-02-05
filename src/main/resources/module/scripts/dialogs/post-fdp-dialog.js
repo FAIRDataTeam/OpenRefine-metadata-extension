@@ -58,10 +58,11 @@ class PostFdpDialog {
     }
 
     persistProjectData() {
-        const projectData = this.projectData;
-        projectData.lastCatalog = Object.fromEntries(this.projectData.lastCatalog.entries());
-        projectData.lastDataset = Object.fromEntries(this.projectData.lastDataset.entries());
-        this.apiClient.postSettings(projectData, [
+        const settings = { projectData: {
+            lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
+            projectData: Object.fromEntries(this.projectData.lastDataset.entries())
+        }};
+        this.apiClient.postSettings(settings, [
             (result) => {
                 this.loadProjectData(result.projectData);
             }

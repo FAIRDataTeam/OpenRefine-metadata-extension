@@ -348,7 +348,7 @@ public class FairDataPointClient {
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
     public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + CATALOG_PART, "POST", MEDIA_TYPE_TURTLE);
+        HttpURLConnection conn = createConnection(url(fdpBaseURI, CATALOG_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
 
@@ -389,7 +389,7 @@ public class FairDataPointClient {
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
     public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, MetadataException, FairDataPointException {
-        HttpURLConnection conn = createConnection(fdpBaseURI + DATASET_PART, "POST", MEDIA_TYPE_TURTLE);
+        HttpURLConnection conn = createConnection(url(fdpBaseURI, DATASET_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
 
