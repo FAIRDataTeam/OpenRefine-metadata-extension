@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class VirtuosoStorage extends Storage {
@@ -46,7 +47,7 @@ public class VirtuosoStorage extends Storage {
 
     @Override
     public String getFilePath(HashMap<String, String> metadata) {
-        return storageDTO.getDirectory() + metadata.getOrDefault("filename", "");
+        return Paths.get(storageDTO.getDirectory(), metadata.getOrDefault("filenameExt", "")).toString();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class VirtuosoStorage extends Storage {
 
     @Override
     public void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException {
-        String filename = metadata.get("filename");
+        String filename = metadata.get("filenameExt");
         if (filename == null) {
             throw new IOException("Filename not given");
         }
