@@ -63,7 +63,7 @@ public class FTPStorage extends Storage {
         ftpClient.connect(storageDTO.getHost());
         ftpClient.login(storageDTO.getUsername(), storageDTO.getPassword());
         ftpClient.changeWorkingDirectory(storageDTO.getDirectory());
-        ftpClient.setFileTransferMode(FTPClient.BINARY_FILE_TYPE);
+        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {
             boolean retval = ftpClient.storeFile(filename, is);
