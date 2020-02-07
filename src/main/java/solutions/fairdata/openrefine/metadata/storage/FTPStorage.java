@@ -27,6 +27,7 @@ import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class FTPStorage extends Storage {
@@ -44,7 +45,7 @@ public class FTPStorage extends Storage {
 
     @Override
     public String getFilePath(HashMap<String, String> metadata) {
-        return storageDTO.getDirectory() + metadata.getOrDefault("filename", "");
+        return Paths.get(storageDTO.getDirectory(), metadata.getOrDefault("filenameExt", "")).toString();
     }
 
     @Override
@@ -54,7 +55,7 @@ public class FTPStorage extends Storage {
 
     @Override
     public void storeData(byte[] data, HashMap<String, String> metadata, String contentType) throws IOException {
-        String filename = metadata.get("filename");
+        String filename = metadata.get("filenameExt");
         if (filename == null) {
             throw new IOException("Filename not given");
         }
@@ -62,7 +63,7 @@ public class FTPStorage extends Storage {
         ftpClient.connect(storageDTO.getHost());
         ftpClient.login(storageDTO.getUsername(), storageDTO.getPassword());
         ftpClient.changeWorkingDirectory(storageDTO.getDirectory());
-        ftpClient.setFileTransferMode(FTPClient.BINARY_FILE_TYPE);
+        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {
             boolean retval = ftpClient.storeFile(filename, is);

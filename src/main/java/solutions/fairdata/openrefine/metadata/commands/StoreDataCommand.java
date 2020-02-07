@@ -144,9 +144,13 @@ public class StoreDataCommand extends Command {
 
                 byte[] data = stream.toByteArray();
 
+                storeDataRequest.getMetadata().put(
+                        "filenameExt",
+                        storeDataRequest.getMetadata().getOrDefault("filename", defaultFilename) + "." + format.getExtension()
+                );
                 if (storeDataRequest.getMode().equals("preview")) {
                     String base64Data = Base64.getEncoder().encodeToString(data);
-                    String filename = storeDataRequest.getMetadata().getOrDefault("filename", defaultFilename) + "." + format.getExtension();
+                    String filename = storeDataRequest.getMetadata().get("filenameExt");
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
