@@ -43,6 +43,8 @@ public class StorageRegistryUtil {
         factories.put(TripleStoreHTTPStorage.TYPE.toLowerCase(), new TripleStoreHTTPStorageFactory());
     }
 
+    public static void clear() { storages.clear(); }
+
     public static void registerStorage(String name, Storage storage) {
         storages.put(name, storage);
     }

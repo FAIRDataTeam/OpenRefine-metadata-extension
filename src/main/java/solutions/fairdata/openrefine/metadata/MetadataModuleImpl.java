@@ -68,7 +68,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
         setInstance(this);
 
-        readConfig();
+        loadConfig();
 
         logger.trace("Metadata Extension module has been initialized");
     }
@@ -81,8 +81,9 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         return settingsDetails;
     }
 
-    private void readConfig() {
+    public void loadConfig() {
         File configFolderFile = new File(getPath(),"config");
+        logger.info("Loading configuration from " + configFolderFile.toString());
 
         readSettingsConfig(new File(configFolderFile, "settings.yaml"));
         readStorageConfig(new File(configFolderFile, "storages.yaml"));
@@ -100,6 +101,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
     private void readStorageConfig(File file) {
         try {
+            StorageRegistryUtil.clear();
             List<StorageDTO> configuredStorages = yamlObjectMapper.readValue(file, new TypeReference<List<StorageDTO>>(){});
             for (StorageDTO storageDTO : configuredStorages) {
                 try {
