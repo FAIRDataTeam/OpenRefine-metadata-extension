@@ -10,8 +10,8 @@ COPY . .
 RUN mvn clean package
 
 # Prepare OpenRefine 3.2 and metadata extension
-RUN curl -sSL https://github.com/OpenRefine/OpenRefine/releases/download/3.2/openrefine-linux-3.2.tar.gz | tar xz
-RUN tar xzf target/metadata-OpenRefine-3.2.tgz --directory openrefine-3.2/webapp/extensions
+RUN curl -sSL https://github.com/OpenRefine/OpenRefine/releases/download/3.3/openrefine-linux-3.3.tar.gz | tar xz
+RUN tar xzf target/metadata-OpenRefine-3.3.tgz --directory openrefine-3.3/webapp/extensions
 
 # ===================================================================
 # Main image
@@ -24,7 +24,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy prepared OpenRefine with extension
-COPY --from=builder /usr/src/app/openrefine-3.2 /app
+COPY --from=builder /usr/src/app/openrefine-3.3 /app
 
 # Prepare workspace volume
 VOLUME /data
