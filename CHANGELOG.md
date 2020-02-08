@@ -14,6 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display version and build info of the connected FAIR Data Point if present
 - Use `instanceUrl` of FAIR Data Point if present to allow different domains for FDP and for 
   its repository metadata
+- Information in About dialog derived from POM and project.properties files
+- Support for different OpenRefine version in Docker image using [ARG](https://docs.docker.com/engine/reference/builder/#arg)
+- Service tasks endpoint for reloading configuration files (extensible for the future), currently
+  intended for testing purposes only (end-to-end tests)
+
+### Changed
+
+- Updated to [OpenRefine 3.3](https://github.com/OpenRefine/OpenRefine/releases/tag/3.3)
+
+### Fixed
+
+- File storing using FTP (file extensions and corrupted binary files)
+- Storing metadata in FAIR Data Point (in some cases error occured)
 
 ## [1.0.0]
 
