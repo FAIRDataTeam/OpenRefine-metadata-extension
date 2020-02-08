@@ -20,6 +20,7 @@ function init() {
     RefineServlet.registerCommand(module, "metadata-specs", new MetadataCommands.MetadataSpecsCommand());
     RefineServlet.registerCommand(module, "typehints", new MetadataCommands.TypehintsCommand());
     RefineServlet.registerCommand(module, "store-data", new MetadataCommands.StoreDataCommand());
+    RefineServlet.registerCommand(module, "service", new MetadataCommands.ServiceCommand());
 
     // Overlay model
     Project.registerOverlayModel("metadataOverlayModel", Packages.solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel);
