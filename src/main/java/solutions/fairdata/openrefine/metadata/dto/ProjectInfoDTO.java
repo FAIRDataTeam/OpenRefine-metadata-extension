@@ -20,31 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response.config;
+package solutions.fairdata.openrefine.metadata.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
-@NoArgsConstructor
+import java.util.List;
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class SettingsResponse {
-
-    private String status;
-    private SettingsConfigDTO settings;
-    private ProjectConfigDTO projectData;
-    private ProjectInfoDTO projectInfo;
-
-    public SettingsResponse(SettingsConfigDTO settings, ProjectConfigDTO projectData, ProjectInfoDTO projectInfo) {
-        this.status = "ok";
-        this.settings = settings;
-        this.projectData = projectData;
-        this.projectInfo = projectInfo;
-    }
+public class ProjectInfoDTO {
+    private String name;
+    private String version;
+    private String openrefineVersion;
+    private List<String> openrefineSupported;
 }
