@@ -77,6 +77,12 @@ $ docker run -p 3333:3333 openrefine-metadata:local-tag
 
 Then open [http://localhost:3333](http://localhost:3333) in your favorite web browser.
 
+You can also build a Docker image with specific OpenRefine version using argument (see [Dockerfile](Dockerfile) for details):
+
+```console
+docker build  . -t  openrefine-metadata:local-or3.2 --build-arg OPENREFINE_VERSION=3.2
+```
+
 Note that we are using Java SE 8 (LTS), concretely OpenJDK 8 in Docker images (to comply with OpenRefine requirements).
 
 ## License
