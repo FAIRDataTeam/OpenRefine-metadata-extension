@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem */
+/* global DOM, DialogSystem, MetadataApiClient */
 
 class MetadataAboutDialog {
     constructor() {
@@ -58,7 +58,7 @@ class MetadataAboutDialog {
                     .append(
                         $("<a>").attr("href", link).attr("target", "_blank").text(version)
                     )
-                )
+                );
             });
             this.elements.infoOpenRefine.append(list);
         }
