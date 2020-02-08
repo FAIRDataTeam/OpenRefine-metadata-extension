@@ -1,27 +1,42 @@
+os: linux
 language: java
 jdk: openjdk8
-sudo: false
+
+services:
+  - docker
 
 cache:
   directories:
     - $HOME/.m2
 
 env:
-  - DOCKER_IMAGE="openrefine-metadata-extension:travis"
+  global:
+    - DOCKER_IMAGE_COMMIT="$PRIVATE_DOCKER_REGISTRY/openrefine-metadata-extension:$TRAVIS_COMMIT"
+    - XBRANCH=$(echo $TRAVIS_BRANCH | sed 's#/#-#g')
+    - DOCKER_IMAGE_BRANCH="$PRIVATE_DOCKER_REGISTRY/openrefine-metadata-extension:$XBRANCH"
+
+before_script:
+  - docker login -u "$PRIVATE_DOCKER_USER" -p "$PRIVATE_DOCKER_PASSWORD" "$PRIVATE_DOCKER_REGISTRY"
 
 script:
   # Create package and distribution ZIP file(s) = local build
   - mvn clean package
   # Create Docker image = in-Docker build
-  - docker build -t $DOCKER_IMAGE .
+  - docker build -t $DOCKER_IMAGE_COMMIT .
 
 deploy:
   - provider: releases
-    skip_cleanup: true
     on:
       tags: true
-    api_key: $GITHUB_TOKEN
+    token: $GITHUB_TOKEN
     file_glob: true
     file:
       - target/metadata-[0-9]*.zip  # only ZIP-dist with version
       - target/metadata-[0-9]*.tgz  # only TGZ-dist with version
+  - provider: script
+    on:
+      all_branches: true
+    script: >
+      docker push $DOCKER_IMAGE_COMMIT &&
+      docker image tag $DOCKER_IMAGE_COMMIT $DOCKER_IMAGE_BRANCH &&
+      docker push $DOCKER_IMAGE_BRANCH
