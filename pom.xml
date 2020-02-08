@@ -64,7 +64,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Core - local -->
-        <openrefine.version>3.2</openrefine.version>
+        <openrefine.version>3.3</openrefine.version>
         <servlet.version>2.5</servlet.version>
         <butterfly.version>1.0.2</butterfly.version>
         <slf4j.version>1.7.18</slf4j.version>
@@ -208,6 +208,12 @@
     <build>
         <outputDirectory>module/MOD-INF/classes</outputDirectory>
         <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

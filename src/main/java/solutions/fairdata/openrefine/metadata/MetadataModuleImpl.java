@@ -29,6 +29,7 @@ import com.google.refine.model.Project;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
@@ -38,7 +39,7 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
 
@@ -51,6 +52,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
     private SettingsConfigDTO settings = SettingsConfigDTO.getDefaultSettings();
     private SettingsConfigDTO settingsDetails = settings.copyDetails();
+    private ProjectInfoDTO projectInfo = new ProjectInfoDTO();;
 
     private static MetadataModuleImpl instance;
 
@@ -68,6 +70,7 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
         setInstance(this);
 
+        loadProjectInfo();
         loadConfig();
 
         logger.trace("Metadata Extension module has been initialized");
@@ -79,6 +82,25 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
 
     public SettingsConfigDTO getSettingsDetails() {
         return settingsDetails;
+    }
+
+    public ProjectInfoDTO getProjectInfo() {
+        return projectInfo;
+    }
+
+    public void loadProjectInfo() {
+        try {
+            final Properties properties = new Properties();
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
+            this.projectInfo.setName(properties.getProperty("artifactId", null));
+            this.projectInfo.setVersion(properties.getProperty("version", null));
+            this.projectInfo.setOpenrefineVersion(properties.getProperty("openrefineVersion", null));
+            this.projectInfo.setOpenrefineSupported(
+                    Arrays.asList(properties.getProperty("openrefineSupported").split("\\s+"))
+            );
+        } catch (IOException e) {
+            logger.warn("Could not load metadata about the metadata extension: " + e.getMessage());
+        }
     }
 
     public void loadConfig() {

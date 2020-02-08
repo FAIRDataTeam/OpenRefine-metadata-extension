@@ -29,6 +29,7 @@ import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.request.config.SettingsRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
+import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
@@ -46,7 +47,8 @@ public class SettingsCommand extends Command {
     private SettingsResponse createSettingsResponse(Project project) {
         SettingsConfigDTO settings = MetadataModuleImpl.getInstance().getSettingsDetails();
         ProjectConfigDTO projectData = MetadataModuleImpl.getProjectConfigDTO(project);
-        return new SettingsResponse(settings, projectData);
+        ProjectInfoDTO projectInfo = MetadataModuleImpl.getInstance().getProjectInfo();
+        return new SettingsResponse(settings, projectData, projectInfo);
     }
 
     @Override

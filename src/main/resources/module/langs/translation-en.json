@@ -149,6 +149,7 @@
   "about-dialog/openrefine-versions": "Supported OpenRefine versions",
   "about-dialog/fdp-versions": "Supported FAIR Data Point versions",
   "about-dialog/authors": "Authors",
+  "about-dialog/unknown": "unknown",
   "about-dialog/description": "Description",
   "about-dialog/description-text": "Extension for OpenRefine to support FAIR metadata. It allows to store layered FAIR metadata to selected FAIR Data Point as well as upload data to supported storage in selected format. For more information about FAIR data, visit the homepage above.",
   "common/select-option": "-- select $1 --",

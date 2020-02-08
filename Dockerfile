@@ -1,6 +1,10 @@
 # Build image
 FROM maven:3.6-jdk-8-slim as builder
 
+# You can specify OpenRefine version by: --build-arg OPENREFINE_VERSION=X.Y
+# Possible versions: 3.3 (supported, default), 3.2
+ARG OPENREFINE_VERSION=3.3
+
 WORKDIR /usr/src/app/
 
 # Add necessary project parts (exclude in .dockerignore)
@@ -9,9 +13,10 @@ COPY . .
 # Compile and create package
 RUN mvn clean package
 
-# Prepare OpenRefine 3.2 and metadata extension
-RUN curl -sSL https://github.com/OpenRefine/OpenRefine/releases/download/3.2/openrefine-linux-3.2.tar.gz | tar xz
-RUN tar xzf target/metadata-OpenRefine-3.2.tgz --directory openrefine-3.2/webapp/extensions
+# Prepare OpenRefine and metadata extension
+RUN curl -sSL https://github.com/OpenRefine/OpenRefine/releases/download/$OPENREFINE_VERSION/openrefine-linux-$OPENREFINE_VERSION.tar.gz | tar xz
+RUN mv openrefine-$OPENREFINE_VERSION openrefine
+RUN tar xzf target/metadata-OpenRefine-3.3.tgz --directory openrefine/webapp/extensions
 
 # ===================================================================
 # Main image
@@ -24,7 +29,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy prepared OpenRefine with extension
-COPY --from=builder /usr/src/app/openrefine-3.2 /app
+COPY --from=builder /usr/src/app/openrefine /app
 
 # Prepare workspace volume
 VOLUME /data
