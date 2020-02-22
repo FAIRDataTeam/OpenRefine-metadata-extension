@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0]
+
 ### Added
 
 - Remembering the last used catalog and dataset per repository (FDP) persistently for the
@@ -26,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - File storing using FTP (file extensions and corrupted binary files)
-- Storing metadata in FAIR Data Point (in some cases error occured)
+- Storing metadata in FAIR Data Point (in some cases error occurred)
 
 ## [1.0.0]
 
@@ -47,3 +49,4 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 
 [Unreleased]: /../../compare/v1.0.0...develop
 [1.0.0]: /../../tree/v1.0.0
+[1.1.0]: /../../tree/v1.1.0
