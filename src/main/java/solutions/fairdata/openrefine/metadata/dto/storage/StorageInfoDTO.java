@@ -37,6 +37,8 @@ public class StorageInfoDTO {
     private String host;
     private String directory;
     private Set<String> contentTypes;
+    private Integer maxByteSize;
+    private Set<String> filenamePatterns;
 
     public StorageInfoDTO(StorageDTO storageDTO) {
         this(
@@ -44,15 +46,19 @@ public class StorageInfoDTO {
                 storageDTO.getType(),
                 storageDTO.getHost(),
                 storageDTO.getDirectory(),
-                storageDTO.getContentTypes()
+                storageDTO.getContentTypes(),
+                storageDTO.getMaxByteSize(),
+                storageDTO.getFilenamePatterns()
         );
     }
 
-    public StorageInfoDTO(String name, String type, String host, String directory, Set<String> contentTypes) {
+    public StorageInfoDTO(String name, String type, String host, String directory, Set<String> contentTypes, Integer maxByteSize, Set<String> filenamePatterns) {
         this.name = name;
         this.type = type;
         this.host = host;
         this.directory = directory;
         this.contentTypes = contentTypes;
+        this.maxByteSize = maxByteSize;
+        this.filenamePatterns = filenamePatterns;
     }
 }

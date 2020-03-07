@@ -26,6 +26,10 @@
     - application/rdf+xml
     - application/x-turtle
     - text/turtle
+  maxByteSize: 12000
+  filenamePatterns:
+    - "*.xml"
+    - "model_*.ttl"
 - name: Local GraphDB
   type: tripleStoreHTTP
   enabled: true
