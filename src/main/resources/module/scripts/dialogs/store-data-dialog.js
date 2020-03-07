@@ -124,9 +124,9 @@ class StoreDataDialog {
             }
 
             const size = Math.ceil(100 * storage.maxByteSize / Math.pow(1024, x)) / 100;
-            const unit = units[x];
+            const unit = units[parseInt(x)];
             this.elements.storageLimits.text(
-                $.i18n(`store-data-dialog/max-bytesize`, size, unit)
+                $.i18n("store-data-dialog/max-bytesize", size, unit)
             );
         }
     }
@@ -222,7 +222,7 @@ class StoreDataDialog {
             formGroup.append(
                 $("<div>")
                     .addClass("input-note")
-                    .text($.i18n(`store-data-dialog/filename-patterns`, storage.filenamePatterns.join(", ")))
+                    .text($.i18n("store-data-dialog/filename-patterns", storage.filenamePatterns.join(", ")))
             );
         }
         this.elements.storageFields.append(formGroup);
