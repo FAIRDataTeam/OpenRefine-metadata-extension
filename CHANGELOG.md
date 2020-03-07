@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Possibility to restrict filesize and naming (using patterns) for storage
+
 ## [1.1.0]
 
 ### Added

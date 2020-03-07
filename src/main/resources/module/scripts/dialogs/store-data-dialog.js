@@ -106,11 +106,29 @@ class StoreDataDialog {
         elmts.storageSelect.on("change", () => {
             const selectedStorage = elmts.storageSelect.val();
             const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
+            this.showStorageLimits(storage);
             if (storage) {
                 this.showFormats(storage.contentTypes);
                 this.showStorageFields(storage);
             }
         });
+    }
+
+    showStorageLimits(storage) {
+        this.elements.storageLimits.empty();
+        if (storage && storage.maxByteSize > 0) {
+            const units = ["B", "kB", "MB", "GB"];
+            let x = units.length-1;
+            while (storage.maxByteSize < Math.pow(1024, x)) {
+                x -= 1;
+            }
+
+            const size = Math.ceil(100 * storage.maxByteSize / Math.pow(1024, x)) / 100;
+            const unit = units[parseInt(x)];
+            this.elements.storageLimits.text(
+                $.i18n("store-data-dialog/max-bytesize", size, unit)
+            );
+        }
     }
 
     showFormats(contentTypes) {
@@ -175,13 +193,13 @@ class StoreDataDialog {
         if (storageSpec) {
             storageSpec.metadata.forEach((fieldId) => {
                 if (MetadataStorageSpecs.metadata.has(fieldId)) {
-                    this.addStorageField(MetadataStorageSpecs.metadata.get(fieldId));
+                    this.addStorageField(storage, MetadataStorageSpecs.metadata.get(fieldId));
                 }
             });
         }
     }
 
-    addStorageField(fieldSpec) {
+    addStorageField(storage, fieldSpec) {
         const label = $("<label>")
             .attr("for", fieldSpec.id)
             .text($.i18n(`store-data-dialog/form/${fieldSpec.id}`));
@@ -199,9 +217,15 @@ class StoreDataDialog {
         }
 
         this.metadataFields.set(fieldSpec.id, field);
-        this.elements.storageFields.append(
-            $("<div>").addClass("form-group").append(label).append(field).append(note)
-        );
+        let formGroup = $("<div>").addClass("form-group").append(label).append(field).append(note);
+        if (fieldSpec.id === "filename" && storage.filenamePatterns && storage.filenamePatterns.length > 0) {
+            formGroup.append(
+                $("<div>")
+                    .addClass("input-note")
+                    .text($.i18n("store-data-dialog/filename-patterns", storage.filenamePatterns.join(", ")))
+            );
+        }
+        this.elements.storageFields.append(formGroup);
     }
 
     defaultCallback() {

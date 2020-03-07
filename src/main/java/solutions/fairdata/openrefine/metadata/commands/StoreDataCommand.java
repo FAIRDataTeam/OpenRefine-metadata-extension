@@ -148,13 +148,21 @@ public class StoreDataCommand extends Command {
                         "filenameExt",
                         storeDataRequest.getMetadata().getOrDefault("filename", defaultFilename) + "." + format.getExtension()
                 );
+                String filename = storeDataRequest.getMetadata().get("filenameExt");
+
                 if (storeDataRequest.getMode().equals("preview")) {
                     String base64Data = Base64.getEncoder().encodeToString(data);
-                    String filename = storeDataRequest.getMetadata().get("filenameExt");
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
                 } else {
+                    if (storage.forbidsName(filename)) {
+                        throw new MetadataCommandException("store-data-dialog/error/naming-violation");
+                    }
+                    else if (storage.fordbidsByteSize(data.length)) {
+                        throw new MetadataCommandException("store-data-dialog/error/too-big");
+                    }
+
                     storage.storeData(data, storeDataRequest.getMetadata(), exporter.getContentType());
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()))
