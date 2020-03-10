@@ -126,9 +126,9 @@ class MetadataFormDialog {
                         this.setValue(fieldId, value);
                     });
                     this.setValue(target, url);
-                    this.setValue('format', format);
-                    this.setValue('mediaType', contentType);
-                    this.setValue('bytesize', byteSize);
+                    this.setValue("format", format);
+                    this.setValue("mediaType", contentType);
+                    this.setValue("bytesize", byteSize);
                 },
                 formGroupId
             );
