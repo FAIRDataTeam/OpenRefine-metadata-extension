@@ -121,11 +121,14 @@ class MetadataFormDialog {
             const others = this.specs.storeData.others;
 
             this.makeStoreDataButton(
-                (url) => {
+                (url, format, contentType, byteSize) => {
                     Object.entries(others).forEach(([fieldId, value]) => {
                         this.setValue(fieldId, value);
                     });
                     this.setValue(target, url);
+                    this.setValue('format', format);
+                    this.setValue('mediaType', contentType);
+                    this.setValue('bytesize', byteSize);
                 },
                 formGroupId
             );
@@ -415,11 +418,12 @@ class MetadataFormDialog {
             $("<button>")
                 .addClass("button")
                 .addClass("store-data")
+                .attr("type", "button")
                 .text($.i18n("metadata/storeData"))
                 .click(() => {
                     const dialog = new StoreDataDialog();
-                    dialog.setCallback((url) => {
-                        callback(url);
+                    dialog.setCallback((...args) => {
+                        callback(...args);
                         dialog.dismiss();
                     });
                     dialog.launch();

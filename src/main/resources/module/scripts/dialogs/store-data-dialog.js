@@ -83,7 +83,7 @@ class StoreDataDialog {
 
         elmts.closeButton.click(() => { this.dismiss(); });
 
-        elmts.previewButton.click(() => {
+        elmts.previewButton.click((event) => {
             event.preventDefault();
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("preview"),
@@ -98,7 +98,7 @@ class StoreDataDialog {
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("store"),
                 (data) => {
-                    this.storeCallback(data.url);
+                    this.storeCallback(data.url, elmts.fileFormatSelect.val(), data.contentType, data.byteSize);
                 }
             );
         });
@@ -114,17 +114,28 @@ class StoreDataDialog {
         });
     }
 
+    formatByteSize(byteSize) {
+        if (byteSize <= 0) {
+            return {
+                size: 0,
+                unit: "B",
+            };
+        }
+        const units = ["B", "kB", "MB", "GB", "TB"];
+        let x = units.length-1;
+        while (byteSize < Math.pow(1024, x)) {
+            x -= 1;
+        }
+        return {
+            size: Math.ceil(100 * byteSize / Math.pow(1024, x)) / 100,
+            unit: units[parseInt(x)],
+        };
+    }
+
     showStorageLimits(storage) {
         this.elements.storageLimits.empty();
         if (storage && storage.maxByteSize > 0) {
-            const units = ["B", "kB", "MB", "GB"];
-            let x = units.length-1;
-            while (storage.maxByteSize < Math.pow(1024, x)) {
-                x -= 1;
-            }
-
-            const size = Math.ceil(100 * storage.maxByteSize / Math.pow(1024, x)) / 100;
-            const unit = units[parseInt(x)];
+            const {size, unit} = this.formatByteSize(storage.maxByteSize);
             this.elements.storageLimits.text(
                 $.i18n("store-data-dialog/max-bytesize", size, unit)
             );
@@ -229,10 +240,11 @@ class StoreDataDialog {
     }
 
     defaultCallback() {
-        return (url) => {
+        return (url, format, contentType, byteSize) => {
+            const {size, unit} = this.formatByteSize(byteSize);
             this.elements.storeDataResult.empty();
             this.elements.storeDataResult.append(
-                $("<span>").addClass("intro").text($.i18n("store-data-dialog/result"))
+                $("<span>").addClass("intro").text($.i18n("store-data-dialog/result", contentType, size, unit))
             );
             this.elements.storeDataResult.append(
                 $("<a>").addClass("link").attr("href", url).attr("target", "_blank").text(url)

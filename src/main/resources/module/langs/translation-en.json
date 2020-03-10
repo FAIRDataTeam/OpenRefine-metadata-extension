@@ -132,7 +132,7 @@
   "store-data-dialog/unusableFormats": "Install $1 for additional {{PLURAL:$2|format|formats}}: $3",
   "store-data-dialog/store": "Store",
   "store-data-dialog/preview": "Preview (download)",
-  "store-data-dialog/result": "File has been stored successfully at: ",
+  "store-data-dialog/result": "File ($1, $2 $3) stored at: ",
   "store-data-dialog/copy-clipboard": "Copy link to clipboard",
   "store-data-dialog/max-bytesize": "Maximal file size is $1 $2",
   "store-data-dialog/filename-patterns": "Filename should match one of patterns: $1",
