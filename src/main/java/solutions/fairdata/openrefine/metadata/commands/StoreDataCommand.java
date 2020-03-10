@@ -165,7 +165,7 @@ public class StoreDataCommand extends Command {
 
                     storage.storeData(data, storeDataRequest.getMetadata(), exporter.getContentType());
                     CommandUtils.objectMapper.writeValue(w,
-                            new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()))
+                            new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()), exporter.getContentType(), data.length)
                     );
                 }
             }
@@ -173,6 +173,7 @@ public class StoreDataCommand extends Command {
             logger.warn("Unable to store data (bad request)");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse(e.getMessage(), e));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.warn("Unable to store data: " + e.getMessage());
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("store-data-dialog/error/exporting", e));
         } finally {
