@@ -94,7 +94,8 @@ class PostFdpDialog {
 
             MetadataHelpers.tempStorage.set("fdpConnection", fdpConnection);
             if (fdpConnection === "custom") {
-                const fdpUri = elmts.baseURI.val();
+                const fdpUri = MetadataHelpers.handleFdpUrl(elmts.baseURI.val());
+                elmts.baseURI.val(fdpUri);
                 const email = elmts.email.val();
                 const password = elmts.password.val();
 
