@@ -75,3 +75,7 @@ MetadataHelpers.copyToClipboard = (text) => {
     $temp.remove();
 };
 
+MetadataHelpers.handleFdpUrl = (fdpUrl) => {
+    // remove trailing slash(es)
+    return fdpUrl.replace(/\/+$/, "");
+};

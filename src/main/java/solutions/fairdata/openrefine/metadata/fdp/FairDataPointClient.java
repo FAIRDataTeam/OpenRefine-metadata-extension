@@ -111,6 +111,9 @@ public class FairDataPointClient {
     }
 
     public FairDataPointClient(String fdpBaseURI, String token, Logger logger) {
+        while (fdpBaseURI.endsWith("/")) {
+            fdpBaseURI = fdpBaseURI.substring(0, fdpBaseURI.length() - 1);
+        }
         this.fdpBaseURI = fdpBaseURI;
         this.token = token;
         this.logger = logger;
