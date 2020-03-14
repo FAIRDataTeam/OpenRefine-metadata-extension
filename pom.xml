@@ -66,7 +66,7 @@
         <!-- Core - local -->
         <openrefine.version>3.3</openrefine.version>
         <servlet.version>2.5</servlet.version>
-        <butterfly.version>1.0.2</butterfly.version>
+        <butterfly.version>1.0.3</butterfly.version>
         <slf4j.version>1.7.18</slf4j.version>
         <fairmetadata4j.version>1.0.0</fairmetadata4j.version>
         <!-- Core - other -->
@@ -103,10 +103,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>edu.mit.simile</groupId>
-            <artifactId>butterfly</artifactId>
+            <groupId>org.openrefine.dependencies</groupId>
+            <artifactId>butterfly-container</artifactId>
             <version>${butterfly.version}</version>
-            <scope>provided</scope>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
