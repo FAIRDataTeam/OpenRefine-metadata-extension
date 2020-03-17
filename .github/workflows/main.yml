@@ -1,0 +1,140 @@
+name: OpenRefine metadata CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+# I. -> Maven package and GitHub release
+  package:
+    name: Build TGZ/ZIP package
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+# (1) -> Prepare cache and Java
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+    - name: Setup Java 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+
+# (2) -> Build with Maven
+    - name: Build with Maven
+      run: |
+        mvn -B package
+
+# (3) -> Upload artifacts
+    - name: Set package filenames
+      id: filenames
+      run: |
+        ZIP_FILE=$(basename $(find ./target -name metadata-*-OpenRefine-*.zip))
+        TGZ_FILE=$(basename $(find ./target -name metadata-*-OpenRefine-*.tgz))
+        echo "::set-output name=zip_file::$ZIP_FILE"
+        echo "::set-output name=tgz_file::$TGZ_FILE"
+
+    - name: Upload ZIP package
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.filenames.outputs.zip_file }}
+        path: ./target/${{ steps.filenames.outputs.zip_file }}
+
+    - name: Upload TGZ package
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.filenames.outputs.tgz_file }}
+        path: ./target/${{ steps.filenames.outputs.tgz_file }}
+
+# (4) -> Create GitHub release
+    - name: GitHub release
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      with:
+        prerelease: ${{ contains(github.ref, '-rc.') }}
+        files: |
+          ./target/${{ steps.filenames.outputs.zip_file }}
+          ./target/${{ steps.filenames.outputs.tgz_file }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# II. -> Docker image
+  image:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+
+    env:
+      PUBLIC_IMAGE: fairdata/openrefine-metadata-extension
+      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/openrefine-metadata-extension
+      TAG_DEVELOP: develop
+      TAG_LATEST: latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+# (1) -> Build Docker image
+    - name: Docker build
+      run: |
+        docker build -t $PRIVATE_IMAGE:$GITHUB_SHA .
+        
+# (2) -> Docker image tagging
+    - name: Docker login
+      if: github.event_name == 'push'
+      run: |
+        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
+        docker login -u "$PRIVATE_REGISTRY_USERNAME" -p "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
+        PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
+        PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+
+    - name: Docker push - commit SHA (private)
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+      run: |
+        docker push $PRIVATE_IMAGE:$GITHUB_SHA
+
+    - name: Docker tag and push - branch (private)
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
+      run: |
+        GITHUB_BRANCH=`echo $GITHUB_REF | cut -d/ -f3- | sed 's#/#-#g'`
+        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH
+        docker push $PRIVATE_IMAGE:$GITHUB_BRANCH
+
+    - name: Docker tag and push - develop (public)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      run: |
+        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PUBLIC_IMAGE:$TAG_DEVELOP
+        docker push $PUBLIC_IMAGE:$TAG_DEVELOP
+
+    - name: Docker tag and push - latest (public)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: |
+        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PUBLIC_IMAGE:$TAG_LATEST
+        docker push $PUBLIC_IMAGE:$TAG_LATEST
+
+    - name: Docker tag and push - version tag (public)
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      run: |
+        GITHUB_TAG=`echo $GITHUB_REF | cut -d/ -f3`
+        # Release vX.Y.Z
+        if [[ $GITHUB_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          IMAGE_TAG_MAJOR="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
+          IMAGE_TAG_MINOR="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v(.*)\..*/\1/g"`
+          IMAGE_TAG_PATCH="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v//g"`
+          echo "Publishing release: $IMAGE_TAG_PATCH";
+          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_MAJOR && docker push $IMAGE_TAG_MAJOR;
+          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_MINOR && docker push $IMAGE_TAG_MINOR;
+          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_PATCH && docker push $IMAGE_TAG_PATCH;
+        fi
+        # Release candidate vX.Y.Z-rc.R
+        if [[ $GITHUB_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
+          IMAGE_TAG_RC="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v//g"`
+          echo "Publishing release candidate: $IMAGE_TAG_RC";
+          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_RC && docker push $IMAGE_TAG_RC;
+        fi
