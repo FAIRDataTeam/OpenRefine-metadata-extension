@@ -25,7 +25,7 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.response.DashboardResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardCatalogDTO;
+import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardItemDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,9 +50,10 @@ public class DashboardCommand extends Command {
         FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, logger);
 
         try {
-            List<DashboardCatalogDTO> dashboard = fdpClient.getDashboard();
+            List<DashboardItemDTO> dashboard = fdpClient.getDashboard();
             CommandUtils.objectMapper.writeValue(w, new DashboardResponse(dashboard));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error while getting dashboard: " + fdpUri + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {

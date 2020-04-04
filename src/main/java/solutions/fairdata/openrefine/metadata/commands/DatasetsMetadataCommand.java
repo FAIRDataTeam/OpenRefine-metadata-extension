@@ -24,9 +24,9 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DatasetPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetsMetadataResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
@@ -56,7 +56,7 @@ public class DatasetsMetadataCommand extends Command {
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             CatalogDTO catalogDTO = fdpClient.getCatalogMetadata(catalogUri);
             ArrayList<DatasetDTO> datasetDTOs = new ArrayList<>();
-            for (String datasetURI : catalogDTO.getDatasets()) {
+            for (String datasetURI : catalogDTO.getChildren()) {
                 datasetDTOs.add(fdpClient.getDatasetMetadata(datasetURI));
             }
 

@@ -22,48 +22,67 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+
+import java.util.ArrayList;
 
 
 public class DatasetTransformerUtils extends MetadataTransformerUtils {
 
-    public static DatasetDTO metadata2DTO(DatasetMetadata datasetMetadata) {
-        DatasetDTO datasetDTO = new DatasetDTO();
+    public static DatasetDTO statements2DTO(ArrayList<Statement> statements, String actualURI) {
+        DatasetDTO dto = new DatasetDTO();
+        MetadataTransformerUtils.statements2DTO(statements, actualURI, dto);
 
-        genericDtoFromMetadata(datasetDTO, datasetMetadata);
-
-        datasetDTO.setPublisher(iriToString(datasetMetadata.getPublisher().getUri()));
-        datasetDTO.setPublisherName(literalToString(datasetMetadata.getPublisher().getName()));
-
-        datasetDTO.setLanguage(iriToString(datasetMetadata.getLanguage()));
-        datasetDTO.setThemes(irisToStrings(datasetMetadata.getThemes()));
-        datasetDTO.setContactPoint(iriToString(datasetMetadata.getContactPoint()));
-        datasetDTO.setKeywords(literalsToStrings(datasetMetadata.getKeywords()));
-        datasetDTO.setLandingPage(iriToString(datasetMetadata.getLandingPage()));
-
-        datasetDTO.setDistributions(irisToStrings(datasetMetadata.getDistributions()));
-        datasetDTO.setParentCatalog(iriToString(datasetMetadata.getParentURI()));
-
-        return datasetDTO;
+        IRI subject = stringToIri(actualURI);
+        for (Statement st: statements) {
+            if (st.getSubject().equals(subject)) {
+                IRI predicate = st.getPredicate();
+                if (predicate.equals(Vocabulary.CONTACT_POINT)) {
+                    dto.setContactPoint(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.DISTRIBUTION)) {
+                    dto.getChildren().add(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.LANGUAGE)) {
+                    dto.setLanguage(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.LANDING_PAGE)) {
+                    dto.setLandingPage(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.PARENT)) {
+                    dto.setParent(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.THEME)) {
+                    dto.getThemes().add(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.KEYWORD)) {
+                    dto.getKeywords().add(st.getObject().stringValue());
+                }
+            }
+        }
+        return dto;
     }
 
-    public static DatasetMetadata dto2Metadata(DatasetDTO datasetDTO) {
-        DatasetMetadata datasetMetadata = new DatasetMetadata();
-
-        genericMetadataFromDto(datasetMetadata, datasetDTO);
-
-        datasetMetadata.setPublisher(createAgent(datasetDTO.getPublisher(), datasetDTO.getPublisherName()));
-
-        datasetMetadata.setLanguage(stringToIri(datasetDTO.getLanguage()));
-        datasetMetadata.setThemes(stringsToIris(datasetDTO.getThemes()));
-        datasetMetadata.setContactPoint(stringToIri(datasetDTO.getContactPoint()));
-        datasetMetadata.setKeywords(stringsToLiterals(datasetDTO.getKeywords()));
-        datasetMetadata.setLandingPage(stringToIri(datasetDTO.getLandingPage()));
-
-        datasetMetadata.setDistributions(stringsToIris(datasetDTO.getDistributions()));
-        datasetMetadata.setParentURI(stringToIri(datasetDTO.getParentCatalog()));
-
-        return datasetMetadata;
+    public static ArrayList<Statement> dto2Statements(DatasetDTO datasetDTO) {
+        ArrayList<Statement> statements = new ArrayList<>();
+        IRI subject = stringToIri(datasetDTO.getIri());
+        statements.add(valueFactory.createStatement(subject, Vocabulary.TYPE, Vocabulary.TYPE_DATASET));
+        statements.add(valueFactory.createStatement(subject, Vocabulary.PARENT, stringToIri(datasetDTO.getParent())));
+        for (String datasetUri: datasetDTO.getChildren()) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.DISTRIBUTION, stringToIri(datasetUri)));
+        }
+        for (String themeUri: datasetDTO.getThemes()) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.THEME, stringToIri(themeUri)));
+        }
+        for (String keyword: datasetDTO.getKeywords()) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.KEYWORD, stringToLiteral(keyword)));
+        }
+        if (datasetDTO.getContactPoint() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.CONTACT_POINT, stringToIri(datasetDTO.getContactPoint())));
+        }
+        if (datasetDTO.getLanguage() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.LANGUAGE, stringToIri(datasetDTO.getLanguage())));
+        }
+        if (datasetDTO.getLandingPage() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.LANDING_PAGE, stringToIri(datasetDTO.getLandingPage())));
+        }
+        return statements;
     }
 }

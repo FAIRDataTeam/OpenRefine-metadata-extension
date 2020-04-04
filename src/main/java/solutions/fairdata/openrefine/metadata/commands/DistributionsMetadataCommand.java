@@ -24,9 +24,9 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DistributionPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DistributionPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DistributionsMetadataResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
@@ -56,7 +56,7 @@ public class DistributionsMetadataCommand extends Command {
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             DatasetDTO datasetDTO = fdpClient.getDatasetMetadata(datasetUri);
             ArrayList<DistributionDTO> distributionDTOs = new ArrayList<>();
-            for (String distributionURI : datasetDTO.getDistributions()) {
+            for (String distributionURI : datasetDTO.getChildren()) {
                 distributionDTOs.add(fdpClient.getDistributionMetadata(distributionURI));
             }
 

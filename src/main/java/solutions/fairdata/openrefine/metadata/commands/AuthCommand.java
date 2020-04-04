@@ -25,8 +25,8 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.commands.request.auth.AuthRequest;
-import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
+import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthResponse;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
@@ -67,13 +67,15 @@ public class AuthCommand extends Command {
                 throw new IOException("Custom FDP connection is not allowed!");
             }
 
+
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             TokenDTO tokenDTO = fdpClient.postAuthentication(authDTO);
             FDPInfoDTO fdpInfoDTO = fdpClient.getFairDataPointInfo();
             FDPConfigDTO fdpConfigDTO = fdpClient.getFairDataPointConfig();
 
-            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpUri, fdpInfoDTO, fdpConfigDTO));
+            CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpClient.getBaseURI(), fdpInfoDTO, fdpConfigDTO));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {

@@ -22,41 +22,62 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+
+import java.util.ArrayList;
 
 
 public class DistributionTransformerUtils extends MetadataTransformerUtils {
 
-    public static DistributionDTO metadata2DTO(DistributionMetadata distributionMetadata) {
-        DistributionDTO distributionDTO = new DistributionDTO();
+    public static DistributionDTO statements2DTO(ArrayList<Statement> statements, String actualURI) {
+        DistributionDTO dto = new DistributionDTO();
+        MetadataTransformerUtils.statements2DTO(statements, actualURI, dto);
 
-        genericDtoFromMetadata(distributionDTO, distributionMetadata);
-
-        distributionDTO.setFormat(literalToString(distributionMetadata.getFormat()));
-        distributionDTO.setBytesize(literalToString(distributionMetadata.getByteSize()));
-        distributionDTO.setMediaType(literalToString(distributionMetadata.getMediaType()));
-        distributionDTO.setAccessUrl(iriToString(distributionMetadata.getAccessURL()));
-        distributionDTO.setDownloadUrl(iriToString(distributionMetadata.getDownloadURL()));
-
-        distributionDTO.setParentDataset(iriToString(distributionMetadata.getParentURI()));
-
-        return distributionDTO;
+        IRI subject = stringToIri(actualURI);
+        for (Statement st: statements) {
+            if (st.getSubject().equals(subject)) {
+                IRI predicate = st.getPredicate();
+                if (predicate.equals(Vocabulary.FORMAT)) {
+                    dto.setFormat(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.BYTE_SIZE)) {
+                    dto.setBytesize(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.MEDIA_TYPE)) {
+                    dto.setMediaType(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.ACCESS_URL)) {
+                    dto.setAccessUrl(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.PARENT)) {
+                    dto.setParent(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.DOWNLOAD_URL)) {
+                    dto.setDownloadUrl(st.getObject().stringValue());
+                }
+            }
+        }
+        return dto;
     }
 
-    public static DistributionMetadata dto2Metadata(DistributionDTO distributionDTO) {
-        DistributionMetadata distributionMetadata = new DistributionMetadata();
-
-        genericMetadataFromDto(distributionMetadata, distributionDTO);
-
-        distributionMetadata.setFormat(stringToLiteral(distributionDTO.getFormat()));
-        distributionMetadata.setByteSize(stringToLiteral(distributionDTO.getBytesize()));
-        distributionMetadata.setMediaType(stringToLiteral(distributionDTO.getMediaType()));
-        distributionMetadata.setAccessURL(stringToIri(distributionDTO.getAccessUrl()));
-        distributionMetadata.setDownloadURL(stringToIri(distributionDTO.getDownloadUrl()));
-
-        distributionMetadata.setParentURI(stringToIri(distributionDTO.getParentDataset()));
-
-        return distributionMetadata;
+    public static ArrayList<Statement> dto2Statements(DistributionDTO distributionDTO) {
+        ArrayList<Statement> statements = new ArrayList<>();
+        IRI subject = stringToIri(distributionDTO.getIri());
+        statements.add(valueFactory.createStatement(subject, Vocabulary.TYPE, Vocabulary.TYPE_DISTRIBUTION));
+        statements.add(valueFactory.createStatement(subject, Vocabulary.PARENT, stringToIri(distributionDTO.getParent())));
+        if (distributionDTO.getMediaType() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.MEDIA_TYPE, stringToIri(distributionDTO.getMediaType())));
+        }
+        if (distributionDTO.getBytesize() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.BYTE_SIZE, stringToLiteral(distributionDTO.getBytesize())));
+        }
+        if (distributionDTO.getFormat() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.FORMAT, stringToIri(distributionDTO.getFormat())));
+        }
+        if (distributionDTO.getAccessUrl() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.ACCESS_URL, stringToIri(distributionDTO.getAccessUrl())));
+        }
+        if (distributionDTO.getDownloadUrl() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.DOWNLOAD_URL, stringToIri(distributionDTO.getDownloadUrl())));
+        }
+        return statements;
     }
 }

@@ -154,10 +154,7 @@ class MetadataFormDialog {
     fillForm(prefill) {
         const elmts = this.elements;
         prefill.forEach((value, key) => {
-            const field = elmts.metadataForm.find(`#${key}`);
-            if (field) {
-                field.val(value);
-            }
+            this.setValue(key, value);
         });
     }
 

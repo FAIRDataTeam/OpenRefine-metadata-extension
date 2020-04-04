@@ -22,18 +22,28 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+
+import java.util.ArrayList;
 
 public class FDPMetadataTransformerUtils extends MetadataTransformerUtils {
 
-    public static FDPMetadataDTO metadata2DTO(FDPMetadata fdpMetadata) {
-        FDPMetadataDTO fdpMetadataDTO = new FDPMetadataDTO();
+    public static FDPMetadataDTO metadata2DTO(ArrayList<Statement> statements, String actualURI) {
+        FDPMetadataDTO dto = new FDPMetadataDTO();
+        MetadataTransformerUtils.statements2DTO(statements, actualURI, dto);
 
-        genericDtoFromMetadata(fdpMetadataDTO, fdpMetadata);
-
-        fdpMetadataDTO.setCatalogs(irisToStrings(fdpMetadata.getCatalogs()));
-
-        return fdpMetadataDTO;
+        IRI subject = stringToIri(actualURI);
+        for (Statement st: statements) {
+            if (st.getSubject().equals(subject)) {
+                IRI predicate = st.getPredicate();
+                if (predicate.equals(Vocabulary.CATALOG)) {
+                    dto.getChildren().add(st.getObject().stringValue());
+                }
+            }
+        }
+        return dto;
     }
 }

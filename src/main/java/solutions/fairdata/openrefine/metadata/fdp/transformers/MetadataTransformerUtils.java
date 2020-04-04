@@ -22,28 +22,81 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import nl.dtl.fairmetadata4j.model.Agent;
-import nl.dtl.fairmetadata4j.model.Identifier;
-import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import solutions.fairdata.openrefine.metadata.dto.metadata.MetadataDTO;
+import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetadataTransformerUtils {
 
-    private static SimpleValueFactory literalFactory = SimpleValueFactory.getInstance();
+    protected static final SimpleValueFactory valueFactory = SimpleValueFactory.getInstance();
+
+    public static void statements2DTO(ArrayList<Statement> statements, String actualURI, MetadataDTO dto) {
+        dto.setIri(actualURI);
+        IRI subject = stringToIri(actualURI);
+        IRI publisherIRI = null;
+        for (Statement st: statements) {
+            if (st.getSubject().equals(subject)) {
+                IRI predicate = st.getPredicate();
+                if (predicate.equals(Vocabulary.TITLE)) {
+                    dto.setTitle(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.VERSION)) {
+                    dto.setVersion(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.DESCRIPTION)) {
+                    dto.setDescription(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.LICENSE)) {
+                    dto.setLicense(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.RIGHTS)) {
+                    dto.setRights(st.getObject().stringValue());
+                } else if (predicate.equals(Vocabulary.PUBLISHER)) {
+                    dto.setPublisher(st.getObject().stringValue());
+                    publisherIRI = (IRI) st.getObject();
+                }
+            }
+        }
+        if (publisherIRI != null) {
+            for (Statement st: statements) {
+                if (st.getSubject().equals(publisherIRI)) {
+                    IRI predicate = st.getPredicate();
+                    if (predicate.equals(Vocabulary.PUBLISHER_NAME)) {
+                        dto.setPublisherName(st.getObject().stringValue());
+                    }
+                }
+            }
+        }
+    }
+
+    public static ArrayList<Statement> dto2Statements(MetadataDTO dto) {
+        IRI subject = stringToIri(dto.getIri());
+        ArrayList<Statement> statements = new ArrayList<>();
+        statements.add(valueFactory.createStatement(subject, Vocabulary.TITLE, stringToLiteral(dto.getTitle())));
+        statements.add(valueFactory.createStatement(subject, Vocabulary.VERSION, stringToLiteral(dto.getVersion())));
+        statements.add(valueFactory.createStatement(subject, Vocabulary.PUBLISHER, stringToIri(dto.getPublisher())));
+        statements.add(valueFactory.createStatement(stringToIri(dto.getPublisher()), Vocabulary.PUBLISHER_NAME, stringToLiteral(dto.getPublisherName())));
+        if (dto.getDescription() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.DESCRIPTION, stringToLiteral(dto.getDescription())));
+        }
+        if (dto.getLicense() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.LICENSE, stringToIri(dto.getLicense())));
+        }
+        if (dto.getRights() != null) {
+            statements.add(valueFactory.createStatement(subject, Vocabulary.RIGHTS, stringToIri(dto.getRights())));
+        }
+        return statements;
+    }
 
     public static String iriToString(IRI iri) {
         return iri == null ? null : iri.toString();
     }
 
     public static IRI stringToIri(String iri) {
-        return iri == null ? null : literalFactory.createIRI(iri);
+        return iri == null ? null : valueFactory.createIRI(iri);
     }
 
     public static String literalToString(Literal literal) {
@@ -51,7 +104,7 @@ public class MetadataTransformerUtils {
     }
 
     public static Literal stringToLiteral(String value) {
-        return value == null ? null : literalFactory.createLiteral(value);
+        return value == null ? null : valueFactory.createLiteral(value);
     }
 
     public static List<String> irisToStrings(List<IRI> iris) {
@@ -69,7 +122,7 @@ public class MetadataTransformerUtils {
     public static List<Literal> stringsToLiterals(List<String> strings) {
         return strings == null ? null : strings.stream().map(MetadataTransformerUtils::stringToLiteral).collect(Collectors.toList());
     }
-
+/*
     public static Agent createAgent(String iri, String name) {
         if (iri == null) return null;
         Agent agent = new Agent();
@@ -115,5 +168,5 @@ public class MetadataTransformerUtils {
     public static void setTimestamps(Metadata metadata, Date date) {
         metadata.setModified(literalFactory.createLiteral(date));
         metadata.setIssued(literalFactory.createLiteral(date));
-    }
+    }*/
 }

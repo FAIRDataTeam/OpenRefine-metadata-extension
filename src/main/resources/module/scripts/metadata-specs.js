@@ -69,7 +69,7 @@ MetadataSpecs.catalog = {
             "multiple": true,
         },
         {
-            "id": "parentFDP",
+            "id": "parent",
             "type": "iri",
             "required": true,
             "hidden": true
@@ -160,7 +160,7 @@ MetadataSpecs.dataset = {
             "required": false,
         },
         {
-            "id": "parentCatalog",
+            "id": "parent",
             "type": "iri",
             "required": true,
             "hidden": true
@@ -256,7 +256,7 @@ MetadataSpecs.distribution = {
             ]
         },
         {
-            "id": "parentDataset",
+            "id": "parent",
             "type": "iri",
             "required": true,
             "hidden": true

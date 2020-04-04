@@ -23,7 +23,6 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
-
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.FDPMetadataResponse;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
@@ -55,6 +54,7 @@ public class FDPMetadataCommand extends Command {
             logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
             CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {

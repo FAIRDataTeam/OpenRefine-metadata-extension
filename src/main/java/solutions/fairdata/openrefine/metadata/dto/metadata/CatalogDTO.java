@@ -22,11 +22,12 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.metadata;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -34,7 +35,7 @@ import lombok.Setter;
 public class CatalogDTO extends MetadataDTO {
     private String language;
     private String homepage;
-    private List<String> themeTaxonomies;
-    private List<String> datasets;
-    private String parentFDP;
+    private List<String> themeTaxonomies = new ArrayList<>();
+    private List<String> children = new ArrayList<>();
+    private String parent;
 }

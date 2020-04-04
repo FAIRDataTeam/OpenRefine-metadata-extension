@@ -24,9 +24,9 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.CatalogPostRequest;
+import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.CatalogPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.CatalogsMetadataResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
@@ -55,7 +55,7 @@ public class CatalogsMetadataCommand extends Command {
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
             ArrayList<CatalogDTO> catalogDTOs = new ArrayList<>();
-            for (String catalogURI : fdpMetadataDTO.getCatalogs()) {
+            for (String catalogURI : fdpMetadataDTO.getChildren()) {
                 catalogDTOs.add(fdpClient.getCatalogMetadata(catalogURI));
             }
 
@@ -81,6 +81,7 @@ public class CatalogsMetadataCommand extends Command {
 
             CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error while creating catalog in FAIR Data Point: " + catalogPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
