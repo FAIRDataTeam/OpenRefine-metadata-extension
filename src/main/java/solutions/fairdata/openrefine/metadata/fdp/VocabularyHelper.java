@@ -27,7 +27,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 
-public class Vocabulary {
+public class VocabularyHelper {
 
     private static final SimpleValueFactory vf = SimpleValueFactory.getInstance();
     // "Shared"

@@ -25,7 +25,7 @@ package solutions.fairdata.openrefine.metadata.fdp.transformers;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
-import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+import solutions.fairdata.openrefine.metadata.fdp.VocabularyHelper;
 
 import java.util.ArrayList;
 
@@ -40,15 +40,15 @@ public class CatalogTransformerUtils extends MetadataTransformerUtils {
         for (Statement st: statements) {
             if (st.getSubject().equals(subject)) {
                 IRI predicate = st.getPredicate();
-                if (predicate.equals(Vocabulary.DATASET)) {
+                if (predicate.equals(VocabularyHelper.DATASET)) {
                     dto.getChildren().add(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.LANGUAGE)) {
+                } else if (predicate.equals(VocabularyHelper.LANGUAGE)) {
                     dto.setLanguage(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.HOMEPAGE)) {
+                } else if (predicate.equals(VocabularyHelper.HOMEPAGE)) {
                     dto.setHomepage(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.PARENT)) {
+                } else if (predicate.equals(VocabularyHelper.PARENT)) {
                     dto.setParent(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.THEME_TAXONOMY)) {
+                } else if (predicate.equals(VocabularyHelper.THEME_TAXONOMY)) {
                     dto.getThemeTaxonomies().add(st.getObject().stringValue());
                 }
             }
@@ -59,19 +59,19 @@ public class CatalogTransformerUtils extends MetadataTransformerUtils {
     public static ArrayList<Statement> dto2Statements(CatalogDTO catalogDTO) {
         ArrayList<Statement> statements = MetadataTransformerUtils.dto2Statements(catalogDTO);
         IRI subject = stringToIri(catalogDTO.getIri());
-        statements.add(valueFactory.createStatement(subject, Vocabulary.TYPE, Vocabulary.TYPE_CATALOG));
-        statements.add(valueFactory.createStatement(subject, Vocabulary.PARENT, stringToIri(catalogDTO.getParent())));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.TYPE, VocabularyHelper.TYPE_CATALOG));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.PARENT, stringToIri(catalogDTO.getParent())));
         for (String datasetUri: catalogDTO.getChildren()) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.DATASET, stringToIri(datasetUri)));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.DATASET, stringToIri(datasetUri)));
         }
         for (String taxonomyUri: catalogDTO.getThemeTaxonomies()) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.THEME_TAXONOMY, stringToIri(taxonomyUri)));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.THEME_TAXONOMY, stringToIri(taxonomyUri)));
         }
         if (catalogDTO.getHomepage() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.HOMEPAGE, stringToIri(catalogDTO.getHomepage())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.HOMEPAGE, stringToIri(catalogDTO.getHomepage())));
         }
         if (catalogDTO.getLanguage() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.LANGUAGE, stringToIri(catalogDTO.getLanguage())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.LANGUAGE, stringToIri(catalogDTO.getLanguage())));
         }
         return statements;
     }

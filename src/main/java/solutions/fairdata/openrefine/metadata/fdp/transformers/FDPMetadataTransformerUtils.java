@@ -25,7 +25,7 @@ package solutions.fairdata.openrefine.metadata.fdp.transformers;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
-import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+import solutions.fairdata.openrefine.metadata.fdp.VocabularyHelper;
 
 import java.util.ArrayList;
 
@@ -39,7 +39,7 @@ public class FDPMetadataTransformerUtils extends MetadataTransformerUtils {
         for (Statement st: statements) {
             if (st.getSubject().equals(subject)) {
                 IRI predicate = st.getPredicate();
-                if (predicate.equals(Vocabulary.CATALOG)) {
+                if (predicate.equals(VocabularyHelper.CATALOG)) {
                     dto.getChildren().add(st.getObject().stringValue());
                 }
             }

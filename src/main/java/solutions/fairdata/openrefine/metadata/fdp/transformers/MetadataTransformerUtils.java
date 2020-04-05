@@ -27,7 +27,7 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import solutions.fairdata.openrefine.metadata.dto.metadata.MetadataDTO;
-import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+import solutions.fairdata.openrefine.metadata.fdp.VocabularyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,17 +44,17 @@ public class MetadataTransformerUtils {
         for (Statement st: statements) {
             if (st.getSubject().equals(subject)) {
                 IRI predicate = st.getPredicate();
-                if (predicate.equals(Vocabulary.TITLE)) {
+                if (predicate.equals(VocabularyHelper.TITLE)) {
                     dto.setTitle(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.VERSION)) {
+                } else if (predicate.equals(VocabularyHelper.VERSION)) {
                     dto.setVersion(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.DESCRIPTION)) {
+                } else if (predicate.equals(VocabularyHelper.DESCRIPTION)) {
                     dto.setDescription(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.LICENSE)) {
+                } else if (predicate.equals(VocabularyHelper.LICENSE)) {
                     dto.setLicense(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.RIGHTS)) {
+                } else if (predicate.equals(VocabularyHelper.RIGHTS)) {
                     dto.setRights(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.PUBLISHER)) {
+                } else if (predicate.equals(VocabularyHelper.PUBLISHER)) {
                     dto.setPublisher(st.getObject().stringValue());
                     publisherIRI = (IRI) st.getObject();
                 }
@@ -64,7 +64,7 @@ public class MetadataTransformerUtils {
             for (Statement st: statements) {
                 if (st.getSubject().equals(publisherIRI)) {
                     IRI predicate = st.getPredicate();
-                    if (predicate.equals(Vocabulary.PUBLISHER_NAME)) {
+                    if (predicate.equals(VocabularyHelper.PUBLISHER_NAME)) {
                         dto.setPublisherName(st.getObject().stringValue());
                     }
                 }
@@ -75,18 +75,18 @@ public class MetadataTransformerUtils {
     public static ArrayList<Statement> dto2Statements(MetadataDTO dto) {
         IRI subject = stringToIri(dto.getIri());
         ArrayList<Statement> statements = new ArrayList<>();
-        statements.add(valueFactory.createStatement(subject, Vocabulary.TITLE, stringToLiteral(dto.getTitle())));
-        statements.add(valueFactory.createStatement(subject, Vocabulary.VERSION, stringToLiteral(dto.getVersion())));
-        statements.add(valueFactory.createStatement(subject, Vocabulary.PUBLISHER, stringToIri(dto.getPublisher())));
-        statements.add(valueFactory.createStatement(stringToIri(dto.getPublisher()), Vocabulary.PUBLISHER_NAME, stringToLiteral(dto.getPublisherName())));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.TITLE, stringToLiteral(dto.getTitle())));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.VERSION, stringToLiteral(dto.getVersion())));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.PUBLISHER, stringToIri(dto.getPublisher())));
+        statements.add(valueFactory.createStatement(stringToIri(dto.getPublisher()), VocabularyHelper.PUBLISHER_NAME, stringToLiteral(dto.getPublisherName())));
         if (dto.getDescription() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.DESCRIPTION, stringToLiteral(dto.getDescription())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.DESCRIPTION, stringToLiteral(dto.getDescription())));
         }
         if (dto.getLicense() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.LICENSE, stringToIri(dto.getLicense())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.LICENSE, stringToIri(dto.getLicense())));
         }
         if (dto.getRights() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.RIGHTS, stringToIri(dto.getRights())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.RIGHTS, stringToIri(dto.getRights())));
         }
         return statements;
     }

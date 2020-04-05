@@ -25,7 +25,7 @@ package solutions.fairdata.openrefine.metadata.fdp.transformers;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
-import solutions.fairdata.openrefine.metadata.fdp.Vocabulary;
+import solutions.fairdata.openrefine.metadata.fdp.VocabularyHelper;
 
 import java.util.ArrayList;
 
@@ -40,17 +40,17 @@ public class DistributionTransformerUtils extends MetadataTransformerUtils {
         for (Statement st: statements) {
             if (st.getSubject().equals(subject)) {
                 IRI predicate = st.getPredicate();
-                if (predicate.equals(Vocabulary.FORMAT)) {
+                if (predicate.equals(VocabularyHelper.FORMAT)) {
                     dto.setFormat(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.BYTE_SIZE)) {
+                } else if (predicate.equals(VocabularyHelper.BYTE_SIZE)) {
                     dto.setBytesize(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.MEDIA_TYPE)) {
+                } else if (predicate.equals(VocabularyHelper.MEDIA_TYPE)) {
                     dto.setMediaType(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.ACCESS_URL)) {
+                } else if (predicate.equals(VocabularyHelper.ACCESS_URL)) {
                     dto.setAccessUrl(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.PARENT)) {
+                } else if (predicate.equals(VocabularyHelper.PARENT)) {
                     dto.setParent(st.getObject().stringValue());
-                } else if (predicate.equals(Vocabulary.DOWNLOAD_URL)) {
+                } else if (predicate.equals(VocabularyHelper.DOWNLOAD_URL)) {
                     dto.setDownloadUrl(st.getObject().stringValue());
                 }
             }
@@ -61,22 +61,22 @@ public class DistributionTransformerUtils extends MetadataTransformerUtils {
     public static ArrayList<Statement> dto2Statements(DistributionDTO distributionDTO) {
         ArrayList<Statement> statements = new ArrayList<>();
         IRI subject = stringToIri(distributionDTO.getIri());
-        statements.add(valueFactory.createStatement(subject, Vocabulary.TYPE, Vocabulary.TYPE_DISTRIBUTION));
-        statements.add(valueFactory.createStatement(subject, Vocabulary.PARENT, stringToIri(distributionDTO.getParent())));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.TYPE, VocabularyHelper.TYPE_DISTRIBUTION));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.PARENT, stringToIri(distributionDTO.getParent())));
         if (distributionDTO.getMediaType() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.MEDIA_TYPE, stringToIri(distributionDTO.getMediaType())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.MEDIA_TYPE, stringToIri(distributionDTO.getMediaType())));
         }
         if (distributionDTO.getBytesize() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.BYTE_SIZE, stringToLiteral(distributionDTO.getBytesize())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.BYTE_SIZE, stringToLiteral(distributionDTO.getBytesize())));
         }
         if (distributionDTO.getFormat() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.FORMAT, stringToIri(distributionDTO.getFormat())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.FORMAT, stringToIri(distributionDTO.getFormat())));
         }
         if (distributionDTO.getAccessUrl() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.ACCESS_URL, stringToIri(distributionDTO.getAccessUrl())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.ACCESS_URL, stringToIri(distributionDTO.getAccessUrl())));
         }
         if (distributionDTO.getDownloadUrl() != null) {
-            statements.add(valueFactory.createStatement(subject, Vocabulary.DOWNLOAD_URL, stringToIri(distributionDTO.getDownloadUrl())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.DOWNLOAD_URL, stringToIri(distributionDTO.getDownloadUrl())));
         }
         return statements;
     }
