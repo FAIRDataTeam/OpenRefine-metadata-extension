@@ -42,7 +42,10 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -173,7 +176,6 @@ public class StoreDataCommand extends Command {
             logger.warn("Unable to store data (bad request)");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse(e.getMessage(), e));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.warn("Unable to store data: " + e.getMessage());
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("store-data-dialog/error/exporting", e));
         } finally {

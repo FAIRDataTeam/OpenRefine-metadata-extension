@@ -23,7 +23,6 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
-
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.FDPMetadataResponse;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;

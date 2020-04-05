@@ -22,15 +22,16 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.metadata;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
 public class FDPMetadataDTO extends MetadataDTO {
-    private List<String> catalogs;
+    private List<String> children = new ArrayList<>();
 }
