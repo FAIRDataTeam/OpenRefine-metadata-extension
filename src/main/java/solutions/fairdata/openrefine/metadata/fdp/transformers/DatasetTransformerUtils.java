@@ -61,7 +61,7 @@ public class DatasetTransformerUtils extends MetadataTransformerUtils {
     }
 
     public static ArrayList<Statement> dto2Statements(DatasetDTO datasetDTO) {
-        ArrayList<Statement> statements = new ArrayList<>();
+        ArrayList<Statement> statements = MetadataTransformerUtils.dto2Statements(datasetDTO);
         IRI subject = stringToIri(datasetDTO.getIri());
         statements.add(valueFactory.createStatement(subject, VocabularyHelper.TYPE, VocabularyHelper.TYPE_DATASET));
         statements.add(valueFactory.createStatement(subject, VocabularyHelper.PARENT, stringToIri(datasetDTO.getParent())));

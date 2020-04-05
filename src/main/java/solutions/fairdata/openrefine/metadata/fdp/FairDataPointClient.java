@@ -325,7 +325,6 @@ public class FairDataPointClient {
 
         ArrayList<Statement> statements = CatalogTransformerUtils.dto2Statements(catalogDTO);
         String metadata = serializeStatements(statements);
-        System.out.println(metadata);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
         bw.write(metadata);

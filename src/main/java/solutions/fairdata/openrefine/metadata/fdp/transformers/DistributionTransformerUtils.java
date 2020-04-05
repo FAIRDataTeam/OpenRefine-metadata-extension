@@ -59,18 +59,18 @@ public class DistributionTransformerUtils extends MetadataTransformerUtils {
     }
 
     public static ArrayList<Statement> dto2Statements(DistributionDTO distributionDTO) {
-        ArrayList<Statement> statements = new ArrayList<>();
+        ArrayList<Statement> statements = MetadataTransformerUtils.dto2Statements(distributionDTO);
         IRI subject = stringToIri(distributionDTO.getIri());
         statements.add(valueFactory.createStatement(subject, VocabularyHelper.TYPE, VocabularyHelper.TYPE_DISTRIBUTION));
         statements.add(valueFactory.createStatement(subject, VocabularyHelper.PARENT, stringToIri(distributionDTO.getParent())));
         if (distributionDTO.getMediaType() != null) {
-            statements.add(valueFactory.createStatement(subject, VocabularyHelper.MEDIA_TYPE, stringToIri(distributionDTO.getMediaType())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.MEDIA_TYPE, stringToLiteral(distributionDTO.getMediaType())));
         }
         if (distributionDTO.getBytesize() != null) {
             statements.add(valueFactory.createStatement(subject, VocabularyHelper.BYTE_SIZE, stringToLiteral(distributionDTO.getBytesize())));
         }
         if (distributionDTO.getFormat() != null) {
-            statements.add(valueFactory.createStatement(subject, VocabularyHelper.FORMAT, stringToIri(distributionDTO.getFormat())));
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.FORMAT, stringToLiteral(distributionDTO.getFormat())));
         }
         if (distributionDTO.getAccessUrl() != null) {
             statements.add(valueFactory.createStatement(subject, VocabularyHelper.ACCESS_URL, stringToIri(distributionDTO.getAccessUrl())));

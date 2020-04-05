@@ -53,7 +53,6 @@ public class DashboardCommand extends Command {
             List<DashboardItemDTO> dashboard = fdpClient.getDashboard();
             CommandUtils.objectMapper.writeValue(w, new DashboardResponse(dashboard));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error while getting dashboard: " + fdpUri + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {

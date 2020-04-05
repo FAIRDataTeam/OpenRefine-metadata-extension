@@ -54,7 +54,6 @@ public class FDPMetadataCommand extends Command {
             logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
             CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
