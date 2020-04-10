@@ -25,50 +25,33 @@ package solutions.fairdata.openrefine.metadata.fdp;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
 import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPInfoDTO;
-import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardCatalogDTO;
-import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardItemDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.CatalogTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DatasetTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.DistributionTransformerUtils;
 import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransformerUtils;
-import solutions.fairdata.openrefine.metadata.fdp.transformers.MetadataTransformerUtils;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Simple client for communication with FAIR Data Point API
@@ -111,6 +94,9 @@ public class FairDataPointClient {
     }
 
     public FairDataPointClient(String fdpBaseURI, String token, Logger logger) {
+        while (fdpBaseURI.endsWith("/")) {
+            fdpBaseURI = fdpBaseURI.substring(0, fdpBaseURI.length() - 1);
+        }
         this.fdpBaseURI = fdpBaseURI;
         this.token = token;
         this.logger = logger;
@@ -144,11 +130,11 @@ public class FairDataPointClient {
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public List<DashboardCatalogDTO> getDashboard() throws IOException, FairDataPointException {
+    public List<DashboardItemDTO> getDashboard() throws IOException, FairDataPointException {
         HttpURLConnection conn = request(url(fdpBaseURI,DASHBOARD_PART), "GET", MEDIA_TYPE_JSON, true);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            return objectMapper.readValue(conn.getInputStream(), new TypeReference<List<DashboardCatalogDTO>>(){});
+            return objectMapper.readValue(conn.getInputStream(), new TypeReference<List<DashboardItemDTO>>(){});
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -167,12 +153,8 @@ public class FairDataPointClient {
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
-            FDPMetadataParser metadataParser = new FDPMetadataParser();
-            FDPMetadata fdpMetadata = metadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return FDPMetadataTransformerUtils.metadata2DTO(fdpMetadata);
+            ArrayList<Statement> statements = parseStatements(conn, actualURI);
+            return FDPMetadataTransformerUtils.metadata2DTO(statements, actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -224,12 +206,7 @@ public class FairDataPointClient {
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
-            CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
-            CatalogMetadata catalogMetadata = catalogMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return CatalogTransformerUtils.metadata2DTO(catalogMetadata);
+            return CatalogTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -249,12 +226,7 @@ public class FairDataPointClient {
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
-            DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser();
-            DatasetMetadata datasetMetadata = datasetMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return DatasetTransformerUtils.metadata2DTO(datasetMetadata);
+            return DatasetTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -274,12 +246,7 @@ public class FairDataPointClient {
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String actualURI = conn.getURL().toString();
 
-            DistributionMetadataParser distributionMetadataParser = new DistributionMetadataParser();
-            DistributionMetadata distributionMetadata = distributionMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return DistributionTransformerUtils.metadata2DTO(distributionMetadata);
+            return DistributionTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -347,7 +314,7 @@ public class FairDataPointClient {
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, MetadataException, FairDataPointException {
+    public CatalogDTO postCatalog(CatalogDTO catalogDTO) throws IOException, FairDataPointException {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, CATALOG_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
@@ -356,10 +323,8 @@ public class FairDataPointClient {
         String uri = url(fdpBaseURI, CATALOG_PART, UUID.randomUUID().toString());
         catalogDTO.setIri(uri);
 
-        CatalogMetadata catalogMetadata = CatalogTransformerUtils.dto2Metadata(catalogDTO);
-        catalogMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
-        MetadataTransformerUtils.setTimestamps(catalogMetadata);
-        String metadata = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
+        ArrayList<Statement> statements = CatalogTransformerUtils.dto2Statements(catalogDTO);
+        String metadata = serializeStatements(statements);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
         bw.write(metadata);
@@ -368,13 +333,7 @@ public class FairDataPointClient {
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
-            CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
-
-            CatalogMetadata returnCatalogMetadata = catalogMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return CatalogTransformerUtils.metadata2DTO(returnCatalogMetadata);
+            return CatalogTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -388,7 +347,7 @@ public class FairDataPointClient {
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, MetadataException, FairDataPointException {
+    public DatasetDTO postDataset(DatasetDTO datasetDTO) throws IOException, FairDataPointException {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, DATASET_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
@@ -397,10 +356,8 @@ public class FairDataPointClient {
         String uri = url(fdpBaseURI, DATASET_PART, UUID.randomUUID().toString());
         datasetDTO.setIri(uri);
 
-        DatasetMetadata datasetMetadata = DatasetTransformerUtils.dto2Metadata(datasetDTO);
-        datasetMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
-        MetadataTransformerUtils.setTimestamps(datasetMetadata);
-        String metadata = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE);
+        ArrayList<Statement> statements = DatasetTransformerUtils.dto2Statements(datasetDTO);
+        String metadata = serializeStatements(statements);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
         bw.write(metadata);
@@ -409,13 +366,7 @@ public class FairDataPointClient {
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
-            DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser();
-
-            DatasetMetadata returnDatasetMetadata = datasetMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return DatasetTransformerUtils.metadata2DTO(returnDatasetMetadata);
+            return DatasetTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -429,7 +380,7 @@ public class FairDataPointClient {
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public DistributionDTO postDistribution(DistributionDTO distributionDTO) throws IOException, MetadataException, FairDataPointException {
+    public DistributionDTO postDistribution(DistributionDTO distributionDTO) throws IOException, FairDataPointException {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, DISTRIBUTION_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
@@ -438,10 +389,8 @@ public class FairDataPointClient {
         String uri = url(fdpBaseURI, DISTRIBUTION_PART, UUID.randomUUID().toString());
         distributionDTO.setIri(uri);
 
-        DistributionMetadata distributionMetadata = DistributionTransformerUtils.dto2Metadata(distributionDTO);
-        distributionMetadata.setIdentifier(MetadataTransformerUtils.createIdentifier(uri));
-        MetadataTransformerUtils.setTimestamps(distributionMetadata);
-        String metadata = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE);
+        ArrayList<Statement> statements = DistributionTransformerUtils.dto2Statements(distributionDTO);
+        String metadata = serializeStatements(statements);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
         bw.write(metadata);
@@ -450,13 +399,7 @@ public class FairDataPointClient {
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
-            DistributionMetadataParser distributionMetadataParser = new DistributionMetadataParser();
-
-            DistributionMetadata returnDistributionMetadata = distributionMetadataParser.parse(
-                    parseStatements(conn, actualURI),
-                    SimpleValueFactory.getInstance().createIRI(actualURI)
-            );
-            return DistributionTransformerUtils.metadata2DTO(returnDistributionMetadata);
+            return DistributionTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
@@ -477,6 +420,18 @@ public class FairDataPointClient {
 
         parser.parse(new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)), uri);
         return new ArrayList<>(collector.getStatements());
+    }
+
+    /**
+     * Helper for creating string from RDF statements
+     *
+     * @param statements list of statements
+     * @return string (Turtle)
+     */
+    private String serializeStatements(ArrayList<Statement> statements) {
+        StringWriter sw = new StringWriter();
+        Rio.write(statements, sw, RDFFormat.TURTLE);
+        return sw.toString();
     }
 
     /**
@@ -549,5 +504,9 @@ public class FairDataPointClient {
             sb.append("/").append(f);
         }
         return sb.toString();
+    }
+
+    public String getBaseURI() {
+        return fdpBaseURI;
     }
 }

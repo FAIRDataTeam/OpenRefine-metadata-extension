@@ -22,21 +22,22 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.metadata;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
 public class DatasetDTO extends MetadataDTO {
     private String language;
-    private List<String> themes;
+    private List<String> themes = new ArrayList<>();
     private String contactPoint;
-    private List<String> keywords;
+    private List<String> keywords = new ArrayList<>();
     private String landingPage;
-    private List<String> distributions;
-    private String parentCatalog;
+    private List<String> children = new ArrayList<>();
+    private String parent;
 }

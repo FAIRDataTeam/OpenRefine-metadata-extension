@@ -59,9 +59,9 @@ class PostFdpDialog {
 
     persistProjectData() {
         const settings = { projectData: {
-            lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
-            projectData: Object.fromEntries(this.projectData.lastDataset.entries())
-        }};
+                lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
+                projectData: Object.fromEntries(this.projectData.lastDataset.entries())
+            }};
         this.apiClient.postSettings(settings, [
             (result) => {
                 this.loadProjectData(result.projectData);
@@ -94,7 +94,8 @@ class PostFdpDialog {
 
             MetadataHelpers.tempStorage.set("fdpConnection", fdpConnection);
             if (fdpConnection === "custom") {
-                const fdpUri = elmts.baseURI.val();
+                const fdpUri = MetadataHelpers.handleFdpUrl(elmts.baseURI.val());
+                elmts.baseURI.val(fdpUri);
                 const email = elmts.email.val();
                 const password = elmts.password.val();
 
@@ -141,7 +142,7 @@ class PostFdpDialog {
             const catalog = this.metadata.catalogs.get(catalogUri);
             if (catalog) {
                 this.metadata.datasets.clear();
-                catalog.datasets.forEach((dataset) => {
+                catalog.children.forEach((dataset) => {
                     this.metadata.datasets.set(dataset.uri, dataset);
                 });
                 const canCreate = catalog.membership && catalog.membership.permissions.some(isCreatePermission);
@@ -161,7 +162,7 @@ class PostFdpDialog {
             const dataset = this.metadata.datasets.get(datasetUri);
             if (dataset) {
                 this.metadata.distributions.clear();
-                dataset.distributions.forEach((distribution) => {
+                dataset.children.forEach((distribution) => {
                     this.metadata.distributions.set(distribution.uri, distribution);
                 });
                 const canCreate = dataset.membership.permissions && dataset.membership.permissions.some(isCreatePermission);
@@ -177,7 +178,7 @@ class PostFdpDialog {
 
         elmts.catalogAddButton.click(() => {
             let prefill = new Map(this.prefill);
-            prefill.set("parentFDP", elmts.baseURI.val());
+            prefill.set("parent", self.apiClient.fdpUri);
             MetadataFormDialog.createAndLaunch(MetadataSpecs.catalog,
                 (catalog, formDialog) => {
                     this.apiClient.postCatalog(
@@ -193,7 +194,7 @@ class PostFdpDialog {
         elmts.datasetAddButton.click(() => {
             const catalogUri = this.elements.catalogSelect.val();
             let prefill = new Map(this.prefill);
-            prefill.set("parentCatalog", catalogUri);
+            prefill.set("parent", catalogUri);
             MetadataFormDialog.createAndLaunch(MetadataSpecs.dataset,
                 (dataset, formDialog) => {
                     this.apiClient.postDataset(
@@ -209,7 +210,7 @@ class PostFdpDialog {
         elmts.distributionAddButton.click(() => {
             const datasetUri = elmts.datasetSelect.val();
             let prefill = new Map(this.prefill);
-            prefill.set("parentDataset", datasetUri);
+            prefill.set("parent", datasetUri);
             MetadataFormDialog.createAndLaunch(MetadataSpecs.distribution,
                 (distribution, formDialog) => {
                     this.apiClient.postDistribution(

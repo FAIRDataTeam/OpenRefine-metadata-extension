@@ -42,7 +42,10 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -148,16 +151,24 @@ public class StoreDataCommand extends Command {
                         "filenameExt",
                         storeDataRequest.getMetadata().getOrDefault("filename", defaultFilename) + "." + format.getExtension()
                 );
+                String filename = storeDataRequest.getMetadata().get("filenameExt");
+
                 if (storeDataRequest.getMode().equals("preview")) {
                     String base64Data = Base64.getEncoder().encodeToString(data);
-                    String filename = storeDataRequest.getMetadata().get("filenameExt");
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
                 } else {
+                    if (storage.forbidsName(filename)) {
+                        throw new MetadataCommandException("store-data-dialog/error/naming-violation");
+                    }
+                    else if (storage.fordbidsByteSize(data.length)) {
+                        throw new MetadataCommandException("store-data-dialog/error/too-big");
+                    }
+
                     storage.storeData(data, storeDataRequest.getMetadata(), exporter.getContentType());
                     CommandUtils.objectMapper.writeValue(w,
-                            new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()))
+                            new StoreDataResponse(storage.getURL(storeDataRequest.getMetadata()), exporter.getContentType(), data.length)
                     );
                 }
             }

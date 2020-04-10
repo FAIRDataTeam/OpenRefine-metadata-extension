@@ -25,6 +25,8 @@ package solutions.fairdata.openrefine.metadata.storage;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 abstract public class Storage {
@@ -84,4 +86,22 @@ abstract public class Storage {
         return storageDTO == null || (storageDTO.getContentTypes() != null && !storageDTO.getContentTypes().contains(contentType));
     }
 
+    public boolean forbidsName(String filename) {
+        if (storageDTO == null || storageDTO.getFilenamePatterns() == null || storageDTO.getFilenamePatterns().isEmpty()) {
+            return false;
+        }
+        for (String pattern : storageDTO.getFilenamePatterns()) {
+            if (FileSystems.getDefault().getPathMatcher("glob:"+pattern).matches(Paths.get(filename))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean fordbidsByteSize(int byteSize) {
+        if (storageDTO == null || storageDTO.getMaxByteSize() == null) {
+            return false;
+        }
+        return byteSize > storageDTO.getMaxByteSize();
+    }
 }

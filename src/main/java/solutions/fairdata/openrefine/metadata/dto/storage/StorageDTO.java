@@ -40,6 +40,8 @@ public class StorageDTO {
     private String host;
     private String directory;
     private Set<String> contentTypes;
+    private Integer maxByteSize;
+    private Set<String> filenamePatterns;
 
     public StorageInfoDTO toInfo() {
         return new StorageInfoDTO(this);

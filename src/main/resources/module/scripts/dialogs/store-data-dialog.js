@@ -83,7 +83,7 @@ class StoreDataDialog {
 
         elmts.closeButton.click(() => { this.dismiss(); });
 
-        elmts.previewButton.click(() => {
+        elmts.previewButton.click((event) => {
             event.preventDefault();
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("preview"),
@@ -98,7 +98,7 @@ class StoreDataDialog {
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("store"),
                 (data) => {
-                    this.storeCallback(data.url);
+                    this.storeCallback(data.url, elmts.fileFormatSelect.val(), data.contentType, data.byteSize);
                 }
             );
         });
@@ -106,11 +106,40 @@ class StoreDataDialog {
         elmts.storageSelect.on("change", () => {
             const selectedStorage = elmts.storageSelect.val();
             const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
+            this.showStorageLimits(storage);
             if (storage) {
                 this.showFormats(storage.contentTypes);
                 this.showStorageFields(storage);
             }
         });
+    }
+
+    formatByteSize(byteSize) {
+        if (byteSize <= 0) {
+            return {
+                size: 0,
+                unit: "B",
+            };
+        }
+        const units = ["B", "kB", "MB", "GB", "TB"];
+        let x = units.length-1;
+        while (byteSize < Math.pow(1024, x)) {
+            x -= 1;
+        }
+        return {
+            size: Math.ceil(100 * byteSize / Math.pow(1024, x)) / 100,
+            unit: units[parseInt(x)],
+        };
+    }
+
+    showStorageLimits(storage) {
+        this.elements.storageLimits.empty();
+        if (storage && storage.maxByteSize > 0) {
+            const {size, unit} = this.formatByteSize(storage.maxByteSize);
+            this.elements.storageLimits.text(
+                $.i18n("store-data-dialog/max-bytesize", size, unit)
+            );
+        }
     }
 
     showFormats(contentTypes) {
@@ -175,13 +204,13 @@ class StoreDataDialog {
         if (storageSpec) {
             storageSpec.metadata.forEach((fieldId) => {
                 if (MetadataStorageSpecs.metadata.has(fieldId)) {
-                    this.addStorageField(MetadataStorageSpecs.metadata.get(fieldId));
+                    this.addStorageField(storage, MetadataStorageSpecs.metadata.get(fieldId));
                 }
             });
         }
     }
 
-    addStorageField(fieldSpec) {
+    addStorageField(storage, fieldSpec) {
         const label = $("<label>")
             .attr("for", fieldSpec.id)
             .text($.i18n(`store-data-dialog/form/${fieldSpec.id}`));
@@ -199,16 +228,23 @@ class StoreDataDialog {
         }
 
         this.metadataFields.set(fieldSpec.id, field);
-        this.elements.storageFields.append(
-            $("<div>").addClass("form-group").append(label).append(field).append(note)
-        );
+        let formGroup = $("<div>").addClass("form-group").append(label).append(field).append(note);
+        if (fieldSpec.id === "filename" && storage.filenamePatterns && storage.filenamePatterns.length > 0) {
+            formGroup.append(
+                $("<div>")
+                    .addClass("input-note")
+                    .text($.i18n("store-data-dialog/filename-patterns", storage.filenamePatterns.join(", ")))
+            );
+        }
+        this.elements.storageFields.append(formGroup);
     }
 
     defaultCallback() {
-        return (url) => {
+        return (url, format, contentType, byteSize) => {
+            const {size, unit} = this.formatByteSize(byteSize);
             this.elements.storeDataResult.empty();
             this.elements.storeDataResult.append(
-                $("<span>").addClass("intro").text($.i18n("store-data-dialog/result"))
+                $("<span>").addClass("intro").text($.i18n("store-data-dialog/result", contentType, size, unit))
             );
             this.elements.storeDataResult.append(
                 $("<a>").addClass("link").attr("href", url).attr("target", "_blank").text(url)

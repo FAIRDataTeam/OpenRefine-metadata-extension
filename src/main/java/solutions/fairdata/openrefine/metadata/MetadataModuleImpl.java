@@ -39,7 +39,9 @@ import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 public class MetadataModuleImpl extends ButterflyModuleImpl {
 
@@ -103,7 +105,13 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         }
     }
 
+    public void clearConfig() {
+        settings = SettingsConfigDTO.getDefaultSettings();
+        settingsDetails = settings.copyDetails();
+    }
+
     public void loadConfig() {
+        clearConfig();
         File configFolderFile = new File(getPath(),"config");
         logger.info("Loading configuration from " + configFolderFile.toString());
 
@@ -160,4 +168,5 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
     public static Logger getLogger() {
         return logger;
     }
+
 }

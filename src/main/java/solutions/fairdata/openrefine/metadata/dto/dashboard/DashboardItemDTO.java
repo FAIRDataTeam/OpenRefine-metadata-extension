@@ -27,13 +27,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class DashboardDistributionDTO {
+public class DashboardItemDTO {
     protected String identifier;
     protected String uri;
     protected String title;
+    protected List<DashboardItemDTO> children;
     protected MembershipDTO membership;
 }

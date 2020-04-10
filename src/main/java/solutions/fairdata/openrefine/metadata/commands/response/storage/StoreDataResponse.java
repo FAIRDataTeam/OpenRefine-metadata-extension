@@ -35,9 +35,13 @@ public class StoreDataResponse {
 
     private String status;
     private String url;
+    private String contentType;
+    private Integer byteSize;
 
-    public StoreDataResponse(String url) {
+    public StoreDataResponse(String url, String contentType, Integer byteSize) {
         this.status = "ok";
         this.url = url;
+        this.contentType = contentType;
+        this.byteSize = byteSize;
     }
 }

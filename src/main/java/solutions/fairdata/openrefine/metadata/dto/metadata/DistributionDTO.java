@@ -35,5 +35,5 @@ public class DistributionDTO extends MetadataDTO {
     private String mediaType;
     private String downloadUrl;
     private String accessUrl;
-    private String parentDataset;
+    private String parent;
 }

@@ -22,14 +22,13 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response;
 
-import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardCatalogDTO;
-
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardItemDTO;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,9 +36,9 @@ import lombok.Setter;
 @Setter
 public class DashboardResponse {
     private String status;
-    private List<DashboardCatalogDTO> catalogs;
+    private List<DashboardItemDTO> catalogs;
 
-    public DashboardResponse(List<DashboardCatalogDTO> catalogs) {
+    public DashboardResponse(List<DashboardItemDTO> catalogs) {
         this.status = "ok";
         this.catalogs = catalogs;
     }

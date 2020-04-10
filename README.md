@@ -1,7 +1,7 @@
 # OpenRefine-metadata-extension
 
-[![Build Status](https://travis-ci.com/FAIRDataTeam/OpenRefine-metadata-extension.svg?branch=master)](https://travis-ci.com/FAIRDataTeam/OpenRefine-metadata-extension)
-![GitHub All Releases](https://img.shields.io/github/downloads/FAIRDataTeam/OpenRefine-metadata-extension/total)
+[![OpenRefine metadata CI](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension/workflows/OpenRefine%20metadata%20CI/badge.svg?branch=master)](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension/actions)
+[![GitHub All Releases](https://img.shields.io/github/downloads/FAIRDataTeam/OpenRefine-metadata-extension/total)](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/fairdata/openrefine-metadata-extension)](https://hub.docker.com/r/fairdata/openrefine-metadata-extension)
 [![License](https://img.shields.io/github/license/FAIRDataTeam/OpenRefine-metadata-extension)](LICENSE)
 [![Documentation](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/openrefine/usage.html)

@@ -22,38 +22,57 @@
  */
 package solutions.fairdata.openrefine.metadata.fdp.transformers;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
+import solutions.fairdata.openrefine.metadata.fdp.VocabularyHelper;
+
+import java.util.ArrayList;
 
 
 public class CatalogTransformerUtils extends MetadataTransformerUtils {
 
-    public static CatalogDTO metadata2DTO(CatalogMetadata catalogMetadata) {
-        CatalogDTO catalogDTO = new CatalogDTO();
+    public static CatalogDTO statements2DTO(ArrayList<Statement> statements, String actualURI) {
+        CatalogDTO dto = new CatalogDTO();
+        MetadataTransformerUtils.statements2DTO(statements, actualURI, dto);
 
-        genericDtoFromMetadata(catalogDTO, catalogMetadata);
-
-        catalogDTO.setLanguage(iriToString(catalogMetadata.getLanguage()));
-        catalogDTO.setHomepage(iriToString(catalogMetadata.getHomepage()));
-        catalogDTO.setThemeTaxonomies(irisToStrings(catalogMetadata.getThemeTaxonomys()));
-
-        catalogDTO.setDatasets(irisToStrings(catalogMetadata.getDatasets()));
-        catalogDTO.setParentFDP(iriToString(catalogMetadata.getParentURI()));
-
-        return catalogDTO;
+        IRI subject = stringToIri(actualURI);
+        for (Statement st: statements) {
+            if (st.getSubject().equals(subject)) {
+                IRI predicate = st.getPredicate();
+                if (predicate.equals(VocabularyHelper.DATASET)) {
+                    dto.getChildren().add(st.getObject().stringValue());
+                } else if (predicate.equals(VocabularyHelper.LANGUAGE)) {
+                    dto.setLanguage(st.getObject().stringValue());
+                } else if (predicate.equals(VocabularyHelper.HOMEPAGE)) {
+                    dto.setHomepage(st.getObject().stringValue());
+                } else if (predicate.equals(VocabularyHelper.PARENT)) {
+                    dto.setParent(st.getObject().stringValue());
+                } else if (predicate.equals(VocabularyHelper.THEME_TAXONOMY)) {
+                    dto.getThemeTaxonomies().add(st.getObject().stringValue());
+                }
+            }
+        }
+        return dto;
     }
 
-    public static CatalogMetadata dto2Metadata(CatalogDTO catalogDTO) {
-        CatalogMetadata catalogMetadata = new CatalogMetadata();
-        genericMetadataFromDto(catalogMetadata, catalogDTO);
-
-        catalogMetadata.setLanguage(stringToIri(catalogDTO.getLanguage()));
-        catalogMetadata.setHomepage(stringToIri(catalogDTO.getHomepage()));
-        catalogMetadata.setThemeTaxonomys(stringsToIris(catalogDTO.getThemeTaxonomies()));
-
-        catalogMetadata.setDatasets(stringsToIris(catalogDTO.getDatasets()));
-        catalogMetadata.setParentURI(stringToIri(catalogDTO.getParentFDP()));
-
-        return catalogMetadata;
+    public static ArrayList<Statement> dto2Statements(CatalogDTO catalogDTO) {
+        ArrayList<Statement> statements = MetadataTransformerUtils.dto2Statements(catalogDTO);
+        IRI subject = stringToIri(catalogDTO.getIri());
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.TYPE, VocabularyHelper.TYPE_CATALOG));
+        statements.add(valueFactory.createStatement(subject, VocabularyHelper.PARENT, stringToIri(catalogDTO.getParent())));
+        for (String datasetUri: catalogDTO.getChildren()) {
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.DATASET, stringToIri(datasetUri)));
+        }
+        for (String taxonomyUri: catalogDTO.getThemeTaxonomies()) {
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.THEME_TAXONOMY, stringToIri(taxonomyUri)));
+        }
+        if (catalogDTO.getHomepage() != null) {
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.HOMEPAGE, stringToIri(catalogDTO.getHomepage())));
+        }
+        if (catalogDTO.getLanguage() != null) {
+            statements.add(valueFactory.createStatement(subject, VocabularyHelper.LANGUAGE, stringToIri(catalogDTO.getLanguage())));
+        }
+        return statements;
     }
 }
