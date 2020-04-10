@@ -7,11 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0]
+
 ### Added
 
 - Possibility to restrict filesize and naming (using patterns) for storage
 - Autofill file-related fields with content type and bytesize of stored file using
   "Store FAIR data" button
+
+### Changed
+
+- Updated for compatibility with FAIR Data Point v1.2
+- Removed fairmetadata4j
+
+### Fixed
+
+- Clear configuration before reloading it
 
 ## [1.1.0]
 
@@ -56,3 +67,5 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 [Unreleased]: /../../compare/v1.1.0...develop
 [1.0.0]: /../../tree/v1.0.0
 [1.1.0]: /../../tree/v1.1.0
+[1.2.0]: /../../tree/v1.2.0
+
