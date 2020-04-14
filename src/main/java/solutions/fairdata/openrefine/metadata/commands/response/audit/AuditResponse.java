@@ -20,38 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.model;
+package solutions.fairdata.openrefine.metadata.commands.response.audit;
 
-import com.google.refine.model.OverlayModel;
-import com.google.refine.model.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataOverlayModel implements OverlayModel {
+public class AuditResponse {
 
-    private ProjectConfigDTO projectData;
-    private AuditLogDTO projectLog;
+    private String status;
+    private AuditLogDTO auditLog;
 
-    @Override
-    public void onBeforeSave(Project project) {
-        // noop
-    }
-
-    @Override
-    public void onAfterSave(Project project) {
-        // noop
-    }
-
-    @Override
-    public void dispose(Project project) {
-        // noop
+    public AuditResponse(AuditLogDTO auditLog) {
+        this.status = "ok";
+        this.auditLog = auditLog;
     }
 }

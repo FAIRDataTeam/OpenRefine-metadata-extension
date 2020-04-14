@@ -146,14 +146,18 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         }
     }
 
-    public static ProjectConfigDTO getProjectConfigDTO(Project project) {
+    public static MetadataOverlayModel getProjectModel(Project project) {
         MetadataOverlayModel metadataOverlayModel = (MetadataOverlayModel) project.overlayModels.get(OVERLAY_MODEL);
         if (metadataOverlayModel == null) {
             metadataOverlayModel = new MetadataOverlayModel();
             metadataOverlayModel.setProjectData(new ProjectConfigDTO());
             project.overlayModels.put(OVERLAY_MODEL, metadataOverlayModel);
         }
-        return metadataOverlayModel.getProjectData();
+        return metadataOverlayModel;
+    }
+
+    public static ProjectConfigDTO getProjectConfigDTO(Project project) {
+        return getProjectModel(project).getProjectData();
     }
 
     public static void setProjectConfigDTO(Project project, ProjectConfigDTO projectData) {

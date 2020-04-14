@@ -49,6 +49,19 @@ class MetadataApiClient {
         this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, [], true);
     }
 
+    getAuditLog(callbacks) {
+        this._ajaxGeneric("audit", "GET", undefined, callbacks, []);
+    }
+
+    clearAuditLog(callbacks) {
+        this._ajaxGeneric("audit", "DELETE", null, callbacks, []);
+    }
+
+    postAuditEntry(eventType, message, callbacks) {
+        const entryData = JSON.stringify({ eventType, message });
+        this._ajaxGeneric("audit","POST", entryData, callbacks, []);
+    }
+
     getDashboard(callbacks, errorCallbacks) {
         const params = { fdpUri: this.fdpUri, token: this.token };
         this._ajaxGeneric("fdp-dashboard", "GET", params, callbacks, errorCallbacks);

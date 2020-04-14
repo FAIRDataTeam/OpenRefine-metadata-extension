@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Audit log (per-project) with possibility to browse, filter, and clear using 
+  a simple dialog in client-side
+
 ## [1.2.0]
 
 ### Added

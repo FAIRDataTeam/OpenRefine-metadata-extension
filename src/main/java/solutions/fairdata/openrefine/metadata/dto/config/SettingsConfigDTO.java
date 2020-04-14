@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventType;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,15 +39,17 @@ import java.util.stream.Collectors;
 @Setter
 public class SettingsConfigDTO {
     private Boolean allowCustomFDP;
+    private EventType audit;
     private HashMap<String, String> metadata = new HashMap<>();
     private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
 
-    SettingsConfigDTO(Boolean allowCustomFDP) {
+    SettingsConfigDTO(Boolean allowCustomFDP, EventType audit) {
         this.allowCustomFDP = allowCustomFDP;
+        this.audit = audit;
     }
 
     public static SettingsConfigDTO getDefaultSettings() {
-        return new SettingsConfigDTO(true);
+        return new SettingsConfigDTO(true, EventType.OFF);
     }
 
     public SettingsConfigDTO copyDetails() {

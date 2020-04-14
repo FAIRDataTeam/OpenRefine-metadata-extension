@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataApiClient, MetadataAuditDialog */
 
 class MetadataAboutDialog {
     constructor() {
@@ -31,6 +31,9 @@ class MetadataAboutDialog {
     bindActions() {
         this.elements.closeButton.click(() => {
             this.dismiss();
+        });
+        this.elements.auditButton.click(() => {
+            MetadataAuditDialog.createAndLaunch();
         });
     }
 

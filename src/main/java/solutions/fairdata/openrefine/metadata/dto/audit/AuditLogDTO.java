@@ -20,38 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.model;
+package solutions.fairdata.openrefine.metadata.dto.audit;
 
-import com.google.refine.model.OverlayModel;
-import com.google.refine.model.Project;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataOverlayModel implements OverlayModel {
-
-    private ProjectConfigDTO projectData;
-    private AuditLogDTO projectLog;
-
-    @Override
-    public void onBeforeSave(Project project) {
-        // noop
-    }
-
-    @Override
-    public void onAfterSave(Project project) {
-        // noop
-    }
-
-    @Override
-    public void dispose(Project project) {
-        // noop
-    }
+public class AuditLogDTO {
+    private Long projectId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-ddTHH:mm:ss.SSSZ")
+    private List<AuditEntryDTO> entries;
 }
