@@ -26,10 +26,12 @@ package solutions.fairdata.openrefine.metadata.commands;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.config.SettingsRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
 import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
@@ -55,10 +57,14 @@ public class SettingsCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Writer w = CommandUtils.prepareWriter(response);
         Project project = getProject(request);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+
         try {
+            pa.reportDebug(EventSource.SETTINGS,"Retrieving current configuration bundle");
             CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
         } catch (Exception e) {
-            logger.error("Error while getting Settings");
+            pa.reportError(EventSource.SETTINGS,"Error occurred while getting Settings");
+            pa.reportTrace(EventSource.SETTINGS, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
@@ -71,13 +77,15 @@ public class SettingsCommand extends Command {
         SettingsRequest settingsRequest = CommandUtils.objectMapper.readValue(request.getReader(), SettingsRequest.class);
         Project project = getProject(request);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
+            pa.reportDebug(EventSource.SETTINGS,"Persisting project configuration");
             MetadataModuleImpl.setProjectConfigDTO(project, settingsRequest.getProjectData());
-
             CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
         } catch (Exception e) {
-            logger.error("Error while persisting Settings");
+            pa.reportError(EventSource.SETTINGS,"Error occurred while persisting Settings");
+            pa.reportTrace(EventSource.SETTINGS, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();

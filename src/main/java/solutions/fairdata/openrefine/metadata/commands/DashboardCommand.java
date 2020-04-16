@@ -23,11 +23,14 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.response.DashboardResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.dashboard.DashboardItemDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,17 +46,20 @@ import java.util.List;
 public class DashboardCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
         String token = request.getParameter("token");
         Writer w = CommandUtils.prepareWriter(response);
         FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, logger);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
+            pa.reportInfo(EventSource.FDP_CONNECTION, "Getting use dashboard: " + fdpUri);
             List<DashboardItemDTO> dashboard = fdpClient.getDashboard();
             CommandUtils.objectMapper.writeValue(w, new DashboardResponse(dashboard));
         } catch (Exception e) {
-            logger.error("Error while getting dashboard: " + fdpUri + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_CONNECTION,"Error while getting user dashboard: " + fdpUri);
+            pa.reportTrace(EventSource.FDP_CONNECTION, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();

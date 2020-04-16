@@ -24,9 +24,11 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.auth.AuthRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.auth.AuthResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
@@ -34,6 +36,7 @@ import solutions.fairdata.openrefine.metadata.dto.config.FDPConnectionConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPInfoDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -51,36 +54,44 @@ import java.io.Writer;
 public class AuthCommand extends Command {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         AuthRequest authRequest = CommandUtils.objectMapper.readValue(request.getReader(), AuthRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
             AuthDTO authDTO = authRequest.getAuthDTO();
             String fdpUri = authRequest.getFdpUri();
             if (authRequest.isConfiguredMode()) {
+                pa.reportDebug(EventSource.FDP_CONNECTION, "Using pre-configured FDP connection");
                 FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getSettings().getFdpConnections().get(authRequest.getConfigId());
                 authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
                 authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
                 fdpUri = fdpConnectionConfigDTO.getBaseURI();
             } else if (authRequest.isCustomMode() && !MetadataModuleImpl.getInstance().getSettings().getAllowCustomFDP()) {
+                pa.reportInfo(EventSource.FDP_CONNECTION, "Used forbidden custom FDP connection");
                 throw new IOException("Custom FDP connection is not allowed!");
+            } else {
+                pa.reportDebug(EventSource.FDP_CONNECTION, "Using custom FDP connection");
             }
 
-
+            pa.reportInfo(EventSource.FDP_CONNECTION, "Initiating communication with FDP: " + fdpUri);
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
+            pa.reportDebug(EventSource.FDP_CONNECTION, "Authenticating with FDP: " + fdpUri);
             TokenDTO tokenDTO = fdpClient.postAuthentication(authDTO);
+            pa.reportDebug(EventSource.FDP_CONNECTION, "Getting FDP info: " + fdpUri);
             FDPInfoDTO fdpInfoDTO = fdpClient.getFairDataPointInfo();
+            pa.reportDebug(EventSource.FDP_CONNECTION, "Getting FDP config: " + fdpUri);
             FDPConfigDTO fdpConfigDTO = fdpClient.getFairDataPointConfig();
 
             CommandUtils.objectMapper.writeValue(w, new AuthResponse(tokenDTO.getToken(), fdpClient.getBaseURI(), fdpInfoDTO, fdpConfigDTO));
         } catch (Exception e) {
-            logger.error("Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_CONNECTION, "Error while authenticating with FAIR Data Point: " + authRequest.getFdpUri());
+            pa.reportTrace(EventSource.FDP_CONNECTION, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
         }
-
     }
 }

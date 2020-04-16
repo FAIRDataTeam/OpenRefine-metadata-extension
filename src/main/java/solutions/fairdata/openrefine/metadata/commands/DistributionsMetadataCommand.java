@@ -23,14 +23,17 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DistributionPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DistributionPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DistributionsMetadataResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,12 +49,13 @@ import java.util.ArrayList;
 public class DistributionsMetadataCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
         String datasetUri = request.getParameter("datasetUri");
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
-        logger.info("Retrieving Distributions metadata from dataset URI: " + datasetUri);
+        pa.reportInfo(EventSource.FDP_METADATA, "Retrieving distributions from dataset: " + datasetUri);
         try {
             FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             DatasetDTO datasetDTO = fdpClient.getDatasetMetadata(datasetUri);
@@ -60,10 +64,11 @@ public class DistributionsMetadataCommand extends Command {
                 distributionDTOs.add(fdpClient.getDistributionMetadata(distributionURI));
             }
 
-            logger.info("Distributions metadata retrieved from dataset: " + datasetUri);
+            pa.reportDebug(EventSource.FDP_METADATA, "Distributions retrieved from dataset: " + datasetUri);
             CommandUtils.objectMapper.writeValue(w, new DistributionsMetadataResponse(distributionDTOs));
         } catch (Exception e) {
-            logger.error("Error while contacting FAIR Data Point: " + datasetUri + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_METADATA, "Error while getting distributions from dataset: " + datasetUri);
+            pa.reportTrace(EventSource.FDP_METADATA, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
@@ -72,17 +77,21 @@ public class DistributionsMetadataCommand extends Command {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DistributionPostRequest distributionPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DistributionPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
+            pa.reportDebug(EventSource.FDP_METADATA, "Creating distribution in dataset: " + distributionPostRequest.getDistribution().getParent());
             FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), logger);
             DistributionDTO distributionDTO = fdpClient.postDistribution(distributionPostRequest.getDistribution());
 
+            pa.reportDebug(EventSource.FDP_METADATA, "Distribution created: " + distributionDTO.getIri());
             CommandUtils.objectMapper.writeValue(w, new DistributionPostResponse(distributionDTO));
         } catch (Exception e) {
-            logger.error("Error while creating distribution in FAIR Data Point: " + distributionPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_METADATA, "Error while creating distribution in dataset: " + distributionPostRequest.getDistribution().getParent());
+            pa.reportTrace(EventSource.FDP_METADATA, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();

@@ -24,9 +24,12 @@ package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.ServiceRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ServiceResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -45,9 +48,10 @@ public class ServiceCommand extends Command {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ServiceRequest serviceRequest = CommandUtils.objectMapper.readValue(request.getReader(), ServiceRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         String command = System.getenv(ServiceCommand.ENVVAR);
         ServiceResponse serviceResponse = new ServiceResponse();
@@ -55,21 +59,26 @@ public class ServiceCommand extends Command {
         try {
             if (ENABLED.equalsIgnoreCase(command)) {
                 ServiceTask task = ServiceTask.valueOf(serviceRequest.getTask().toUpperCase());
+                pa.reportInfo(EventSource.SERVICE, "Requested to execute service task " + task.toString());
                 if (task == ServiceTask.RELOAD_CONFIG) {
                     MetadataModuleImpl.getInstance().loadConfig();
                     serviceResponse.setStatus(ServiceResponse.STATUS_OK);
                     serviceResponse.setMessage("Configuration reloaded");
+                    pa.reportDebug(EventSource.SERVICE, "Config has been reloaded");
                 }
             } else {
+                pa.reportWarning(EventSource.SERVICE, "Requested to execute service task but it is disabled");
                 serviceResponse.setMessage("Service tasks are not enabled");
             }
             CommandUtils.objectMapper.writeValue(w, serviceResponse);
         } catch (IllegalArgumentException e) {
+            pa.reportWarning(EventSource.SERVICE, "Requested unknown service task: " + serviceRequest.getTask());
             serviceResponse.setMessage("Unknown service task: " + serviceRequest.getTask());
             CommandUtils.objectMapper.writeValue(w, serviceResponse);
         } catch (Exception e) {
-            logger.error("Error while performing service task: " + serviceRequest.getTask() + " (" + e.getMessage() + ")");
-            serviceResponse.setMessage("Error while performing service task (" + e.getMessage() + ")");
+            pa.reportError(EventSource.SERVICE,"Error while performing service task: " + serviceRequest.getTask());
+            pa.reportTrace(EventSource.SERVICE, e);
+            serviceResponse.setMessage("Error while performing service task: " +  serviceRequest.getTask() );
             CommandUtils.objectMapper.writeValue(w, serviceResponse);
         } finally {
             w.flush();

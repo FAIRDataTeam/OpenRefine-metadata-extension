@@ -47,7 +47,7 @@ public class AuditCommand extends Command {
             CommandUtils.objectMapper.writeValue(w, new AuditResponse(pa.getAuditLog()));
         } catch (Exception e) {
             pa.reportError(EventSource.AUDIT, "Could not retrieve audit log for project");
-            logger.error("Error while getting Audit Log");
+            pa.reportTrace(EventSource.AUDIT, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
@@ -65,7 +65,7 @@ public class AuditCommand extends Command {
             pa.report(auditRequest.getEventType(), EventSource.FRONTEND, auditRequest.getMessage());
         } catch (Exception e) {
             pa.reportError(EventSource.AUDIT, "Could not add message to audit log");
-            logger.error("Error while inserting Client message to Audit Log");
+            pa.reportTrace(EventSource.AUDIT, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
         } finally {
             w.flush();
@@ -79,10 +79,11 @@ public class AuditCommand extends Command {
         ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
+            pa.reportInfo(EventSource.AUDIT, "Clearing audit log for project");
             pa.clearLog();
         } catch (Exception e) {
             pa.reportError(EventSource.AUDIT, "Could not clear audit log for project");
-            logger.error("Error while clearing Audit Log");
+            pa.reportTrace(EventSource.AUDIT, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();

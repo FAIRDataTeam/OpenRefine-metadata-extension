@@ -28,6 +28,8 @@ import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventType;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +45,12 @@ public class ProjectAudit {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         return df.format(new Date());
+    }
+
+    private static String getStackTrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 
     public ProjectAudit(Project project) {
@@ -61,18 +69,29 @@ public class ProjectAudit {
     }
 
     public void reportError(EventSource eventSource, String message) {
+        MetadataModuleImpl.getLogger().error(eventSource + ": " + message);
         report(EventType.ERROR, eventSource, message);
     }
 
     public void reportWarning(EventSource eventSource, String message) {
+        MetadataModuleImpl.getLogger().warn(eventSource + ": " + message);
         report(EventType.WARNING, eventSource, message);
     }
 
     public void reportInfo(EventSource eventSource, String message) {
+        MetadataModuleImpl.getLogger().info(eventSource + ": " + message);
         report(EventType.INFO, eventSource, message);
     }
+
     public void reportDebug(EventSource eventSource, String message) {
+        MetadataModuleImpl.getLogger().debug(eventSource + ": " + message);
         report(EventType.DEBUG, eventSource, message);
+    }
+
+    public void reportTrace(EventSource eventSource, Exception e) {
+        String message = e.getClass().getSimpleName() + " appeared:\n" + getStackTrace(e);
+        MetadataModuleImpl.getLogger().trace(eventSource + ": " + message);
+        report(EventType.TRACE, eventSource, message);
     }
 
     public AuditLogDTO getAuditLog() {

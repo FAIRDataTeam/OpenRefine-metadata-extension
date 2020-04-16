@@ -27,7 +27,8 @@ public enum EventType {
     ERROR(200),
     WARNING(300),
     INFO(400),
-    DEBUG(500);
+    DEBUG(500),
+    TRACE(900);
 
     private int level;
 

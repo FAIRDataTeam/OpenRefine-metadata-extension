@@ -29,5 +29,6 @@ public enum EventSource {
     STORAGE,
     AUDIT,
     TYPEHINTS,
-    FRONTEND
+    FRONTEND,
+    SETTINGS;
 }

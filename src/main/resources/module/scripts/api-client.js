@@ -54,12 +54,12 @@ class MetadataApiClient {
     }
 
     clearAuditLog(callbacks) {
-        this._ajaxGeneric("audit", "DELETE", null, callbacks, []);
+        this._ajaxGeneric("audit", "DELETE", null, callbacks, [], true);
     }
 
     postAuditEntry(eventType, message, callbacks) {
         const entryData = JSON.stringify({ eventType, message });
-        this._ajaxGeneric("audit","POST", entryData, callbacks, []);
+        this._ajaxGeneric("audit","POST", entryData, callbacks, [], true);
     }
 
     getDashboard(callbacks, errorCallbacks) {

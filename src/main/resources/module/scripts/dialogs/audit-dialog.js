@@ -19,6 +19,7 @@ class MetadataAuditDialog {
             ["WARNING", 300],
             ["INFO", 400],
             ["DEBUG", 500],
+            ["TRACE", 900],
         ]);
         this.filters = {
             type: Array.from(this.eventTypes.keys()),
