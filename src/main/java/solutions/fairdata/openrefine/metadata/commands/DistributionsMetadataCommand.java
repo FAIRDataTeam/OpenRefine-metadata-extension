@@ -54,10 +54,10 @@ public class DistributionsMetadataCommand extends Command {
         String datasetUri = request.getParameter("datasetUri");
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
 
         pa.reportInfo(EventSource.FDP_METADATA, "Retrieving distributions from dataset: " + datasetUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             DatasetDTO datasetDTO = fdpClient.getDatasetMetadata(datasetUri);
             ArrayList<DistributionDTO> distributionDTOs = new ArrayList<>();
             for (String distributionURI : datasetDTO.getChildren()) {
@@ -81,10 +81,10 @@ public class DistributionsMetadataCommand extends Command {
         DistributionPostRequest distributionPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DistributionPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), pa);
 
         try {
             pa.reportDebug(EventSource.FDP_METADATA, "Creating distribution in dataset: " + distributionPostRequest.getDistribution().getParent());
-            FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), logger);
             DistributionDTO distributionDTO = fdpClient.postDistribution(distributionPostRequest.getDistribution());
 
             pa.reportDebug(EventSource.FDP_METADATA, "Distribution created: " + distributionDTO.getIri());

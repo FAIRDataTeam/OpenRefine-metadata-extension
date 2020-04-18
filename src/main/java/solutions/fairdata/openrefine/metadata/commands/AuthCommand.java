@@ -59,24 +59,24 @@ public class AuthCommand extends Command {
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
 
-        try {
-            AuthDTO authDTO = authRequest.getAuthDTO();
-            String fdpUri = authRequest.getFdpUri();
-            if (authRequest.isConfiguredMode()) {
-                pa.reportDebug(EventSource.FDP_CONNECTION, "Using pre-configured FDP connection");
-                FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getSettings().getFdpConnections().get(authRequest.getConfigId());
-                authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
-                authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
-                fdpUri = fdpConnectionConfigDTO.getBaseURI();
-            } else if (authRequest.isCustomMode() && !MetadataModuleImpl.getInstance().getSettings().getAllowCustomFDP()) {
-                pa.reportInfo(EventSource.FDP_CONNECTION, "Used forbidden custom FDP connection");
-                throw new IOException("Custom FDP connection is not allowed!");
-            } else {
-                pa.reportDebug(EventSource.FDP_CONNECTION, "Using custom FDP connection");
-            }
+        AuthDTO authDTO = authRequest.getAuthDTO();
+        String fdpUri = authRequest.getFdpUri();
+        if (authRequest.isConfiguredMode()) {
+            pa.reportDebug(EventSource.FDP_CONNECTION, "Using pre-configured FDP connection");
+            FDPConnectionConfigDTO fdpConnectionConfigDTO = MetadataModuleImpl.getInstance().getSettings().getFdpConnections().get(authRequest.getConfigId());
+            authDTO.setEmail(fdpConnectionConfigDTO.getEmail());
+            authDTO.setPassword(fdpConnectionConfigDTO.getPassword());
+            fdpUri = fdpConnectionConfigDTO.getBaseURI();
+        } else if (authRequest.isCustomMode() && !MetadataModuleImpl.getInstance().getSettings().getAllowCustomFDP()) {
+            pa.reportInfo(EventSource.FDP_CONNECTION, "Used forbidden custom FDP connection");
+            throw new IOException("Custom FDP connection is not allowed!");
+        } else {
+            pa.reportDebug(EventSource.FDP_CONNECTION, "Using custom FDP connection");
+        }
 
-            pa.reportInfo(EventSource.FDP_CONNECTION, "Initiating communication with FDP: " + fdpUri);
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
+        pa.reportInfo(EventSource.FDP_CONNECTION, "Initiating communication with FDP: " + fdpUri);
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
+        try {
             pa.reportDebug(EventSource.FDP_CONNECTION, "Authenticating with FDP: " + fdpUri);
             TokenDTO tokenDTO = fdpClient.postAuthentication(authDTO);
             pa.reportDebug(EventSource.FDP_CONNECTION, "Getting FDP info: " + fdpUri);

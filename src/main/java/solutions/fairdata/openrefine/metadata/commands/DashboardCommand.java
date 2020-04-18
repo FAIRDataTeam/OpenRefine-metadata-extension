@@ -50,8 +50,8 @@ public class DashboardCommand extends Command {
         String fdpUri = request.getParameter("fdpUri");
         String token = request.getParameter("token");
         Writer w = CommandUtils.prepareWriter(response);
-        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, logger);
         ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, pa);
 
         try {
             pa.reportInfo(EventSource.FDP_CONNECTION, "Getting use dashboard: " + fdpUri);

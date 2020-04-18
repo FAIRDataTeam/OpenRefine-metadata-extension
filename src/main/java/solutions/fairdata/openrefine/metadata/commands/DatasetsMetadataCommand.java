@@ -54,10 +54,10 @@ public class DatasetsMetadataCommand extends Command {
         String catalogUri = request.getParameter("catalogUri");
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
 
         pa.reportInfo(EventSource.FDP_METADATA, "Retrieving datasets from catalog: " + catalogUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             CatalogDTO catalogDTO = fdpClient.getCatalogMetadata(catalogUri);
             ArrayList<DatasetDTO> datasetDTOs = new ArrayList<>();
             for (String datasetURI : catalogDTO.getChildren()) {
@@ -81,10 +81,10 @@ public class DatasetsMetadataCommand extends Command {
         DatasetPostRequest datasetPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DatasetPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), pa);
 
         try {
             pa.reportInfo(EventSource.FDP_METADATA, "Creating dataset in catalog: " + datasetPostRequest.getDataset().getParent());
-            FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), logger);
             DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDataset());
 
             pa.reportDebug(EventSource.FDP_METADATA, "Dataset created: " + datasetDTO.getIri());
