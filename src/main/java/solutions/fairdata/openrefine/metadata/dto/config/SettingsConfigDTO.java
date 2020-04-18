@@ -40,21 +40,25 @@ import java.util.stream.Collectors;
 public class SettingsConfigDTO {
     private Boolean allowCustomFDP;
     private EventType audit;
+    private Boolean auditShow;
     private HashMap<String, String> metadata = new HashMap<>();
     private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
 
-    SettingsConfigDTO(Boolean allowCustomFDP, EventType audit) {
+    SettingsConfigDTO(Boolean allowCustomFDP, EventType audit, Boolean auditShow) {
         this.allowCustomFDP = allowCustomFDP;
         this.audit = audit;
+        this.auditShow = auditShow;
     }
 
     public static SettingsConfigDTO getDefaultSettings() {
-        return new SettingsConfigDTO(true, EventType.OFF);
+        return new SettingsConfigDTO(true, EventType.OFF, false);
     }
 
     public SettingsConfigDTO copyDetails() {
         SettingsConfigDTO details = new SettingsConfigDTO();
         details.setAllowCustomFDP(getAllowCustomFDP());
+        details.setAudit(getAudit());
+        details.setAuditShow(getAuditShow());
         details.setMetadata(getMetadata());
         details.setFdpConnections(getFdpConnections().stream().map(FDPConnectionConfigDTO::copyDetails).collect(Collectors.toList()));
         return details;

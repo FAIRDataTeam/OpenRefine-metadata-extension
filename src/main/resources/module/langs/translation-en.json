@@ -178,11 +178,12 @@
   "audit/type/INFO": "INFO",
   "audit/type/DEBUG": "DEBUG",
   "audit/source/ANY": "any",
-  "audit/source/FDP_CONNECTION": "FDP connection (API)",
+  "audit/source/FDP_CONNECTION": "FDP connection",
   "audit/source/FDP_METADATA": "FDP metadata",
   "audit/source/STORAGE": "Storage handling",
   "audit/source/SERVICE": "Service tasks",
   "audit/source/AUDIT": "Audit logs",
   "audit/source/TYPEHINTS": "Typehints queries",
-  "audit/source/FRONTEND": "OpenRefine client-side"
+  "audit/source/FRONTEND": "OpenRefine client",
+  "audit/source/SETTINGS": "Settings"
 }

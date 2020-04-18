@@ -12,6 +12,7 @@ class MetadataAboutDialog {
 
         this.apiClient.getSettings([
             (result) => {
+                this.loadSettings(result);
                 if (result.projectInfo) {
                     this.showProjectInfo(result.projectInfo);
                 }
@@ -26,6 +27,12 @@ class MetadataAboutDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
+    }
+
+    loadSettings(settings) {
+        if (settings.settings.auditShow === true) {
+            this.elements.auditButton.removeClass('hidden');
+        }
     }
 
     bindActions() {

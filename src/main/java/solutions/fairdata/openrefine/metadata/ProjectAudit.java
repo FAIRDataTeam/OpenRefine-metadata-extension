@@ -59,7 +59,6 @@ public class ProjectAudit {
             MetadataModuleImpl.getProjectModel(project).setProjectLog(new AuditLogDTO(project.id, new ArrayList<>()));
         }
         this.log = MetadataModuleImpl.getProjectModel(project).getProjectLog();
-        System.out.println("Prepared ProjectAudit with level " + this.level);
     }
 
     public void report(EventType eventType, EventSource eventSource, String message) {

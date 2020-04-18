@@ -74,11 +74,21 @@ class MetadataAuditDialog {
             const timestamp = Date.parse(entry.timestamp.split("Z", 1)[0]);
             this.elements.auditTableBody.append(
                 $("<tr>")
-                    .append($("<td>").text(timestamp.toLocaleDateString()))
-                    .append($("<td>").text(timestamp.toLocaleTimeString()))
-                    .append($("<td>").text($.i18n(`audit/type/${entry.eventType}`)))
-                    .append($("<td>").text($.i18n(`audit/source/${entry.eventSource}`)))
-                    .append($("<td>").text(entry.message))
+                    .append($("<td>")
+                        .addClass("date")
+                        .text(timestamp.toLocaleDateString()))
+                    .append($("<td>")
+                        .addClass("time")
+                        .text(timestamp.toLocaleTimeString()))
+                    .append($("<td>")
+                        .addClass(`type-${entry.eventType.toLowerCase()}`)
+                        .text($.i18n(`audit/type/${entry.eventType}`)))
+                    .append($("<td>")
+                        .addClass(`source-${entry.eventSource.toLowerCase()}`)
+                        .text($.i18n(`audit/source/${entry.eventSource}`)))
+                    .append($("<td>")
+                        .addClass("message")
+                        .text(entry.message))
             );
         });
     }

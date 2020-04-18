@@ -44,6 +44,10 @@ class MetadataApiClient {
         this._ajaxGeneric("settings","GET", {}, callbacks, []);
     }
 
+    getStorageInfo(callbacks) {
+        this._ajaxGeneric("store-data", "GET", {}, callbacks, []);
+    }
+
     postSettings(projectData, callbacks) {
         const settingsPostRequest = JSON.stringify({ projectData });
         this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, [], true);

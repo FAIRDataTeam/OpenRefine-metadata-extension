@@ -7,6 +7,8 @@ allowCustomFDP: true
 
 # - Enable per-project audit log for extension to keep track of various actions
 audit: INFO
+# - Show audit in OpenRefine front-end dialog
+auditShow: true
 
 # - You may pre-configure some metadata to appear prefilled in the metadata forms.
 #   The keys should correspond with metadata form specs

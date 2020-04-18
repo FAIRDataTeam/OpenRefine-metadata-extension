@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs, MetadataAuditDialog */
 
 class StoreDataDialog {
 
@@ -8,18 +8,24 @@ class StoreDataDialog {
         this.level = null;
         this.storeCallback = this.defaultCallback();
         this.metadataFields = new Map();
+        this.apiClient = new MetadataApiClient();
 
         this.initBasicTexts();
         this.bindActions();
 
-        MetadataHelpers.ajax("store-data", "GET", null, (data) => {
+        this.apiClient.getSettings([
+            (result) => {
+                this.loadSettings(result);
+            }
+        ]);
+        this.apiClient.getStorageInfo([(data) => {
             this.formats = data.formats;
             this.storages = data.storages;
             this.defaults = new Map(Object.entries(data.defaults));
 
             this.showStorages();
             this.showFormats();
-        });
+        }]);
     }
 
     setCallback(callback) {
@@ -33,6 +39,12 @@ class StoreDataDialog {
     dismiss() {
         DialogSystem.dismissUntil(this.level - 1);
         this.level = null;
+    }
+
+    loadSettings(settings) {
+        if (settings.settings.auditShow === true) {
+            this.elements.auditButton.removeClass('hidden');
+        }
     }
 
     initBasicTexts() {
@@ -82,6 +94,7 @@ class StoreDataDialog {
         const elmts = this.elements;
 
         elmts.closeButton.click(() => { this.dismiss(); });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
 
         elmts.previewButton.click((event) => {
             event.preventDefault();
