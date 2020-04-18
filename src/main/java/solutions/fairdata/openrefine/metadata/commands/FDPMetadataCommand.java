@@ -23,11 +23,14 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.FDPMetadataResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -42,19 +45,20 @@ import java.io.Writer;
 public class FDPMetadataCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
 
-        logger.info("Retrieving FAIR Data Point metadata from URI: " + fdpUri);
+        pa.reportInfo(EventSource.FDP_METADATA, "Retrieving FAIR Data Point (repository) metadata from URI: " + fdpUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
-
-            logger.info("FAIR Data Point metadata retrieved: " + fdpUri);
+            pa.reportInfo(EventSource.FDP_METADATA, "FAIR Data Point (repository) metadata retrieved from: " + fdpUri);
             CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
-            logger.error("Error while contacting FAIR Data Point: " + fdpUri + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_METADATA, "Error while getting FAIR Data Point metadata from: " + fdpUri);
+            pa.reportTrace(EventSource.FDP_METADATA, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();

@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, FDPInfoDialog, MetadataSpecs, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, FDPInfoDialog, MetadataSpecs, MetadataApiClient, MetadataAuditDialog */
 
 class PostFdpDialog {
 
@@ -27,19 +27,26 @@ class PostFdpDialog {
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
             (result) => {
-                this.settings = new Map(Object.entries(result.settings));
-                this.loadProjectData(result.projectData);
-                this.preparePrefill();
-                this.bindActions();
-                this.prepareConnections();
-                this.recallCredentials();
-                this.elements.dialogBody.removeClass("hidden");
+                this.loadSettings(result);
             }
         ]);
     }
 
     getCurrentRepositoryUri() {
         return this.apiClient.fdpUri;
+    }
+
+    loadSettings(settings) {
+        this.settings = new Map(Object.entries(settings.settings));
+        this.loadProjectData(settings.projectData);
+        this.preparePrefill();
+        this.bindActions();
+        this.prepareConnections();
+        this.recallCredentials();
+        if (settings.settings.auditShow === true) {
+            this.elements.auditButton.removeClass('hidden');
+        }
+        this.elements.dialogBody.removeClass("hidden");
     }
 
     loadProjectData(projectData) {
@@ -86,6 +93,7 @@ class PostFdpDialog {
         const isCreatePermission = (permission) => { return permission.code === "C"; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
 
         elmts.connectButton.click(() => {
             const fdpConnection = elmts.fdpConnectionSelect.val();

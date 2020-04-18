@@ -1,0 +1,53 @@
+<div class="dialog-frame metadata-dialog audit-dialog" style="width: 800px;">
+    <div class="dialog-header">
+        <div class="dialog-title" bind="dialogTitle" data-i18n="audit/title"></div>
+        <button class="button close-button" bind="closeButton" data-i18n="common/button-close"></button>
+    </div>
+    <div class="dialog-body" bind="dialogBody">
+        <div class="audit-filters">
+            <div class="audit-filter">
+                <label for="type">Type</label>
+                <select id="type" bind="typeSelect">
+                </select>
+            </div>
+            <div class="audit-filter">
+                <label for="source">Source</label>
+                <select id="source" bind="sourceSelect">
+                </select>
+            </div>
+            <div class="audit-filter">
+                <label for="format">Format</label>
+                <select id="format" bind="formatSelect">
+                </select>
+            </div>
+        </div>
+        <div class="audit-raw" bind="auditRaw">
+            <textarea bind="auditTextArea" readonly></textarea>
+        </div>
+        <div class="audit-table" bind="auditTable">
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Source</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody bind="auditTableBody">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="audit-summary">
+            <div class="audit-info">
+                <span bind="auditItems">?</span>&nbsp;<span data-i18n="audit/entries"></span>
+            </div>
+            <div class="audit-actions">
+                <button bind="refreshButton" data-i18n="audit/button-refresh"></button>
+                <button bind="clearButton" data-i18n="audit/button-clear"></button>
+            </div>
+        </div>
+    </div>
+</div>

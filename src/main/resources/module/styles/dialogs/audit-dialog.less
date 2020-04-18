@@ -1,0 +1,68 @@
+div.metadata-dialog.audit-dialog div.audit-filters {
+  display: flex;
+}
+div.metadata-dialog.audit-dialog div.audit-filters > div.audit-filter {
+  flex-grow: 1;
+  display: flex;
+  margin: 0 0.5em 0.5em 0.5em;
+  align-items: center;
+}
+div.metadata-dialog.audit-dialog div.audit-filters > div.audit-filter > label {
+  margin-right: 0.3em;
+}
+div.metadata-dialog.audit-dialog div.audit-filters > div.audit-filter > select {
+  flex-grow: 1;
+}
+
+div.metadata-dialog.audit-dialog div.audit-table,
+div.metadata-dialog.audit-dialog div.audit-raw > textarea {
+  width: 100%;
+  margin-top: 0.5em;
+  height: 250px;
+  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+div.metadata-dialog.audit-dialog div.audit-table tr > td,
+div.metadata-dialog.audit-dialog div.audit-table tr > th {
+  padding: 0.3em 0.6em 0.3em 0.3em;
+  white-space: nowrap;
+}
+div.metadata-dialog.audit-dialog div.audit-table tr > td:last-child {
+  padding: 0.3em 0.3em 0.3em 0.3em;
+  white-space: normal;
+}
+div.metadata-dialog.audit-dialog div.audit-table thead tr {
+  text-align: center;
+  padding-bottom: 0.3em;
+  margin-bottom: 0.3em;
+  border-bottom: 1px solid darkgray;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.date,
+div.metadata-dialog.audit-dialog div.audit-table td.time {
+  text-align: right;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.type-debug {
+  color: blueviolet;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.type-error {
+  color: red;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.type-warning {
+  color: darkorange;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.type-info {
+  color: dodgerblue;
+}
+div.metadata-dialog.audit-dialog div.audit-table td.type-trace {
+  color: darkgray;
+}
+
+div.metadata-dialog.audit-dialog div.audit-summary {
+  margin: 0.5em 1em 0 1em;
+  display: flex;
+  align-items: center;
+}
+div.metadata-dialog.audit-dialog div.audit-summary > div.audit-info {
+  flex-grow: 1;
+}

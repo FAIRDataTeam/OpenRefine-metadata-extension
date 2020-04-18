@@ -44,9 +44,26 @@ class MetadataApiClient {
         this._ajaxGeneric("settings","GET", {}, callbacks, []);
     }
 
+    getStorageInfo(callbacks) {
+        this._ajaxGeneric("store-data", "GET", {}, callbacks, []);
+    }
+
     postSettings(projectData, callbacks) {
         const settingsPostRequest = JSON.stringify({ projectData });
         this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, [], true);
+    }
+
+    getAuditLog(callbacks) {
+        this._ajaxGeneric("audit", "GET", undefined, callbacks, []);
+    }
+
+    clearAuditLog(callbacks) {
+        this._ajaxGeneric("audit", "DELETE", null, callbacks, [], true);
+    }
+
+    postAuditEntry(eventType, message, callbacks) {
+        const entryData = JSON.stringify({ eventType, message });
+        this._ajaxGeneric("audit","POST", entryData, callbacks, [], true);
     }
 
     getDashboard(callbacks, errorCallbacks) {

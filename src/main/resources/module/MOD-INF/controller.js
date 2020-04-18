@@ -10,6 +10,7 @@ function init() {
     const MetadataCommands = Packages.solutions.fairdata.openrefine.metadata.commands;
 
     // Commands
+    RefineServlet.registerCommand(module, "audit", new MetadataCommands.AuditCommand());
     RefineServlet.registerCommand(module, "settings", new MetadataCommands.SettingsCommand());
     RefineServlet.registerCommand(module, "fdp-auth", new MetadataCommands.AuthCommand());
     RefineServlet.registerCommand(module, "fdp-dashboard", new MetadataCommands.DashboardCommand());
@@ -36,6 +37,7 @@ function init() {
             "scripts/metadata-specs.js",
             "scripts/storages-specs.js",
             "scripts/dialogs/about-dialog.js",
+            "scripts/dialogs/audit-dialog.js",
             "scripts/dialogs/fdp-info-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
             "scripts/dialogs/post-fdp-dialog.js",
@@ -47,6 +49,7 @@ function init() {
         [
             "styles/metadata-common.less",
             "styles/dialogs/about-dialog.less",
+            "styles/dialogs/audit-dialog.less",
             "styles/dialogs/fdp-info-dialog.less",
             "styles/dialogs/store-data-dialog.less",
             "styles/dialogs/metadata-form-dialog.less",

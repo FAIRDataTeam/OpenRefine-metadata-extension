@@ -20,38 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.model;
+package solutions.fairdata.openrefine.metadata.dto.audit;
 
-import com.google.refine.model.OverlayModel;
-import com.google.refine.model.Project;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+public enum EventType {
+    OFF(0),
+    ERROR(200),
+    WARNING(300),
+    INFO(400),
+    DEBUG(500),
+    TRACE(900);
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class MetadataOverlayModel implements OverlayModel {
+    private int level;
 
-    private ProjectConfigDTO projectData;
-    private AuditLogDTO projectLog;
-
-    @Override
-    public void onBeforeSave(Project project) {
-        // noop
+    EventType(int level) {
+        this.level = level;
     }
 
-    @Override
-    public void onAfterSave(Project project) {
-        // noop
-    }
-
-    @Override
-    public void dispose(Project project) {
-        // noop
+    public int getLevel() {
+        return level;
     }
 }

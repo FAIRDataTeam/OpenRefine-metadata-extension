@@ -31,8 +31,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
-import org.slf4j.Logger;
 import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.auth.AuthDTO;
 import solutions.fairdata.openrefine.metadata.dto.auth.TokenDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.FDPConfigDTO;
@@ -85,21 +86,21 @@ public class FairDataPointClient {
 
     private static final String USER_AGENT = MetadataModuleImpl.USER_AGENT;
 
-    private final Logger logger;
+    private final ProjectAudit projectAudit;
     private final String token;
     private final String fdpBaseURI;
 
-    public FairDataPointClient(String fdpBaseURI, Logger logger) {
-        this(fdpBaseURI, null, logger);
+    public FairDataPointClient(String fdpBaseURI, ProjectAudit projectAudit) {
+        this(fdpBaseURI, null, projectAudit);
     }
 
-    public FairDataPointClient(String fdpBaseURI, String token, Logger logger) {
+    public FairDataPointClient(String fdpBaseURI, String token, ProjectAudit projectAudit) {
         while (fdpBaseURI.endsWith("/")) {
             fdpBaseURI = fdpBaseURI.substring(0, fdpBaseURI.length() - 1);
         }
         this.fdpBaseURI = fdpBaseURI;
         this.token = token;
-        this.logger = logger;
+        this.projectAudit = projectAudit;
     }
 
     /**
@@ -114,11 +115,14 @@ public class FairDataPointClient {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, AUTH_PART), "POST", MEDIA_TYPE_JSON);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_JSON);
         conn.setDoOutput(true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending POST authentication request to FDP");
         objectMapper.writeValue(conn.getOutputStream(), auth);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received authentication response");
             return objectMapper.readValue(conn.getInputStream(), TokenDTO.class);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to authenticate: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -132,10 +136,13 @@ public class FairDataPointClient {
      */
     public List<DashboardItemDTO> getDashboard() throws IOException, FairDataPointException {
         HttpURLConnection conn = request(url(fdpBaseURI,DASHBOARD_PART), "GET", MEDIA_TYPE_JSON, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET dashboard request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received dashboard response");
             return objectMapper.readValue(conn.getInputStream(), new TypeReference<List<DashboardItemDTO>>(){});
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get dashboard: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -149,13 +156,16 @@ public class FairDataPointClient {
      */
     public FDPMetadataDTO getFairDataPointMetadata() throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpBaseURI, "GET", MEDIA_TYPE_TURTLE, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET repository metadata request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received repository metadata");
             String actualURI = conn.getURL().toString();
-
             ArrayList<Statement> statements = parseStatements(conn, actualURI);
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Parsed and processed repository metadata");
             return FDPMetadataTransformerUtils.metadata2DTO(statements, actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get repository metadata: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -168,10 +178,13 @@ public class FairDataPointClient {
      */
     public FDPInfoDTO getFairDataPointInfo() throws IOException {
         HttpURLConnection conn = request(url(fdpBaseURI, INFO_PART), "GET", MEDIA_TYPE_JSON, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET info request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received FDP info");
             return objectMapper.readValue(conn.getInputStream(), FDPInfoDTO.class);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get FDP info: " + conn.getResponseCode());
             return null;
         }
     }
@@ -184,10 +197,13 @@ public class FairDataPointClient {
      */
     public FDPConfigDTO getFairDataPointConfig() throws IOException {
         HttpURLConnection conn = request(url(fdpBaseURI, CONFIG_PART), "GET", MEDIA_TYPE_JSON, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET config request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received FDP config");
             return objectMapper.readValue(conn.getInputStream(), FDPConfigDTO.class);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get FDP config: " + conn.getResponseCode());
             return null;
         }
     }
@@ -202,12 +218,14 @@ public class FairDataPointClient {
      */
     public CatalogDTO getCatalogMetadata(String catalogURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(catalogURI, "GET", MEDIA_TYPE_TURTLE, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET catalog request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received catalog from FDP");
             String actualURI = conn.getURL().toString();
-
             return CatalogTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get catalog: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -222,12 +240,14 @@ public class FairDataPointClient {
      */
     public DatasetDTO getDatasetMetadata(String datasetURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(datasetURI, "GET", MEDIA_TYPE_TURTLE, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET dataset request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received dataset from FDP");
             String actualURI = conn.getURL().toString();
-
             return DatasetTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get dataset: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -242,12 +262,14 @@ public class FairDataPointClient {
      */
     public DistributionDTO getDistributionMetadata(String distributionURI) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(distributionURI, "GET", MEDIA_TYPE_TURTLE, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET distribution request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received distribution from FDP");
             String actualURI = conn.getURL().toString();
-
             return DistributionTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get distribution: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -298,10 +320,13 @@ public class FairDataPointClient {
      */
     private Object getMetadataSpec(String metadataPart) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(url(fdpBaseURI, metadataPart, SPEC_PART), "GET", MEDIA_TYPE_JSON, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET metadata spec request to FDP - " + metadataPart);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received metadata specs from FDP");
             return objectMapper.readValue(conn.getInputStream(), Object.class);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get metadata specs: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -318,6 +343,7 @@ public class FairDataPointClient {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, CATALOG_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending POST catalog request to FDP");
 
         // Generate random IRI, FDP will replace it with really unique
         String uri = url(fdpBaseURI, CATALOG_PART, UUID.randomUUID().toString());
@@ -332,9 +358,11 @@ public class FairDataPointClient {
         bw.close();
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Created new catalog and received it as response");
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
             return CatalogTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to create new catalog: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -351,6 +379,7 @@ public class FairDataPointClient {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, DATASET_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending POST dataset request to FDP");
 
         // Generate random IRI, FDP will replace it with really unique
         String uri = url(fdpBaseURI, DATASET_PART, UUID.randomUUID().toString());
@@ -365,9 +394,11 @@ public class FairDataPointClient {
         bw.close();
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Created new dataset and received it as response");
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
             return DatasetTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to create new dataset: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -384,6 +415,7 @@ public class FairDataPointClient {
         HttpURLConnection conn = createConnection(url(fdpBaseURI, DISTRIBUTION_PART), "POST", MEDIA_TYPE_TURTLE);
         conn.addRequestProperty(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_TURTLE);
         conn.setDoOutput(true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending POST distribution request to FDP");
 
         // Generate random IRI, FDP will replace it with really unique
         String uri = url(fdpBaseURI, DISTRIBUTION_PART, UUID.randomUUID().toString());
@@ -398,9 +430,11 @@ public class FairDataPointClient {
         bw.close();
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Created new distribution and received it as response");
             String actualURI = conn.getHeaderField(HttpHeaders.LOCATION);
             return DistributionTransformerUtils.statements2DTO(parseStatements(conn, actualURI), actualURI);
         } else {
+            projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to create new distribution: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
         }
     }
@@ -469,7 +503,7 @@ public class FairDataPointClient {
     private HttpURLConnection request(String url, String method, String accept, boolean followRedirects) throws IOException {
         HttpURLConnection conn = createConnection(url, method, accept);
 
-        logger.info("FDP HTTP {} request to {} (response: {})", method, url, conn.getResponseCode());
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, String.format("HTTP %s request to %s (response: %d)", method, url, conn.getResponseCode()));
         conn.connect();
 
         // HttpUrlConnection redirection does not work with HTTPS and has others flaws
@@ -481,7 +515,7 @@ public class FairDataPointClient {
                 String nextUrl = conn.getHeaderField(HttpHeaders.LOCATION);
                 String cookies = conn.getHeaderField("Set-Cookie");
 
-                logger.info("HTTP request (caused by redirect) to " + nextUrl);
+                projectAudit.reportDebug(EventSource.FDP_CONNECTION, "HTTP request (caused by redirect) to " + nextUrl);
 
                 if (visited.contains(nextUrl)) {
                     throw new IOException("HTTP redirection loop detected");
@@ -491,7 +525,7 @@ public class FairDataPointClient {
                 conn = createConnection(nextUrl, method, accept);
                 conn.setRequestProperty("Cookie", cookies);
 
-                logger.info("FDP HTTP {} request to {} after redirect (response: {})", method, url, conn.getResponseCode());
+                projectAudit.reportDebug(EventSource.FDP_CONNECTION, String.format("HTTP %s request to %s (response: %d)", method, url, conn.getResponseCode()));
                 conn.connect();
             }
         }

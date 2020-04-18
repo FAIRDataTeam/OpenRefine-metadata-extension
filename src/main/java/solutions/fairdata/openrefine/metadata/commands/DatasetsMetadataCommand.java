@@ -23,14 +23,17 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DatasetPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetPostResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.metadata.DatasetsMetadataResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,24 +49,26 @@ import java.util.ArrayList;
 public class DatasetsMetadataCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
         String catalogUri = request.getParameter("catalogUri");
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
 
-        logger.info("Retrieving Datasets metadata from catalog URI: " + catalogUri);
+        pa.reportInfo(EventSource.FDP_METADATA, "Retrieving datasets from catalog: " + catalogUri);
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, logger);
             CatalogDTO catalogDTO = fdpClient.getCatalogMetadata(catalogUri);
             ArrayList<DatasetDTO> datasetDTOs = new ArrayList<>();
             for (String datasetURI : catalogDTO.getChildren()) {
                 datasetDTOs.add(fdpClient.getDatasetMetadata(datasetURI));
             }
 
-            logger.info("Datasets metadata retrieved from catalog: " + catalogUri);
+            pa.reportDebug(EventSource.FDP_METADATA, "Datasets retrieved from catalog: " + catalogUri);
             CommandUtils.objectMapper.writeValue(w, new DatasetsMetadataResponse(datasetDTOs));
         } catch (Exception e) {
-            logger.error("Error while contacting FAIR Data Point: " + catalogUri + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_METADATA, "Error while getting datasets from catalog: " + catalogUri);
+            pa.reportTrace(EventSource.FDP_METADATA, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
@@ -72,17 +77,21 @@ public class DatasetsMetadataCommand extends Command {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DatasetPostRequest datasetPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DatasetPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+        FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), pa);
 
         try {
-            FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), logger);
+            pa.reportInfo(EventSource.FDP_METADATA, "Creating dataset in catalog: " + datasetPostRequest.getDataset().getParent());
             DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDataset());
 
+            pa.reportDebug(EventSource.FDP_METADATA, "Dataset created: " + datasetDTO.getIri());
             CommandUtils.objectMapper.writeValue(w, new DatasetPostResponse(datasetDTO));
         } catch (Exception e) {
-            logger.error("Error while creating catalog in FAIR Data Point: " + datasetPostRequest.getFdpUri() + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.FDP_METADATA, "Error while creating dataset in catalog: " + datasetPostRequest.getDataset().getParent());
+            pa.reportTrace(EventSource.FDP_METADATA, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();

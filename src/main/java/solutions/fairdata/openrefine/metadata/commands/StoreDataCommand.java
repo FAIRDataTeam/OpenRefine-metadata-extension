@@ -28,12 +28,14 @@ import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.exceptions.MetadataCommandException;
 import solutions.fairdata.openrefine.metadata.commands.request.storage.StoreDataRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.storage.StoreDataInfoResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.storage.StoreDataPreviewResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.storage.StoreDataResponse;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.storage.ExportFormatDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.Storage;
@@ -91,11 +93,15 @@ public class StoreDataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+
+        pa.reportDebug(EventSource.STORAGE,"Updating possible and known export formats");
         updateFormats();
 
         String defaultFilename = getProject(request).getMetadata().getName().replaceAll("\\W+", "_");
         String defaultBaseURI = "http://" + request.getServerName() + "/" + defaultFilename;
 
+        pa.reportDebug(EventSource.STORAGE,"Retrieving storage information");
         StoreDataInfoResponse storeDataInfoResponse = new StoreDataInfoResponse(
                 new ArrayList<>(formats.values()),
                 new ArrayList<>(StorageRegistryUtil.getStorages().stream().map(Storage::getStorageDTO).map(StorageDTO::toInfo).collect(Collectors.toList()))
@@ -112,8 +118,10 @@ public class StoreDataCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         StoreDataRequest storeDataRequest = CommandUtils.objectMapper.readValue(request.getReader(), StoreDataRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
+            pa.reportDebug(EventSource.STORAGE,"Preparing information for storing data");
             Engine engine = getEngine(request, getProject(request));
             Properties params = getRequestParameters(request);
             String defaultFilename = getProject(request).getMetadata().getName().replaceAll("\\W+", "_");
@@ -122,18 +130,21 @@ public class StoreDataCommand extends Command {
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
             Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage());
             if (exporter == null) {
+                pa.reportWarning(EventSource.STORAGE,"Unknown export format requested");
                 throw new MetadataCommandException("store-data-dialog/error/unknown-export-format");
             }
             else if (storage == null) {
+                pa.reportWarning(EventSource.STORAGE,"Unknown storage requested");
                 throw new MetadataCommandException("store-data-dialog/error/unknown-storage");
             }
             else if (storage.forbidsContentType(exporter.getContentType())) {
+                pa.reportWarning(EventSource.STORAGE,"Requested content-type is forbidden for selected storage");
                 throw new MetadataCommandException("store-data-dialog/error/unsupported-type");
             }
 
             try (
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)
             ) {
                 if (exporter instanceof WriterExporter) {
                     WriterExporter writerExporter = (WriterExporter) exporter;
@@ -142,6 +153,7 @@ public class StoreDataCommand extends Command {
                     StreamExporter streamExporter = (StreamExporter) exporter;
                     streamExporter.export(getProject(request), params, engine, stream);
                 } else {
+                    pa.reportWarning(EventSource.STORAGE,"Failed to export to selected format");
                     throw new MetadataCommandException("store-data-dialog/error/unusable-exporter");
                 }
 
@@ -154,17 +166,25 @@ public class StoreDataCommand extends Command {
                 String filename = storeDataRequest.getMetadata().get("filenameExt");
 
                 if (storeDataRequest.getMode().equals("preview")) {
+                    pa.reportInfo(EventSource.STORAGE,"Preparing preview of data: " + filename);
+                    pa.reportDebug(EventSource.STORAGE,"File size is (bytes): " + data.length);
+                    pa.reportDebug(EventSource.STORAGE,"File content-type is: " + exporter.getContentType());
                     String base64Data = Base64.getEncoder().encodeToString(data);
                     CommandUtils.objectMapper.writeValue(w,
                             new StoreDataPreviewResponse(filename, exporter.getContentType(), base64Data)
                     );
                 } else {
                     if (storage.forbidsName(filename)) {
+                        pa.reportWarning(EventSource.STORAGE,"Filename violates storage requirements");
                         throw new MetadataCommandException("store-data-dialog/error/naming-violation");
                     }
                     else if (storage.fordbidsByteSize(data.length)) {
+                        pa.reportWarning(EventSource.STORAGE,"File is too big for selected storage");
                         throw new MetadataCommandException("store-data-dialog/error/too-big");
                     }
+                    pa.reportInfo(EventSource.STORAGE,"Storing data: " + filename);
+                    pa.reportDebug(EventSource.STORAGE,"File size is (bytes): " + data.length);
+                    pa.reportDebug(EventSource.STORAGE,"File content-type is: " + exporter.getContentType());
 
                     storage.storeData(data, storeDataRequest.getMetadata(), exporter.getContentType());
                     CommandUtils.objectMapper.writeValue(w,
@@ -173,10 +193,10 @@ public class StoreDataCommand extends Command {
                 }
             }
         } catch (MetadataCommandException e) {
-            logger.warn("Unable to store data (bad request)");
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse(e.getMessage(), e));
         } catch (Exception e) {
-            logger.warn("Unable to store data: " + e.getMessage());
+            pa.reportError(EventSource.STORAGE,"Unable to store data");
+            pa.reportTrace(EventSource.STORAGE, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("store-data-dialog/error/exporting", e));
         } finally {
             w.flush();

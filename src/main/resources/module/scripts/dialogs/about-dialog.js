@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataApiClient, MetadataAuditDialog */
 
 class MetadataAboutDialog {
     constructor() {
@@ -12,6 +12,7 @@ class MetadataAboutDialog {
 
         this.apiClient.getSettings([
             (result) => {
+                this.loadSettings(result);
                 if (result.projectInfo) {
                     this.showProjectInfo(result.projectInfo);
                 }
@@ -28,9 +29,18 @@ class MetadataAboutDialog {
         this.level = null;
     }
 
+    loadSettings(settings) {
+        if (settings.settings.auditShow === true) {
+            this.elements.auditButton.removeClass('hidden');
+        }
+    }
+
     bindActions() {
         this.elements.closeButton.click(() => {
             this.dismiss();
+        });
+        this.elements.auditButton.click(() => {
+            MetadataAuditDialog.createAndLaunch();
         });
     }
 

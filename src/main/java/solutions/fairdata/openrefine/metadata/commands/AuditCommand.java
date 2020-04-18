@@ -22,18 +22,12 @@
  */
 package solutions.fairdata.openrefine.metadata.commands;
 
-
 import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
-import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.ProjectAudit;
-import solutions.fairdata.openrefine.metadata.commands.request.config.SettingsRequest;
+import solutions.fairdata.openrefine.metadata.commands.request.audit.AuditRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
-import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
-import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
+import solutions.fairdata.openrefine.metadata.commands.response.audit.AuditResponse;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,30 +35,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * Command for getting the extension settings
- */
-public class SettingsCommand extends Command {
-
-    private SettingsResponse createSettingsResponse(Project project) {
-        SettingsConfigDTO settings = MetadataModuleImpl.getInstance().getSettingsDetails();
-        ProjectConfigDTO projectData = MetadataModuleImpl.getProjectConfigDTO(project);
-        ProjectInfoDTO projectInfo = MetadataModuleImpl.getInstance().getProjectInfo();
-        return new SettingsResponse(settings, projectData, projectInfo);
-    }
+public class AuditCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer w = CommandUtils.prepareWriter(response);
-        Project project = getProject(request);
         ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
-            pa.reportDebug(EventSource.SETTINGS,"Retrieving current configuration bundle");
-            CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
+            pa.reportDebug(EventSource.AUDIT, "Returning audit log for project");
+            CommandUtils.objectMapper.writeValue(w, new AuditResponse(pa.getAuditLog()));
         } catch (Exception e) {
-            pa.reportError(EventSource.SETTINGS,"Error occurred while getting Settings");
-            pa.reportTrace(EventSource.SETTINGS, e);
+            pa.reportError(EventSource.AUDIT, "Could not retrieve audit log for project");
+            pa.reportTrace(EventSource.AUDIT, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
@@ -73,20 +56,35 @@ public class SettingsCommand extends Command {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        SettingsRequest settingsRequest = CommandUtils.objectMapper.readValue(request.getReader(), SettingsRequest.class);
-        Project project = getProject(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        AuditRequest auditRequest = CommandUtils.objectMapper.readValue(request.getReader(), AuditRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
-            pa.reportDebug(EventSource.SETTINGS,"Persisting project configuration");
-            MetadataModuleImpl.setProjectConfigDTO(project, settingsRequest.getProjectData());
-            CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
+            pa.report(auditRequest.getEventType(), EventSource.FRONTEND, auditRequest.getMessage());
         } catch (Exception e) {
-            pa.reportError(EventSource.SETTINGS,"Error occurred while persisting Settings");
-            pa.reportTrace(EventSource.SETTINGS, e);
+            pa.reportError(EventSource.AUDIT, "Could not add message to audit log");
+            pa.reportTrace(EventSource.AUDIT, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+
+        try {
+            pa.reportInfo(EventSource.AUDIT, "Clearing audit log for project");
+            pa.clearLog();
+        } catch (Exception e) {
+            pa.reportError(EventSource.AUDIT, "Could not clear audit log for project");
+            pa.reportTrace(EventSource.AUDIT, e);
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
             w.close();
