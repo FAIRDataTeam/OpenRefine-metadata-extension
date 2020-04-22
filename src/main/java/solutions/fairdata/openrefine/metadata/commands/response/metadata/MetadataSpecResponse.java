@@ -34,9 +34,9 @@ import lombok.Setter;
 public class MetadataSpecResponse {
 
     public String status;
-    public Object spec;
+    public String spec;
 
-    public MetadataSpecResponse(Object spec) {
+    public MetadataSpecResponse(String spec) {
         this.status = "ok";
         this.spec = spec;
     }

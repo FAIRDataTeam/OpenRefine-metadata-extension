@@ -1,7 +1,7 @@
 /* global DOM, DialogSystem, Refine, MetadataApiClient, StoreDataDialog */
 
 class MetadataFormDialog {
-    constructor(specs, callbackFn, prefill) {
+    constructor(apiClient, specs, callbackFn, prefill) {
         this.frame = $(DOM.loadHTML("metadata", "scripts/dialogs/metadata-form-dialog.html"));
         this.elements = DOM.bind(this.frame);
         this.level = null;
@@ -9,16 +9,17 @@ class MetadataFormDialog {
         this.type = specs.id;
         this.specs = specs;
         this.callbackFn = callbackFn;
-        this.apiClient = new MetadataApiClient();
+        this.apiClient = apiClient;
+        this.shaclSpec = "";
 
         this.datalists = new Set();
 
         const prefillMap = prefill || new Map();
 
         this.initBasicTexts();
-        this.createForm();
         this.fillForm(prefillMap);
         this.bindActions();
+        this.getSpec();
     }
 
     launch() {
@@ -73,6 +74,15 @@ class MetadataFormDialog {
             }
             input.trigger("change");
         }
+    }
+
+    getSpec() {
+        this.apiClient.getMetadataSpec(this.type, [
+            (result) => {
+                this.shaclSpec = result.spec;
+                this.createForm();
+            }
+        ], []);
     }
 
     createForm() {

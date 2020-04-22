@@ -51,6 +51,7 @@ import solutions.fairdata.openrefine.metadata.fdp.transformers.FDPMetadataTransf
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -85,6 +86,7 @@ public class FairDataPointClient {
     private static final String MEDIA_TYPE_TURTLE = "text/turtle";
 
     private static final String USER_AGENT = MetadataModuleImpl.USER_AGENT;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private final ProjectAudit projectAudit;
     private final String token;
@@ -275,56 +277,20 @@ public class FairDataPointClient {
     }
 
     /**
-     * Get specs of catalog layer (form specs)
+     * Get shape specs
      *
-     * @return form specs as generic object
+     * @param shapeName specification of layer (catalog, dataset, or distribution)
+     * @return SHACL definition as string
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public Object getCatalogSpec() throws IOException, FairDataPointException {
-        return getMetadataSpec(CATALOG_PART);
-    }
-
-
-    /**
-     * Get specs of dataset layer (form specs)
-     *
-     * @return form specs as generic object
-     * @throws IOException in case of a communication error
-     * @throws FairDataPointException in case that FDP responds with an unexpected code
-     */
-    public Object getDatasetSpec() throws IOException, FairDataPointException {
-        return getMetadataSpec(DATASET_PART);
-    }
-
-
-    /**
-     * Get specs of distribution layer (form specs)
-     *
-     * @return form specs as generic object
-     * @throws IOException in case of a communication error
-     * @throws FairDataPointException in case that FDP responds with an unexpected code
-     */
-    public Object getDistributionSpec() throws IOException, FairDataPointException {
-        return getMetadataSpec(DISTRIBUTION_PART);
-    }
-
-
-    /**
-     * Get form specs
-     *
-     * @param metadataPart specification of layer (catalog, dataset, or distribution)
-     * @return form specs as generic object
-     * @throws IOException in case of a communication error
-     * @throws FairDataPointException in case that FDP responds with an unexpected code
-     */
-    private Object getMetadataSpec(String metadataPart) throws IOException, FairDataPointException {
-        HttpURLConnection conn = request(url(fdpBaseURI, metadataPart, SPEC_PART), "GET", MEDIA_TYPE_JSON, true);
-        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET metadata spec request to FDP - " + metadataPart);
+    public String getMetadataSpec(String shapeName) throws IOException, FairDataPointException {
+        HttpURLConnection conn = request(url(fdpBaseURI, shapeName, SPEC_PART), "GET", MEDIA_TYPE_TURTLE, true);
+        projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET metadata spec request to FDP - " + shapeName);
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received metadata specs from FDP");
-            return objectMapper.readValue(conn.getInputStream(), Object.class);
+            return readInputStream(conn.getInputStream());
         } else {
             projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Failed to get metadata specs: " + conn.getResponseCode());
             throw new FairDataPointException(conn.getResponseCode(), conn.getResponseMessage());
@@ -352,7 +318,7 @@ public class FairDataPointClient {
         ArrayList<Statement> statements = CatalogTransformerUtils.dto2Statements(catalogDTO);
         String metadata = serializeStatements(statements);
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), CHARSET));
         bw.write(metadata);
         bw.flush();
         bw.close();
@@ -388,7 +354,7 @@ public class FairDataPointClient {
         ArrayList<Statement> statements = DatasetTransformerUtils.dto2Statements(datasetDTO);
         String metadata = serializeStatements(statements);
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), CHARSET));
         bw.write(metadata);
         bw.flush();
         bw.close();
@@ -424,7 +390,7 @@ public class FairDataPointClient {
         ArrayList<Statement> statements = DistributionTransformerUtils.dto2Statements(distributionDTO);
         String metadata = serializeStatements(statements);
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), CHARSET));
         bw.write(metadata);
         bw.flush();
         bw.close();
@@ -452,7 +418,7 @@ public class FairDataPointClient {
         StatementCollector collector = new StatementCollector();
         parser.setRDFHandler(collector);
 
-        parser.parse(new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)), uri);
+        parser.parse(new BufferedReader(new InputStreamReader(conn.getInputStream(), CHARSET)), uri);
         return new ArrayList<>(collector.getStatements());
     }
 
@@ -482,7 +448,7 @@ public class FairDataPointClient {
         conn.setRequestMethod(method);
         conn.addRequestProperty(HttpHeaders.ACCEPT, accept);
         conn.addRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
-        conn.addRequestProperty(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());
+        conn.addRequestProperty(HttpHeaders.CONTENT_ENCODING, CHARSET.displayName());
 
         if (token != null) {
             conn.addRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -538,6 +504,16 @@ public class FairDataPointClient {
             sb.append("/").append(f);
         }
         return sb.toString();
+    }
+
+    private String readInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+        return result.toString(CHARSET.name());
     }
 
     public String getBaseURI() {

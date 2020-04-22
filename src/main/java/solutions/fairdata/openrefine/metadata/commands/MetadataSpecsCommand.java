@@ -50,17 +50,8 @@ public class MetadataSpecsCommand extends Command {
         FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, pa);
 
         try {
-            Object result;
-            if ("catalog".equalsIgnoreCase(type)) {
-                result = fdpClient.getCatalogSpec();
-            } else if ("dataset".equalsIgnoreCase(type)) {
-                result = fdpClient.getDatasetSpec();
-            } else if ("distribution".equalsIgnoreCase(type)) {
-                result = fdpClient.getDistributionSpec();
-            } else {
-                throw new IOException("Invalid metadata type requested");
-            }
-            CommandUtils.objectMapper.writeValue(w, new MetadataSpecResponse(result));
+            String spec = fdpClient.getMetadataSpec(type);
+            CommandUtils.objectMapper.writeValue(w, new MetadataSpecResponse(spec));
         } catch (Exception e) {
             pa.reportError(EventSource.FDP_CONNECTION,"Error while getting metadata specs: " + fdpUri);
             pa.reportTrace(EventSource.FDP_CONNECTION, e);

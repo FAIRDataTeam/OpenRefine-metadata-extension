@@ -91,18 +91,6 @@ class MetadataApiClient {
         this._ajaxGeneric("distributions-metadata", "GET", params, callbacks, errorCallbacks);
     }
 
-    getCatalogSpec(callbacks, errorCallbacks) {
-        this.getMetadataSpec("catalog", callbacks, errorCallbacks);
-    }
-
-    getDatasetSpec(callbacks, errorCallbacks) {
-        this.getMetadataSpec("dataset", callbacks, errorCallbacks);
-    }
-
-    getDistributionSpec(callbacks, errorCallbacks) {
-        this.getMetadataSpec("distribution", callbacks, errorCallbacks);
-    }
-
     getMetadataSpec(type, callbacks, errorCallbacks) {
         const params = { fdpUri: this.fdpUri, token: this.token, type };
         this._ajaxGeneric("metadata-specs", "GET", params, callbacks, errorCallbacks);
