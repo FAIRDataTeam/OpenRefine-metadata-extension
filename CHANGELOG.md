@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Prepared getting and passing SHACL specs from FDP to OpenRefine frontend
+- Updated for compatibility with newer FAIR Data Point 1.3.0
+
+### Fixed
+
+- Persisting information about stored metadata
 
 ## [1.2.0]
 

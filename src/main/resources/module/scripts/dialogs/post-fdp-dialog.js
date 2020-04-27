@@ -65,10 +65,12 @@ class PostFdpDialog {
     }
 
     persistProjectData() {
-        const settings = { projectData: {
+        const settings = {
+            projectData: {
                 lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
-                projectData: Object.fromEntries(this.projectData.lastDataset.entries())
-            }};
+                lastDataset: Object.fromEntries(this.projectData.lastDataset.entries())
+            }
+        };
         this.apiClient.postSettings(settings, [
             (result) => {
                 this.loadProjectData(result.projectData);
@@ -186,7 +188,7 @@ class PostFdpDialog {
 
         elmts.catalogAddButton.click(() => {
             let prefill = new Map(this.prefill);
-            prefill.set("parent", self.apiClient.fdpUri);
+            prefill.set("parent", self.apiClient.repositoryUri);
             MetadataFormDialog.createAndLaunch(this.apiClient, MetadataSpecs.catalog,
                 (catalog, formDialog) => {
                     this.apiClient.postCatalog(

@@ -14,12 +14,11 @@ class MetadataFormDialog {
 
         this.datalists = new Set();
 
-        const prefillMap = prefill || new Map();
+        this.prefill = prefill || new Map();
 
         this.initBasicTexts();
-        this.fillForm(prefillMap);
-        this.bindActions();
         this.getSpec();
+        this.bindActions();
     }
 
     launch() {
@@ -143,6 +142,8 @@ class MetadataFormDialog {
                 formGroupId
             );
         }
+
+        this.fillForm(this.prefill);
     }
 
     displayError(errorName, errorMessage) {
@@ -439,8 +440,8 @@ class MetadataFormDialog {
     }
 
     // launcher
-    static createAndLaunch(specs, callbackFn, prefill) {
-        const dialog = new MetadataFormDialog(specs, callbackFn, prefill);
+    static createAndLaunch(apiClient, specs, callbackFn, prefill) {
+        const dialog = new MetadataFormDialog(apiClient, specs, callbackFn, prefill);
         dialog.launch();
     }
 }

@@ -74,7 +74,7 @@ public class FairDataPointClient {
     ));
 
     private static final String INFO_PART = "actuator/info";
-    private static final String CONFIG_PART = "configuration";
+    private static final String CONFIG_PART = "configs/bootstrap";
     private static final String CATALOG_PART = "catalog";
     private static final String DATASET_PART = "dataset";
     private static final String DISTRIBUTION_PART = "distribution";
@@ -156,13 +156,13 @@ public class FairDataPointClient {
      * @throws IOException in case of a communication error
      * @throws FairDataPointException in case that FDP responds with an unexpected code
      */
-    public FDPMetadataDTO getFairDataPointMetadata() throws IOException, FairDataPointException {
+    public FDPMetadataDTO getFairDataPointMetadata(String repositoryUri) throws IOException, FairDataPointException {
         HttpURLConnection conn = request(fdpBaseURI, "GET", MEDIA_TYPE_TURTLE, true);
         projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Sending GET repository metadata request to FDP");
 
         if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Received repository metadata");
-            String actualURI = conn.getURL().toString();
+            String actualURI = repositoryUri != null ? repositoryUri : conn.getURL().toString();
             ArrayList<Statement> statements = parseStatements(conn, actualURI);
             projectAudit.reportDebug(EventSource.FDP_CONNECTION, "Parsed and processed repository metadata");
             return FDPMetadataTransformerUtils.metadata2DTO(statements, actualURI);

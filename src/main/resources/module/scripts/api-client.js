@@ -4,6 +4,7 @@ class MetadataApiClient {
 
     constructor() {
         this.fdpUri = null;
+        this.repositoryUri = null;
         this.token = null;
         this.fdpConfig = null;
         this.fdpInfo = null;
@@ -31,6 +32,7 @@ class MetadataApiClient {
             }),
             [(result) => {
                 this.fdpUri = result.fdpUri;
+                this.repositoryUri = result.fdpConfig.persistentUrl;
                 this.token = result.token;
                 this.fdpConfig = result.fdpConfig;
                 this.fdpInfo = result.fdpInfo;
@@ -49,8 +51,8 @@ class MetadataApiClient {
     }
 
     postSettings(projectData, callbacks) {
-        const settingsPostRequest = JSON.stringify({ projectData });
-        this._ajaxGeneric("settings","POST", settingsPostRequest, callbacks, [], true);
+        const settingsPostRequest = JSON.stringify(projectData);
+        this._ajaxGeneric("settings", "POST", settingsPostRequest, callbacks, [], true);
     }
 
     getAuditLog(callbacks) {
@@ -72,22 +74,22 @@ class MetadataApiClient {
     }
 
     getFDPMetadata(callbacks, errorCallbacks) {
-        const params = { fdpUri: this.fdpUri };
+        const params = { fdpUri: this.fdpUri, repositoryUri: this.repositoryUri, token: this.token };
         this._ajaxGeneric("fdp-metadata", "GET", params, callbacks, errorCallbacks);
     }
 
     getCatalogs(callbacks, errorCallbacks) {
-        const params = { fdpUri: this.fdpUri };
+        const params = { fdpUri: this.fdpUri, repositoryUri: this.repositoryUri, token: this.token };
         this._ajaxGeneric("catalogs-metadata", "GET", params, callbacks, errorCallbacks);
     }
 
     getDatasets(catalogUri, callbacks, errorCallbacks) {
-        const params = { fdpUri: this.fdpUri, catalogUri };
+        const params = { fdpUri: this.fdpUri, repositoryUri: this.repositoryUri, token: this.token, catalogUri };
         this._ajaxGeneric("datasets-metadata", "GET", params, callbacks, errorCallbacks);
     }
 
     getDistributions(datasetUri, callbacks, errorCallbacks) {
-        const params = { fdpUri: this.fdpUri, datasetUri };
+        const params = { fdpUri: this.fdpUri, repositoryUri: this.repositoryUri, token: this.token, datasetUri };
         this._ajaxGeneric("distributions-metadata", "GET", params, callbacks, errorCallbacks);
     }
 

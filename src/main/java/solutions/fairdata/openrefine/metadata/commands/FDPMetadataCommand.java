@@ -47,13 +47,15 @@ public class FDPMetadataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
+        String repositoryUri = request.getParameter("repositoryUri");
+        String token = request.getParameter("token");
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
-        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, pa);
 
         pa.reportInfo(EventSource.FDP_METADATA, "Retrieving FAIR Data Point (repository) metadata from URI: " + fdpUri);
         try {
-            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
+            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(repositoryUri);
             pa.reportInfo(EventSource.FDP_METADATA, "FAIR Data Point (repository) metadata retrieved from: " + fdpUri);
             CommandUtils.objectMapper.writeValue(w, new FDPMetadataResponse("connect-fdp-command/success", fdpMetadataDTO));
         } catch (Exception e) {
