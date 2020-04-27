@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -35,10 +36,7 @@ public class StorageDTO {
     private String name;
     private String type;
     private Boolean enabled;
-    private String username;
-    private String password;
-    private String host;
-    private String directory;
+    private Map<String, String> details;
     private Set<String> contentTypes;
     private Integer maxByteSize;
     private Set<String> filenamePatterns;

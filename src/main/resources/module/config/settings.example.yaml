@@ -5,6 +5,9 @@
 #   Do not set this to "false" when no fdpConnections are specified!
 allowCustomFDP: true
 
+#
+allowCustomStorage: true
+
 # - Enable per-project audit log for extension to keep track of various actions
 audit: INFO
 # - Show audit in OpenRefine front-end dialog

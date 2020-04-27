@@ -22,16 +22,15 @@
  */
 package solutions.fairdata.openrefine.metadata.commands.response.storage;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import solutions.fairdata.openrefine.metadata.dto.storage.ExportFormatDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageInfoDTO;
 
 import java.util.HashMap;
 import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,11 +42,13 @@ public class StoreDataInfoResponse {
     private List<ExportFormatDTO> formats;
     private List<StorageInfoDTO> storages;
     private HashMap<String, String> defaults;
+    private HashMap<String, List<String>> storageTypes;
 
     public StoreDataInfoResponse(List<ExportFormatDTO> formats, List<StorageInfoDTO> storages) {
         this.status = "ok";
         this.formats = formats;
         this.storages = storages;
         this.defaults = new HashMap<>();
+        this.storageTypes = new HashMap<>();
     }
 }

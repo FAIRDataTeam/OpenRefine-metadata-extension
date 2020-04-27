@@ -22,6 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.net.ftp.FTPClient;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
@@ -29,13 +30,42 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 
 public class FTPStorage extends Storage {
 
     public static final String TYPE = "ftp";
 
+    private static final String DETAIL_HOST = "host";
+    private static final String DETAIL_USERNAME = "username";
+    private static final String DETAIL_PASSWORD = "password";
+    private static final String DETAIL_DIRECTORY = "directory";
+    public static final List<String> DETAILS = ImmutableList.of(
+            DETAIL_HOST,
+            DETAIL_USERNAME,
+            DETAIL_PASSWORD,
+            DETAIL_DIRECTORY
+    );
+
+    private String host;
+    private String username;
+    private String password;
+    private String directory;
+
+    private void loadDetails(StorageDTO storageDTO) {
+        host = storageDTO.getDetails().get(DETAIL_HOST);
+        username = storageDTO.getDetails().get(DETAIL_USERNAME);
+        password = storageDTO.getDetails().get(DETAIL_PASSWORD);
+        directory = storageDTO.getDetails().get(DETAIL_DIRECTORY);
+
+        if (host == null) {
+            throw new IllegalArgumentException("Missing host for FTP storage");
+        }
+    }
+
     public FTPStorage(StorageDTO storageDTO) {
         super(storageDTO);
+        loadDetails(storageDTO);
     }
 
     @Override
@@ -44,13 +74,18 @@ public class FTPStorage extends Storage {
     }
 
     @Override
+    public List<String> getDetailNames() {
+        return DETAILS;
+    }
+
+    @Override
     public String getFilePath(HashMap<String, String> metadata) {
-        return Paths.get(storageDTO.getDirectory(), metadata.getOrDefault("filenameExt", "")).toString();
+        return Paths.get(directory, metadata.getOrDefault("filenameExt", "")).toString();
     }
 
     @Override
     public String getURL(HashMap<String, String> metadata) {
-        return "ftp://" + storageDTO.getHost() + getFilePath(metadata);
+        return "ftp://" + host + getFilePath(metadata);
     }
 
     @Override
@@ -60,9 +95,15 @@ public class FTPStorage extends Storage {
             throw new IOException("Filename not given");
         }
         FTPClient ftpClient = new FTPClient();
-        ftpClient.connect(storageDTO.getHost());
-        ftpClient.login(storageDTO.getUsername(), storageDTO.getPassword());
-        ftpClient.changeWorkingDirectory(storageDTO.getDirectory());
+        ftpClient.connect(host);
+        if (username != null && password != null) {
+            ftpClient.login(username, password);
+        }
+        if (directory != null) {
+            ftpClient.changeWorkingDirectory(directory);
+        } else {
+            directory = ftpClient.printWorkingDirectory();
+        }
         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {

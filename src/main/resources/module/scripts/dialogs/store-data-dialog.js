@@ -19,6 +19,7 @@ class StoreDataDialog {
             }
         ]);
         this.apiClient.getStorageInfo([(data) => {
+            console.log(data);
             this.formats = data.formats;
             this.storages = data.storages;
             this.defaults = new Map(Object.entries(data.defaults));

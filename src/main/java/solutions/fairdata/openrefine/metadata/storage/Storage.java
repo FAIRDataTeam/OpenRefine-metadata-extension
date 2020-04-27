@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 
 abstract public class Storage {
 
@@ -49,6 +50,11 @@ abstract public class Storage {
      * @return storage type name
      */
     public abstract String getType();
+
+    /**
+     * @return list of details for storage connection
+     */
+    public abstract List<String> getDetailNames();
 
     /**
      * Get file path (in the storage) for reference stored daty
@@ -98,7 +104,7 @@ abstract public class Storage {
         return true;
     }
 
-    public boolean fordbidsByteSize(int byteSize) {
+    public boolean forbidsByteSize(int byteSize) {
         if (storageDTO == null || storageDTO.getMaxByteSize() == null) {
             return false;
         }

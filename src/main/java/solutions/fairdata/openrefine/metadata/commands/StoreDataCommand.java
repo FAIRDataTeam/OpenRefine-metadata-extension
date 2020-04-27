@@ -38,8 +38,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.storage.StoreDat
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.storage.ExportFormatDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
-import solutions.fairdata.openrefine.metadata.storage.Storage;
-import solutions.fairdata.openrefine.metadata.storage.StorageRegistryUtil;
+import solutions.fairdata.openrefine.metadata.storage.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -108,6 +107,9 @@ public class StoreDataCommand extends Command {
         );
         storeDataInfoResponse.getDefaults().put("filename", defaultFilename);
         storeDataInfoResponse.getDefaults().put("baseURI", defaultBaseURI);
+        storeDataInfoResponse.getStorageTypes().put(FTPStorage.TYPE, FTPStorage.DETAILS);
+        storeDataInfoResponse.getStorageTypes().put(VirtuosoStorage.TYPE, VirtuosoStorage.DETAILS);
+        storeDataInfoResponse.getStorageTypes().put(TripleStoreHTTPStorage.TYPE, TripleStoreHTTPStorage.DETAILS);
         CommandUtils.objectMapper.writeValue(w, storeDataInfoResponse);
 
         w.flush();
@@ -178,7 +180,7 @@ public class StoreDataCommand extends Command {
                         pa.reportWarning(EventSource.STORAGE,"Filename violates storage requirements");
                         throw new MetadataCommandException("store-data-dialog/error/naming-violation");
                     }
-                    else if (storage.fordbidsByteSize(data.length)) {
+                    else if (storage.forbidsByteSize(data.length)) {
                         pa.reportWarning(EventSource.STORAGE,"File is too big for selected storage");
                         throw new MetadataCommandException("store-data-dialog/error/too-big");
                     }
