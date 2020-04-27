@@ -51,13 +51,15 @@ public class CatalogsMetadataCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String fdpUri = request.getParameter("fdpUri");
+        String repositoryUri = request.getParameter("repositoryUri");
+        String token = request.getParameter("token");
         Writer w = CommandUtils.prepareWriter(response);
         ProjectAudit pa = new ProjectAudit(getProject(request));
-        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, pa);
+        FairDataPointClient fdpClient = new FairDataPointClient(fdpUri, token, pa);
 
         pa.reportInfo(EventSource.FDP_METADATA, "Retrieving catalogs from FDP URI: " + fdpUri);
         try {
-            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata();
+            FDPMetadataDTO fdpMetadataDTO = fdpClient.getFairDataPointMetadata(repositoryUri);
             ArrayList<CatalogDTO> catalogDTOs = new ArrayList<>();
             for (String catalogURI : fdpMetadataDTO.getChildren()) {
                 catalogDTOs.add(fdpClient.getCatalogMetadata(catalogURI));
