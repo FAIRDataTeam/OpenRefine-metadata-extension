@@ -30,21 +30,16 @@ import solutions.fairdata.openrefine.metadata.dto.audit.EventType;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class ProjectAudit {
 
-    private AuditLogDTO log;
-    private int level;
+    private final AuditLogDTO log;
+    private final int level;
 
     private static String currentTimestamp() {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return df.format(new Date());
+        return OffsetDateTime.now().toString();
     }
 
     private static String getStackTrace(Exception e) {

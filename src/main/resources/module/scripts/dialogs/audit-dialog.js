@@ -70,7 +70,6 @@ class MetadataAuditDialog {
 
     showLogTable(entries) {
         entries.forEach((entry) => {
-            console.log(entry.timestamp.split("Z", 1)[0]);
             const timestamp = Date.parse(entry.timestamp.split("Z", 1)[0]);
             this.elements.auditTableBody.append(
                 $("<tr>")
