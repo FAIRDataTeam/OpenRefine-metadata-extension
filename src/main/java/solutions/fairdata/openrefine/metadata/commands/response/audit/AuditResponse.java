@@ -20,24 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response.metadata;
+package solutions.fairdata.openrefine.metadata.commands.response.audit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataSpecResponse {
+public class AuditResponse {
 
-    public String status;
-    public String spec;
+    private String status;
+    private AuditLogDTO auditLog;
 
-    public MetadataSpecResponse(String spec) {
+    public AuditResponse(AuditLogDTO auditLog) {
         this.status = "ok";
-        this.spec = spec;
+        this.auditLog = auditLog;
     }
 }

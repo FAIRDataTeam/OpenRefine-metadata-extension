@@ -13,14 +13,14 @@ class FDPInfoDialog {
         let fdpName = null;
         let fdpVersion = null;
         let fdpBuiltAt = null;
-        let fdpInstanceUrl = null;
+        let fdpPersistentUrl = null;
         if (apiClient.fdpInfo !== null) {
             fdpName = apiClient.fdpInfo.name;
             fdpVersion = apiClient.fdpInfo.version;
             fdpBuiltAt = apiClient.fdpInfo.builtAt;
         }
         if (apiClient.fdpConfig !== null) {
-            fdpInstanceUrl = apiClient.fdpConfig.instanceUrl;
+            fdpPersistentUrl = apiClient.fdpConfig.persistentUrl;
         }
 
         const handleNull = (text) => {
@@ -32,7 +32,7 @@ class FDPInfoDialog {
         this.elements.fdpInfoVersion.text(handleNull(fdpVersion));
         this.elements.fdpInfoBuiltAt.text(handleNull(fdpBuiltAt));
         this.elements.fdpInfoBaseUri.text(handleNull(fdpUri));
-        this.elements.fdpInfoInstanceUrl.text(handleNull(fdpInstanceUrl));
+        this.elements.fdpInfoPersistentUrl.text(handleNull(fdpPersistentUrl));
     }
 
     launch() {

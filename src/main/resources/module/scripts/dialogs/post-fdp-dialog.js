@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, FDPInfoDialog, MetadataSpecs, MetadataApiClient */
+/* global DOM, DialogSystem, MetadataHelpers, MetadataFormDialog, FDPInfoDialog, MetadataSpecs, MetadataApiClient, MetadataAuditDialog */
 
 class PostFdpDialog {
 
@@ -27,19 +27,26 @@ class PostFdpDialog {
         this.elements.dialogBody.addClass("hidden");
         this.apiClient.getSettings([
             (result) => {
-                this.settings = new Map(Object.entries(result.settings));
-                this.loadProjectData(result.projectData);
-                this.preparePrefill();
-                this.bindActions();
-                this.prepareConnections();
-                this.recallCredentials();
-                this.elements.dialogBody.removeClass("hidden");
+                this.loadSettings(result);
             }
         ]);
     }
 
     getCurrentRepositoryUri() {
         return this.apiClient.fdpUri;
+    }
+
+    loadSettings(settings) {
+        this.settings = new Map(Object.entries(settings.settings));
+        this.loadProjectData(settings.projectData);
+        this.preparePrefill();
+        this.bindActions();
+        this.prepareConnections();
+        this.recallCredentials();
+        if (settings.settings.auditShow === true) {
+            this.elements.auditButton.removeClass('hidden');
+        }
+        this.elements.dialogBody.removeClass("hidden");
     }
 
     loadProjectData(projectData) {
@@ -58,10 +65,12 @@ class PostFdpDialog {
     }
 
     persistProjectData() {
-        const settings = { projectData: {
+        const settings = {
+            projectData: {
                 lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
-                projectData: Object.fromEntries(this.projectData.lastDataset.entries())
-            }};
+                lastDataset: Object.fromEntries(this.projectData.lastDataset.entries())
+            }
+        };
         this.apiClient.postSettings(settings, [
             (result) => {
                 this.loadProjectData(result.projectData);
@@ -86,6 +95,7 @@ class PostFdpDialog {
         const isCreatePermission = (permission) => { return permission.code === "C"; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
 
         elmts.connectButton.click(() => {
             const fdpConnection = elmts.fdpConnectionSelect.val();
@@ -178,8 +188,8 @@ class PostFdpDialog {
 
         elmts.catalogAddButton.click(() => {
             let prefill = new Map(this.prefill);
-            prefill.set("parent", self.apiClient.fdpUri);
-            MetadataFormDialog.createAndLaunch(MetadataSpecs.catalog,
+            prefill.set("parent", self.apiClient.repositoryUri);
+            MetadataFormDialog.createAndLaunch(this.apiClient, MetadataSpecs.catalog,
                 (catalog, formDialog) => {
                     this.apiClient.postCatalog(
                         catalog,
@@ -195,7 +205,7 @@ class PostFdpDialog {
             const catalogUri = this.elements.catalogSelect.val();
             let prefill = new Map(this.prefill);
             prefill.set("parent", catalogUri);
-            MetadataFormDialog.createAndLaunch(MetadataSpecs.dataset,
+            MetadataFormDialog.createAndLaunch(this.apiClient, MetadataSpecs.dataset,
                 (dataset, formDialog) => {
                     this.apiClient.postDataset(
                         dataset,
@@ -211,7 +221,7 @@ class PostFdpDialog {
             const datasetUri = elmts.datasetSelect.val();
             let prefill = new Map(this.prefill);
             prefill.set("parent", datasetUri);
-            MetadataFormDialog.createAndLaunch(MetadataSpecs.distribution,
+            MetadataFormDialog.createAndLaunch(this.apiClient, MetadataSpecs.distribution,
                 (distribution, formDialog) => {
                     this.apiClient.postDistribution(
                         distribution,

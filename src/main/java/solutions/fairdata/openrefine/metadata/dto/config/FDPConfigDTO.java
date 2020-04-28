@@ -32,5 +32,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FDPConfigDTO {
-    private String instanceUrl;
+    private String persistentUrl;
 }

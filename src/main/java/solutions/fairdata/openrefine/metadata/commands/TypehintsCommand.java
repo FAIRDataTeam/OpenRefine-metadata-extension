@@ -23,14 +23,12 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.TypehintsResponse;
 import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
-import solutions.fairdata.openrefine.metadata.typehinting.TypehintService;
-import solutions.fairdata.openrefine.metadata.typehinting.LanguageTypehintService;
-import solutions.fairdata.openrefine.metadata.typehinting.LicenseTypehintService;
-import solutions.fairdata.openrefine.metadata.typehinting.MediaTypeTypehintService;
-import solutions.fairdata.openrefine.metadata.typehinting.ThemeTypehintService;
+import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
+import solutions.fairdata.openrefine.metadata.typehinting.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +65,9 @@ public class TypehintsCommand extends Command {
             query = "";
         }
         Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
 
+        pa.reportInfo(EventSource.TYPEHINTS, "Retrieving typehints \"" + name + "\" with query \"" + query + "\"");
         try {
             List<TypehintDTO> typehints = null;
             String source = "none";
@@ -76,11 +76,15 @@ public class TypehintsCommand extends Command {
                 typehints = typehintService.getTypehints(query);
                 source = typehintService.getSource();
                 typehints.sort(Comparator.comparing(TypehintDTO::getTitle));
+                pa.reportInfo(EventSource.TYPEHINTS, "Retrieved " + typehints.size() + " typehint items");
+            } else {
+                pa.reportWarning(EventSource.TYPEHINTS, "Unknown typehints requested: " + name);
             }
 
             CommandUtils.objectMapper.writeValue(w, new TypehintsResponse(source, typehints));
         } catch (Exception e) {
-            logger.error("Error while preparing typehints of name: " + name + " (" + e.getMessage() + ")");
+            pa.reportError(EventSource.TYPEHINTS,"Error while retrieving typehints: " + name);
+            pa.reportTrace(EventSource.TYPEHINTS, e);
             CommandUtils.objectMapper.writeValue(w, new ErrorResponse("connect-fdp-command/error", e));
         } finally {
             w.flush();
