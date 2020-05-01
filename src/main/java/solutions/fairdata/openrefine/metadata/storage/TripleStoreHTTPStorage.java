@@ -22,7 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
-import com.google.common.collect.ImmutableList;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -32,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,12 +43,12 @@ public class TripleStoreHTTPStorage extends Storage {
     private static final String DETAIL_USERNAME = "username";
     private static final String DETAIL_PASSWORD = "password";
     private static final String DETAIL_REPOSITORY = "repository";
-    public static final List<String> DETAILS = ImmutableList.of(
+    public static final List<String> DETAILS = Collections.unmodifiableList(Arrays.asList(
             DETAIL_HOST,
             DETAIL_USERNAME,
             DETAIL_PASSWORD,
             DETAIL_REPOSITORY
-    );
+    ));
 
     private String host;
     private String username;

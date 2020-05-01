@@ -22,13 +22,14 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.net.ftp.FTPClient;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,12 +41,12 @@ public class FTPStorage extends Storage {
     private static final String DETAIL_USERNAME = "username";
     private static final String DETAIL_PASSWORD = "password";
     private static final String DETAIL_DIRECTORY = "directory";
-    public static final List<String> DETAILS = ImmutableList.of(
+    public static final List<String> DETAILS = Collections.unmodifiableList(Arrays.asList(
             DETAIL_HOST,
             DETAIL_USERNAME,
             DETAIL_PASSWORD,
             DETAIL_DIRECTORY
-    );
+    ));
 
     private String host;
     private String username;

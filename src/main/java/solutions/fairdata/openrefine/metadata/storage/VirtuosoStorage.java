@@ -22,8 +22,6 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
-import com.google.common.collect.ImmutableList;
-import org.apache.xerces.impl.dv.util.Base64;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 
 import java.io.IOException;
@@ -33,8 +31,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class VirtuosoStorage extends Storage {
 
@@ -45,12 +42,12 @@ public class VirtuosoStorage extends Storage {
     private static final String DETAIL_USERNAME = "username";
     private static final String DETAIL_PASSWORD = "password";
     private static final String DETAIL_DIRECTORY = "directory";
-    public static final List<String> DETAILS = ImmutableList.of(
+    public static final List<String> DETAILS = Collections.unmodifiableList(Arrays.asList(
             DETAIL_HOST,
             DETAIL_USERNAME,
             DETAIL_PASSWORD,
             DETAIL_DIRECTORY
-    );
+    ));
 
     private String host;
     private String username;
@@ -113,7 +110,7 @@ public class VirtuosoStorage extends Storage {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (username != null && password != null) {
             String auth = username + ":" + password;
-            String authHeaderValue = "Basic " + Base64.encode(auth.getBytes(CHARSET));
+            String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(CHARSET));
             conn.setRequestProperty("Authorization", authHeaderValue);
         }
         conn.setDoOutput(true);
