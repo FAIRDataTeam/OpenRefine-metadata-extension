@@ -109,6 +109,7 @@
   "metadata/distribution/accessUrl/description": "A landing page, feed, SPARQL endpoint or other type of resource that gives access to the distribution of the dataset.",
   "metadata/distribution/downloadUrl/name": "Download URL",
   "metadata/distribution/downloadUrl/description": "A file that contains the distribution of the dataset in a given format.",
+  "store-data-dialog/custom": "Custom storage",
   "store-data-dialog/title": "Store data to FAIR storage",
   "store-data-dialog/formats/csv": "Comma-separated values",
   "store-data-dialog/formats/tsv": "Tab-separated values",

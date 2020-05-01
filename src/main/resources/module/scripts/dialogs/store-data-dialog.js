@@ -9,6 +9,7 @@ class StoreDataDialog {
         this.storeCallback = this.defaultCallback();
         this.metadataFields = new Map();
         this.apiClient = new MetadataApiClient();
+        this.allowCustomStorage = false;
 
         this.initBasicTexts();
         this.bindActions();
@@ -22,6 +23,10 @@ class StoreDataDialog {
             console.log(data);
             this.formats = data.formats;
             this.storages = data.storages;
+            this.storages.forEach((storage) => {
+                storage.details = new Map(Object.entries(storage.details));
+            });
+            console.log(this.storages);
             this.defaults = new Map(Object.entries(data.defaults));
 
             this.showStorages();
@@ -43,6 +48,7 @@ class StoreDataDialog {
     }
 
     loadSettings(settings) {
+        this.allowCustomStorage = settings.settings.allowCustomStorage === true;
         if (settings.settings.auditShow === true) {
             this.elements.auditButton.removeClass('hidden');
         }
@@ -119,13 +125,25 @@ class StoreDataDialog {
 
         elmts.storageSelect.on("change", () => {
             const selectedStorage = elmts.storageSelect.val();
-            const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
-            this.showStorageLimits(storage);
-            if (storage) {
-                this.showFormats(storage.contentTypes);
-                this.showStorageFields(storage);
+            if (selectedStorage == "_custom" && this.allowCustomStorage) {
+                this.showCustomStorage();
+            } else {
+                this.showDefinedStorage(selectedStorage);
             }
         });
+    }
+
+    showCustomStorage() {
+        // TODO
+    }
+
+    showDefinedStorage(selectedStorage) {
+        const storage = this.storages.find((s) => { return s.name === selectedStorage; });
+        this.showStorageLimits(storage);
+        if (storage) {
+            this.showFormats(storage.contentTypes);
+            this.showStorageFields(storage);
+        }
     }
 
     formatByteSize(byteSize) {
@@ -202,8 +220,16 @@ class StoreDataDialog {
             .prop("selected", true)
             .text($.i18n("common/select-option/storage"))
         );
+        if (this.allowCustomStorage) {
+            this.elements.storageSelect.append($("<option>")
+                .val("_custom")
+                .text($.i18n("store-data-dialog/custom"))
+            );
+        }
         this.storages.forEach((storage) => {
-            const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
+            const host = storage.details.get("host");
+            const loc = storage.details.has("directory") ? storage.details.get("directory") : storage.details.get("repository");
+            const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, host, loc);
             this.elements.storageSelect.append(
                 $("<option>").val(storage.name).text(label)
             );

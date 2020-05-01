@@ -5,7 +5,7 @@
 #   Do not set this to "false" when no fdpConnections are specified!
 allowCustomFDP: true
 
-#
+# - Allow users to select "Custom storage" and specify own connection details
 allowCustomStorage: true
 
 # - Enable per-project audit log for extension to keep track of various actions
