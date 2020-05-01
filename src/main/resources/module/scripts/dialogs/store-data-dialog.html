@@ -12,6 +12,13 @@
                 <select name="storage" id="storage" bind="storageSelect"></select>
                 <div class="input-note" bind="storageLimits"></div>
             </div>
+            <div bind="customStorageFields" class="hidden">
+                <div class="form-group">
+                    <label for="storageType" data-i18n="store-data-dialog/form/type"></label>
+                    <select name="storageType" id="storageType" bind="storageTypeSelect"></select>
+                </div>
+                <div bind="customStorageDetails"></div>
+            </div>
             <div class="form-group">
                 <label for="fileFormat" data-i18n="store-data-dialog/form/fileFormat"></label>
                 <select name="fileFormat" id="fileFormat" bind="fileFormatSelect"></select>

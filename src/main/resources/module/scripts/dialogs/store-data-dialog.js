@@ -104,6 +104,7 @@ class StoreDataDialog {
         elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
 
         elmts.previewButton.click((event) => {
+            // TODO handle custom storage
             event.preventDefault();
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("preview"),
@@ -114,6 +115,7 @@ class StoreDataDialog {
         });
 
         elmts.storeButton.click((event) => {
+            // TODO handle custom storage
             event.preventDefault();
             this.sendStoreDataRequest(
                 this.prepareStoreDataRequest("store"),
@@ -134,10 +136,12 @@ class StoreDataDialog {
     }
 
     showCustomStorage() {
-        // TODO
+        this.elements.customStorageFields.removeClass("hidden");
+        // TODO details fields
     }
 
     showDefinedStorage(selectedStorage) {
+        this.elements.customStorageFields.addClass("hidden");
         const storage = this.storages.find((s) => { return s.name === selectedStorage; });
         this.showStorageLimits(storage);
         if (storage) {
