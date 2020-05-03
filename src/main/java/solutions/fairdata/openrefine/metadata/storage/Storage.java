@@ -89,7 +89,10 @@ abstract public class Storage {
      * @return if is forbidden
      */
     public boolean forbidsContentType(String contentType) {
-        return storageDTO == null || (storageDTO.getContentTypes() != null && !storageDTO.getContentTypes().contains(contentType));
+        if (storageDTO == null || storageDTO.getContentTypes() == null) {
+            return false;
+        }
+        return !storageDTO.getContentTypes().contains(contentType);
     }
 
     public boolean forbidsName(String filename) {

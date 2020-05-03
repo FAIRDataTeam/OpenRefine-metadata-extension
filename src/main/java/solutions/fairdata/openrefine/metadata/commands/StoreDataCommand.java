@@ -130,7 +130,8 @@ public class StoreDataCommand extends Command {
 
             ExportFormatDTO format = formats.get(storeDataRequest.getFormat());
             Exporter exporter = ExporterRegistry.getExporter(storeDataRequest.getFormat());
-            Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage());
+            Storage storage = StorageRegistryUtil.getStorage(storeDataRequest.getStorage(), storeDataRequest.getCustom());
+
             if (exporter == null) {
                 pa.reportWarning(EventSource.STORAGE,"Unknown export format requested");
                 throw new MetadataCommandException("store-data-dialog/error/unknown-export-format");

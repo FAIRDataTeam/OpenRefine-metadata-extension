@@ -22,6 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.storage;
 
+import solutions.fairdata.openrefine.metadata.dto.storage.CustomStorageDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.storage.factory.FTPStorageFactory;
 import solutions.fairdata.openrefine.metadata.storage.factory.StorageFactory;
@@ -33,6 +34,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class StorageRegistryUtil {
+
+    private static final String CUSTOM_TYPE = "_custom";
 
     private static final HashMap<String, Storage> storages = new HashMap<>();
     private static final HashMap<String, StorageFactory> factories = new HashMap<>();
@@ -51,6 +54,22 @@ public class StorageRegistryUtil {
 
     public static Storage getStorage(String name) {
         return storages.get(name);
+    }
+
+    public static Storage getStorage(String name, CustomStorageDTO custom) {
+        if (name.equals(CUSTOM_TYPE) && custom != null) {
+            StorageDTO storageDTO = new StorageDTO();
+            storageDTO.setType(name);
+            storageDTO.setName(name);
+            storageDTO.setDetails(custom.getDetails());
+
+            StorageFactory factory = factories.get(custom.getType().toLowerCase());
+            if (factory == null) {
+                return null;
+            }
+            return factory.createStorage(storageDTO);
+        }
+        return getStorage(name);
     }
 
     public static Set<String> getStorageNames() {

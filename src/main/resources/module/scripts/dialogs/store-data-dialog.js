@@ -60,9 +60,9 @@ class StoreDataDialog {
     prepareCustomStorage() {
         const type = this.elements.storageTypeSelect.val();
         if (!this.storageTypes.has(type)) return null;
-        const details = new Map();
+        let details = {};
         this.storageTypes.get(type).forEach((name) => {
-            details.set(name, $(`input#storage-details-${name}`).val())
+            Object.assign(details, {[name]: $(`input#storage-details-${name}`).val()})
         });
         return {type, details};
     }

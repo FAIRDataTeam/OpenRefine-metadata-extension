@@ -35,8 +35,9 @@ import java.util.Set;
 public class StorageDTO {
     private String name;
     private String type;
-    private Boolean enabled;
+    private Boolean enabled = true;
     private Map<String, String> details;
+    // constraints (nullable)
     private Set<String> contentTypes;
     private Integer maxByteSize;
     private Set<String> filenamePatterns;
