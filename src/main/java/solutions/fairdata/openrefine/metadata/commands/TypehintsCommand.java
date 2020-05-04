@@ -28,7 +28,11 @@ import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.TypehintsResponse;
 import solutions.fairdata.openrefine.metadata.dto.TypehintDTO;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
-import solutions.fairdata.openrefine.metadata.typehinting.*;
+import solutions.fairdata.openrefine.metadata.typehinting.LanguageTypehintService;
+import solutions.fairdata.openrefine.metadata.typehinting.LicenseTypehintService;
+import solutions.fairdata.openrefine.metadata.typehinting.MediaTypeTypehintService;
+import solutions.fairdata.openrefine.metadata.typehinting.ThemeTypehintService;
+import solutions.fairdata.openrefine.metadata.typehinting.TypehintService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

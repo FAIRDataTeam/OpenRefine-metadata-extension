@@ -1,4 +1,4 @@
-/* global DOM, DialogSystem, MetadataHelpers, MetadataStorageSpecs, MetadataAuditDialog */
+/* global DOM, DialogSystem, MetadataApiClient, MetadataHelpers, MetadataStorageSpecs, MetadataAuditDialog */
 
 class StoreDataDialog {
 
@@ -49,7 +49,7 @@ class StoreDataDialog {
     loadSettings(settings) {
         this.allowCustomStorage = settings.settings.allowCustomStorage === true;
         if (settings.settings.auditShow === true) {
-            this.elements.auditButton.removeClass('hidden');
+            this.elements.auditButton.removeClass("hidden");
         }
     }
 
@@ -119,7 +119,7 @@ class StoreDataDialog {
         const elmts = this.elements;
 
         elmts.closeButton.click(() => { this.dismiss(); });
-        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch(); });
 
         elmts.previewButton.click((event) => {
             event.preventDefault();
@@ -215,21 +215,21 @@ class StoreDataDialog {
     }
 
     formatByteSize(byteSize) {
+        let result = {
+            size: 0,
+            unit: "B",
+        };
         if (byteSize <= 0) {
-            return {
-                size: 0,
-                unit: "B",
-            };
+            return result;
         }
         const units = ["B", "kB", "MB", "GB", "TB"];
         let x = units.length-1;
         while (byteSize < Math.pow(1024, x)) {
             x -= 1;
         }
-        return {
-            size: Math.ceil(100 * byteSize / Math.pow(1024, x)) / 100,
-            unit: units[parseInt(x)],
-        };
+        result.size = Math.ceil(100 * byteSize / Math.pow(1024, x)) / 100;
+        result.unit = units[parseInt(x, 10)];
+        return result;
     }
 
     showStorageLimits(storage) {

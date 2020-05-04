@@ -59,7 +59,7 @@ class MetadataAuditDialog {
                     .text($.i18n(`audit/${what}/${option}`))
             );
         });
-        select.val(toSelect)
+        select.val(toSelect);
     }
 
     showFilters() {
@@ -109,10 +109,10 @@ class MetadataAuditDialog {
     filterEntries(entries) {
         const type = this.elements.typeSelect.val();
         const typeVal = this.eventTypes.get(type);
-        const typeFiltered = entries.filter(e => this.eventTypes.get(e.eventType) <= typeVal);
+        const typeFiltered = entries.filter((e) => this.eventTypes.get(e.eventType) <= typeVal);
         const source = this.elements.sourceSelect.val();
         if (source !== "ANY") {
-            return typeFiltered.filter(e => e.eventSource === source);
+            return typeFiltered.filter((e) => e.eventSource === source);
         }
         return typeFiltered;
     }
