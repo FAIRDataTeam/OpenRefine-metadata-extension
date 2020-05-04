@@ -31,14 +31,32 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 public class TripleStoreHTTPStorage extends Storage {
 
     public static final String TYPE = "tripleStoreHTTP";
+
+    private static final String DETAIL_HOST = "host";
+    private static final String DETAIL_USERNAME = "username";
+    private static final String DETAIL_PASSWORD = "password";
+    private static final String DETAIL_REPOSITORY = "repository";
+    public static final List<String> DETAILS = Collections.unmodifiableList(Arrays.asList(
+            DETAIL_HOST,
+            DETAIL_USERNAME,
+            DETAIL_PASSWORD,
+            DETAIL_REPOSITORY
+    ));
+
+    private String host;
+    private String username;
+    private String password;
+    private String repository;
+
     private static final HashMap<String, RDFFormat> formats = new HashMap<>();
-    private final HTTPRepository repository;
+    private final HTTPRepository repo;
 
     static {
         List<RDFFormat> rdfFormats = Arrays.asList(RDFFormat.TURTLE, RDFFormat.RDFXML);
@@ -49,14 +67,31 @@ public class TripleStoreHTTPStorage extends Storage {
         }
     }
 
+    private void loadDetails(StorageDTO storageDTO) {
+        host = storageDTO.getDetails().get(DETAIL_HOST);
+        username = storageDTO.getDetails().get(DETAIL_USERNAME);
+        password = storageDTO.getDetails().get(DETAIL_PASSWORD);
+        repository = storageDTO.getDetails().get(DETAIL_REPOSITORY);
+
+        if (host == null) {
+            throw new IllegalArgumentException("Missing host for FTP storage");
+        }
+        if (repository == null) {
+            throw new IllegalArgumentException("Missing repository for FTP storage");
+        }
+    }
+
     public TripleStoreHTTPStorage(StorageDTO storageDTO) {
         super(storageDTO);
-        String uri = storageDTO.getHost();
+        loadDetails(storageDTO);
+        String uri = host;
         if (!uri.startsWith("http")) {  // For HTTPRepository it needs the protocol
             uri = "http://" + uri;
         }
-        repository = new HTTPRepository(uri, storageDTO.getDirectory());
-        repository.setUsernameAndPassword(storageDTO.getUsername(), storageDTO.getPassword());
+        repo = new HTTPRepository(uri, repository);
+        if (username != null && password != null) {
+            repo.setUsernameAndPassword(username, password);
+        }
     }
 
     @Override
@@ -65,8 +100,13 @@ public class TripleStoreHTTPStorage extends Storage {
     }
 
     @Override
+    public List<String> getDetailNames() {
+        return DETAILS;
+    }
+
+    @Override
     public String getFilePath(HashMap<String, String> metadata) {
-        return repository.getRepositoryURL();
+        return repo.getRepositoryURL();
     }
 
     private RDFFormat getFormat(String contentType) {
@@ -80,7 +120,7 @@ public class TripleStoreHTTPStorage extends Storage {
             throw new IOException("Base URI not given");
         }
         InputStream inputStream =  new ByteArrayInputStream(data);
-        RepositoryConnection repositoryConnection = repository.getConnection();
+        RepositoryConnection repositoryConnection = repo.getConnection();
         try {
             repositoryConnection.add(inputStream, baseURI, getFormat(contentType));
         } finally {
@@ -90,6 +130,6 @@ public class TripleStoreHTTPStorage extends Storage {
 
     @Override
     public String getURL(HashMap<String, String> metadata) {
-        return repository.getRepositoryURL();
+        return repo.getRepositoryURL();
     }
 }

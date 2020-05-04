@@ -9,6 +9,7 @@ class StoreDataDialog {
         this.storeCallback = this.defaultCallback();
         this.metadataFields = new Map();
         this.apiClient = new MetadataApiClient();
+        this.allowCustomStorage = false;
 
         this.initBasicTexts();
         this.bindActions();
@@ -21,6 +22,10 @@ class StoreDataDialog {
         this.apiClient.getStorageInfo([(data) => {
             this.formats = data.formats;
             this.storages = data.storages;
+            this.storages.forEach((storage) => {
+                storage.details = new Map(Object.entries(storage.details));
+            });
+            this.storageTypes = new Map(Object.entries(data.storageTypes));
             this.defaults = new Map(Object.entries(data.defaults));
 
             this.showStorages();
@@ -42,6 +47,7 @@ class StoreDataDialog {
     }
 
     loadSettings(settings) {
+        this.allowCustomStorage = settings.settings.allowCustomStorage === true;
         if (settings.settings.auditShow === true) {
             this.elements.auditButton.removeClass('hidden');
         }
@@ -51,18 +57,33 @@ class StoreDataDialog {
         this.frame.i18n();
     }
 
+    prepareCustomStorage() {
+        let result = {
+            type: this.elements.storageTypeSelect.val(),
+            details: {}
+        };
+        if (!this.storageTypes.has(result.type)) {
+            return null;
+        }
+        this.storageTypes.get(result.type).forEach((name) => {
+            Object.assign(result.details, {[name]: $(`input#storage-details-${name}`).val()});
+        });
+        return result;
+    }
+
     prepareStoreDataRequest(mode) {
         const elmts = this.elements;
         let metadata = new Map();
 
-        this.metadataFields.forEach((value, key, map) => {
+        this.metadataFields.forEach((value, key) => {
             metadata.set(key, value.val());
         });
 
+        const format = elmts.fileFormatSelect.val();
+        const storage = elmts.storageSelect.val();
+        const custom = storage === "_custom" ? this.prepareCustomStorage() : null;
         return {
-            mode,
-            format: elmts.fileFormatSelect.val(),
-            storage: elmts.storageSelect.val(),
+            mode, format, storage, custom,
             metadata: Object.fromEntries(metadata.entries())
         };
     }
@@ -70,6 +91,10 @@ class StoreDataDialog {
     validateStoreDataRequest(request) {
         if (request.format === null || request.storage === null) {
             this.elements.errorMessage.text($.i18n("store-data-dialog/error/select-storage-format"));
+            return false;
+        }
+        if (request.storage === "_custom" && request.custom === null) {
+            this.elements.errorMessage.text($.i18n("store-data-dialog/error/select-storage-type"));
             return false;
         }
         return true;
@@ -118,13 +143,75 @@ class StoreDataDialog {
 
         elmts.storageSelect.on("change", () => {
             const selectedStorage = elmts.storageSelect.val();
-            const storage =  this.storages.find((s) => { return s.name === selectedStorage; });
-            this.showStorageLimits(storage);
-            if (storage) {
-                this.showFormats(storage.contentTypes);
-                this.showStorageFields(storage);
+            if (selectedStorage === "_custom" && this.allowCustomStorage) {
+                this.showCustomStorage();
+            } else {
+                this.showDefinedStorage(selectedStorage);
             }
         });
+
+        elmts.storageTypeSelect.on("change", () => {
+            const storageStorageType = elmts.storageTypeSelect.val();
+            if (this.allowCustomStorage) {
+                this.showStorageDetailsFields(storageStorageType);
+            }
+        });
+    }
+
+    createCustomStorageField(name) {
+        const id = `storage-details-${name}`;
+        const label = $("<label>")
+            .attr("for", id)
+            .text($.i18n(`store-data-dialog/form/details/${name}`));
+        const field = $("<input>")
+            .attr("type", "text")
+            .attr("id", id)
+            .attr("name", id);
+        return $("<div>")
+            .addClass("form-group")
+            .append(label)
+            .append(field);
+    }
+
+    showStorageTypes() {
+        this.elements.storageTypeSelect.empty();
+        this.elements.storageTypeSelect.append($("<option>")
+            .prop("disabled", true)
+            .prop("selected", true)
+            .text($.i18n("common/select-option/storageType"))
+        );
+        this.storageTypes.forEach((value, key) => {
+            this.elements.storageTypeSelect.append($("<option>")
+                .val(key)
+                .text($.i18n(`store-data-dialog/form/type/${key}`))
+            );
+        });
+    }
+
+    showStorageDetailsFields(storageType) {
+        if (!this.storageTypes.has(storageType)) {
+            return;
+        }
+        this.elements.customStorageDetails.empty();
+        this.storageTypes.get(storageType).forEach((name) => {
+            const field = this.createCustomStorageField(name);
+            this.elements.customStorageDetails.append(field);
+        });
+    }
+
+    showCustomStorage() {
+        this.elements.customStorageFields.removeClass("hidden");
+        this.showStorageTypes();
+    }
+
+    showDefinedStorage(selectedStorage) {
+        this.elements.customStorageFields.addClass("hidden");
+        const storage = this.storages.find((s) => { return s.name === selectedStorage; });
+        this.showStorageLimits(storage);
+        if (storage) {
+            this.showFormats(storage.contentTypes);
+            this.showStorageFields(storage);
+        }
     }
 
     formatByteSize(byteSize) {
@@ -201,8 +288,16 @@ class StoreDataDialog {
             .prop("selected", true)
             .text($.i18n("common/select-option/storage"))
         );
+        if (this.allowCustomStorage) {
+            this.elements.storageSelect.append($("<option>")
+                .val("_custom")
+                .text($.i18n("store-data-dialog/custom"))
+            );
+        }
         this.storages.forEach((storage) => {
-            const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, storage.host, storage.directory);
+            const host = storage.details.get("host");
+            const loc = storage.details.has("directory") ? storage.details.get("directory") : storage.details.get("repository");
+            const label = $.i18n(`store-data-dialog/storages/${storage.type}`, storage.name, host, loc);
             this.elements.storageSelect.append(
                 $("<option>").val(storage.name).text(label)
             );
