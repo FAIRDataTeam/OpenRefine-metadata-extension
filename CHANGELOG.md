@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Possibility to specify custom storage in frontend
+-  Possibility to specify custom storage in frontend
 
 ### Fixed
 
-- Virtuoso storage can use HTTP Basic Auth
+-  Virtuoso storage can use HTTP Basic Auth
 
 ## [1.4.0]
 

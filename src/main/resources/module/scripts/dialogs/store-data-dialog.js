@@ -58,13 +58,17 @@ class StoreDataDialog {
     }
 
     prepareCustomStorage() {
-        const type = this.elements.storageTypeSelect.val();
-        if (!this.storageTypes.has(type)) return null;
-        let details = {};
-        this.storageTypes.get(type).forEach((name) => {
-            Object.assign(details, {[name]: $(`input#storage-details-${name}`).val()})
+        let result = {
+            type: this.elements.storageTypeSelect.val(),
+            details: {}
+        };
+        if (!this.storageTypes.has(result.type)) {
+            return null;
+        }
+        this.storageTypes.get(result.type).forEach((name) => {
+            Object.assign(result.details, {[name]: $(`input#storage-details-${name}`).val()});
         });
-        return {type, details};
+        return result;
     }
 
     prepareStoreDataRequest(mode) {
@@ -77,7 +81,7 @@ class StoreDataDialog {
 
         const format = elmts.fileFormatSelect.val();
         const storage = elmts.storageSelect.val();
-        const custom = storage === '_custom' ? this.prepareCustomStorage() : null;
+        const custom = storage === "_custom" ? this.prepareCustomStorage() : null;
         return {
             mode, format, storage, custom,
             metadata: Object.fromEntries(metadata.entries())
@@ -91,7 +95,7 @@ class StoreDataDialog {
         }
         if (request.storage === "_custom" && request.custom === null) {
             this.elements.errorMessage.text($.i18n("store-data-dialog/error/select-storage-type"));
-            return false
+            return false;
         }
         return true;
     }
@@ -158,11 +162,11 @@ class StoreDataDialog {
         const id = `storage-details-${name}`;
         const label = $("<label>")
             .attr("for", id)
-            .text($.i18n(`store-data-dialog/form/details/${name}`))
+            .text($.i18n(`store-data-dialog/form/details/${name}`));
         const field = $("<input>")
             .attr("type", "text")
             .attr("id", id)
-            .attr("name", id)
+            .attr("name", id);
         return $("<div>")
             .addClass("form-group")
             .append(label)
