@@ -44,7 +44,7 @@ class PostFdpDialog {
         this.prepareConnections();
         this.recallCredentials();
         if (settings.settings.auditShow === true) {
-            this.elements.auditButton.removeClass('hidden');
+            this.elements.auditButton.removeClass("hidden");
         }
         this.elements.dialogBody.removeClass("hidden");
     }
@@ -95,7 +95,7 @@ class PostFdpDialog {
         const isCreatePermission = (permission) => { return permission.code === "C"; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
-        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch(); });
 
         elmts.connectButton.click(() => {
             const fdpConnection = elmts.fdpConnectionSelect.val();

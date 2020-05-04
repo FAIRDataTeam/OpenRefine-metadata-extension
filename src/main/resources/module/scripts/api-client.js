@@ -56,11 +56,11 @@ class MetadataApiClient {
     }
 
     getAuditLog(callbacks) {
-        this._ajaxGeneric("audit", "GET", undefined, callbacks, []);
+        this._ajaxGeneric("audit", "GET", {}, callbacks, []);
     }
 
     clearAuditLog(callbacks) {
-        this._ajaxGeneric("audit", "DELETE", null, callbacks, [], true);
+        this._ajaxGeneric("audit", "DELETE", {}, callbacks, [], true);
     }
 
     postAuditEntry(eventType, message, callbacks) {
