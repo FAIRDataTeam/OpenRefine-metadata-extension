@@ -77,7 +77,7 @@ class MetadataHistoryDialog {
                         .append($("<a>")
                             .attr("href", record.details.parent)
                             .attr("target", "_blank")
-                            .text($.i18n(`history/parent`))))
+                            .text($.i18n("history/parent"))))
             );
         });
         this.elements.historyItems.text(this.records.length);

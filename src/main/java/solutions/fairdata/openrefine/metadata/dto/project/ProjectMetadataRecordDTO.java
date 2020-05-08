@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.Utils;
+import solutions.fairdata.openrefine.metadata.GenericUtils;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
@@ -43,7 +43,7 @@ public class ProjectMetadataRecordDTO {
     public static final String DETAIL_PARENT = "parent";
     public static final String DETAIL_TITLE = "title";
 
-    private String timestamp = Utils.currentTimestamp();
+    private String timestamp = GenericUtils.currentTimestamp();
     private String uri;
     private HashMap<String, String> details = new HashMap<>();
 

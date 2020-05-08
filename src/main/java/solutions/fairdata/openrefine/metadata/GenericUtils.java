@@ -24,7 +24,7 @@ package solutions.fairdata.openrefine.metadata;
 
 import java.time.OffsetDateTime;
 
-public class Utils {
+public class GenericUtils {
 
     public static String currentTimestamp() {
         return OffsetDateTime.now().toString();

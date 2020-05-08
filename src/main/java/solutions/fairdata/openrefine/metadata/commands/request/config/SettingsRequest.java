@@ -26,7 +26,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor

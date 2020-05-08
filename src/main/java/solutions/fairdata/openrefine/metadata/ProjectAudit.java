@@ -30,7 +30,6 @@ import solutions.fairdata.openrefine.metadata.dto.audit.EventType;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 public class ProjectAudit {
@@ -58,7 +57,7 @@ public class ProjectAudit {
 
     public void report(EventType eventType, EventSource eventSource, String message) {
         if (eventType.getLevel() <= level && this.log != null) {
-            this.log.getEntries().add(new AuditEntryDTO(eventType, eventSource, message, Utils.currentTimestamp()));
+            this.log.getEntries().add(new AuditEntryDTO(eventType, eventSource, message, GenericUtils.currentTimestamp()));
         }
     }
 
