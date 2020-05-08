@@ -70,15 +70,17 @@ class MetadataAuditDialog {
 
     showLogTable(entries) {
         entries.forEach((entry) => {
-            const timestamp = Date.parse(entry.timestamp.split("Z", 1)[0]);
+            const timestamp = Date.parse(entry.timestamp.split(".", 1)[0]);
+            let date = "";
+            let time = "";
+            if (timestamp) {
+                date = timestamp.toLocaleDateString();
+                time = timestamp.toLocaleTimeString();
+            }
             this.elements.auditTableBody.append(
                 $("<tr>")
-                    .append($("<td>")
-                        .addClass("date")
-                        .text(timestamp.toLocaleDateString()))
-                    .append($("<td>")
-                        .addClass("time")
-                        .text(timestamp.toLocaleTimeString()))
+                    .append($("<td>").addClass("date").text(date))
+                    .append($("<td>").addClass("time").text(time))
                     .append($("<td>")
                         .addClass(`type-${entry.eventType.toLowerCase()}`)
                         .text($.i18n(`audit/type/${entry.eventType}`)))

@@ -25,12 +25,13 @@ package solutions.fairdata.openrefine.metadata;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.refine.io.ProjectUtilities;
 import com.google.refine.model.Project;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 import solutions.fairdata.openrefine.metadata.dto.storage.StorageDTO;
 import solutions.fairdata.openrefine.metadata.model.MetadataOverlayModel;
@@ -150,23 +151,18 @@ public class MetadataModuleImpl extends ButterflyModuleImpl {
         MetadataOverlayModel metadataOverlayModel = (MetadataOverlayModel) project.overlayModels.get(OVERLAY_MODEL);
         if (metadataOverlayModel == null) {
             metadataOverlayModel = new MetadataOverlayModel();
-            metadataOverlayModel.setProjectData(new ProjectConfigDTO());
+            metadataOverlayModel.setProjectData(new ProjectHistoryDTO());
             project.overlayModels.put(OVERLAY_MODEL, metadataOverlayModel);
         }
         return metadataOverlayModel;
     }
 
-    public static ProjectConfigDTO getProjectConfigDTO(Project project) {
+    public static ProjectHistoryDTO getProjectHistoryDTO(Project project) {
         return getProjectModel(project).getProjectData();
     }
 
-    public static void setProjectConfigDTO(Project project, ProjectConfigDTO projectData) {
-        MetadataOverlayModel metadataOverlayModel = (MetadataOverlayModel) project.overlayModels.get(OVERLAY_MODEL);
-        if (metadataOverlayModel == null) {
-            metadataOverlayModel = new MetadataOverlayModel();
-            project.overlayModels.put(OVERLAY_MODEL, metadataOverlayModel);
-        }
-        metadataOverlayModel.setProjectData(projectData);
+    public static void forceSaveProject(Project project) throws IOException {
+        ProjectUtilities.save(project);
     }
 
     public static Logger getLogger() {

@@ -23,6 +23,8 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.CatalogPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -31,6 +33,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.metadata.Catalog
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.FDPMetadataDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectMetadataRecordDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.ServletException;
@@ -81,13 +84,15 @@ public class CatalogsMetadataCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         CatalogPostRequest catalogPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), CatalogPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
-        ProjectAudit pa = new ProjectAudit(getProject(request));
+        Project project = getProject(request);
+        ProjectAudit pa = new ProjectAudit(project);
         FairDataPointClient fdpClient = new FairDataPointClient(catalogPostRequest.getFdpUri(), catalogPostRequest.getToken(), pa);
 
         try {
             pa.reportInfo(EventSource.FDP_METADATA, "Creating catalog: " + catalogPostRequest.getFdpUri());
             CatalogDTO catalogDTO = fdpClient.postCatalog(catalogPostRequest.getCatalog());
-
+            MetadataModuleImpl.getProjectModel(project).addProjectMetadata(ProjectMetadataRecordDTO.createFor(catalogDTO));
+            MetadataModuleImpl.forceSaveProject(project);
             pa.reportDebug(EventSource.FDP_METADATA, "Catalog created: " + catalogDTO.getIri());
             CommandUtils.objectMapper.writeValue(w, new CatalogPostResponse(catalogDTO));
         } catch (Exception e) {

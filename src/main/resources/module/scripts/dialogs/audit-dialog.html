@@ -24,20 +24,18 @@
         <div class="audit-raw" bind="auditRaw">
             <textarea bind="auditTextArea" readonly></textarea>
         </div>
-        <div class="audit-table" bind="auditTable">
+        <div class="audit-table scrollable-table" bind="auditTable">
             <table>
                 <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Type</th>
-                    <th>Source</th>
-                    <th>Message</th>
+                    <th data-i18n="audit/table/date"></th>
+                    <th data-i18n="audit/table/time"></th>
+                    <th data-i18n="audit/table/type"></th>
+                    <th data-i18n="audit/table/source"></th>
+                    <th data-i18n="audit/table/message"></th>
                 </tr>
                 </thead>
-                <tbody bind="auditTableBody">
-
-                </tbody>
+                <tbody bind="auditTableBody"></tbody>
             </table>
         </div>
         <div class="audit-summary">

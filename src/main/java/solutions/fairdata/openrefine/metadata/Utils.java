@@ -20,31 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.response.config;
+package solutions.fairdata.openrefine.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
-import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
+import java.time.OffsetDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class SettingsResponse {
+public class Utils {
 
-    private String status;
-    private SettingsConfigDTO settings;
-    private ProjectHistoryDTO projectData;
-    private ProjectInfoDTO projectInfo;
-
-    public SettingsResponse(SettingsConfigDTO settings, ProjectHistoryDTO projectData, ProjectInfoDTO projectInfo) {
-        this.status = "ok";
-        this.settings = settings;
-        this.projectData = projectData;
-        this.projectInfo = projectInfo;
+    public static String currentTimestamp() {
+        return OffsetDateTime.now().toString();
     }
 }

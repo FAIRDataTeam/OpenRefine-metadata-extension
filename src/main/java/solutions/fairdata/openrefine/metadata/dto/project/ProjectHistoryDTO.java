@@ -20,20 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto.config;
+package solutions.fairdata.openrefine.metadata.dto.project;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProjectConfigDTO {
+public class ProjectHistoryDTO {
     private HashMap<String, String> lastCatalog = new HashMap<>();
     private HashMap<String, String> lastDataset = new HashMap<>();
+
+    private List<ProjectMetadataRecordDTO> records = new ArrayList<>();
 }

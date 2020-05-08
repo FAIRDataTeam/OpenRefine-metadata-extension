@@ -23,6 +23,8 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DatasetPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -31,6 +33,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.metadata.Dataset
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.CatalogDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectMetadataRecordDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.ServletException;
@@ -80,13 +83,15 @@ public class DatasetsMetadataCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DatasetPostRequest datasetPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DatasetPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
-        ProjectAudit pa = new ProjectAudit(getProject(request));
+        Project project = getProject(request);
+        ProjectAudit pa = new ProjectAudit(project);
         FairDataPointClient fdpClient = new FairDataPointClient(datasetPostRequest.getFdpUri(), datasetPostRequest.getToken(), pa);
 
         try {
             pa.reportInfo(EventSource.FDP_METADATA, "Creating dataset in catalog: " + datasetPostRequest.getDataset().getParent());
             DatasetDTO datasetDTO = fdpClient.postDataset(datasetPostRequest.getDataset());
-
+            MetadataModuleImpl.getProjectModel(project).addProjectMetadata(ProjectMetadataRecordDTO.createFor(datasetDTO));
+            MetadataModuleImpl.forceSaveProject(project);
             pa.reportDebug(EventSource.FDP_METADATA, "Dataset created: " + datasetDTO.getIri());
             CommandUtils.objectMapper.writeValue(w, new DatasetPostResponse(datasetDTO));
         } catch (Exception e) {
