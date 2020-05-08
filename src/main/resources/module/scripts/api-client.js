@@ -55,6 +55,10 @@ class MetadataApiClient {
         this._ajaxGeneric("settings", "POST", settingsPostRequest, callbacks, [], true);
     }
 
+    clearProjectHistory(callbacks) {
+        this._ajaxGeneric("settings", "DELETE", {}, callbacks, [], true);
+    }
+
     getAuditLog(callbacks) {
         this._ajaxGeneric("audit", "GET", {}, callbacks, []);
     }

@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--  Possibility to specify custom storage in frontend
+- Possibility to specify custom storage in frontend
+- History of created metadata in new dialog and stored using overlay model
+  per project
+
+### Changed
+
+- Saving project when overlay model updated (history)
+- Localizable audit table headers
 
 ### Fixed
 
--  Virtuoso storage can use HTTP Basic Auth
+- Virtuoso storage can use HTTP Basic Auth
 
 ## [1.4.0]
 

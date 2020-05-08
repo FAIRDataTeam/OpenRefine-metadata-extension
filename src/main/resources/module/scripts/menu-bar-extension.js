@@ -1,4 +1,4 @@
-/* global lang, ExtensionBar, PostFdpDialog, StoreDataDialog, MetadataAboutDialog, MetadataHelpers */
+/* global lang, ExtensionBar, PostFdpDialog, StoreDataDialog, MetadataAboutDialog, MetadataHistoryDialog, MetadataHelpers */
 
 // Load the localization file
 var dictionary = {};
@@ -33,6 +33,14 @@ $(function(){
                     id: "metadata/post-fdp",
                     label: $.i18n("menu-bar-extension/post-fdp"),
                     click: PostFdpDialog.createAndLaunch
+                },
+                {
+                    // separator
+                },
+                {
+                    id: "metadata/history",
+                    label: $.i18n("menu-bar-extension/history"),
+                    click: MetadataHistoryDialog.createAndLaunch
                 },
                 {
                     // separator

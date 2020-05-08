@@ -39,6 +39,7 @@ function init() {
             "scripts/dialogs/about-dialog.js",
             "scripts/dialogs/audit-dialog.js",
             "scripts/dialogs/fdp-info-dialog.js",
+            "scripts/dialogs/history-dialog.js",
             "scripts/dialogs/metadata-form-dialog.js",
             "scripts/dialogs/post-fdp-dialog.js",
             "scripts/dialogs/store-data-dialog.js",
@@ -51,8 +52,9 @@ function init() {
             "styles/dialogs/about-dialog.less",
             "styles/dialogs/audit-dialog.less",
             "styles/dialogs/fdp-info-dialog.less",
-            "styles/dialogs/store-data-dialog.less",
+            "styles/dialogs/history-dialog.less",
             "styles/dialogs/metadata-form-dialog.less",
             "styles/dialogs/post-fdp-dialog.less",
+            "styles/dialogs/store-data-dialog.less",
         ]);
 }
