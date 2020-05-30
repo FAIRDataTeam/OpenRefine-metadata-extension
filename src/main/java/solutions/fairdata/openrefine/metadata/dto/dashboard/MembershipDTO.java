@@ -37,5 +37,5 @@ public class MembershipDTO {
     private String uuid;
     private String name;
     private List<MembershipPermissionDTO> permissions;
-    private List<MembershipEntity> allowedEntities;
+    private List<String> allowedEntities;
 }

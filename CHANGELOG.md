@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Saving project when overlay model updated (history)
 - Localizable audit table headers
+- Adjusted for compatibility with FAIR Data Point 1.5.0
 
 ### Fixed
 
