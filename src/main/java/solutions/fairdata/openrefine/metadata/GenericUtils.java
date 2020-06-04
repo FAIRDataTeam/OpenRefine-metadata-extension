@@ -20,28 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.commands.request.storage;
+package solutions.fairdata.openrefine.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.storage.CustomStorageDTO;
+import java.time.OffsetDateTime;
 
-import java.util.*;
+public class GenericUtils {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class StoreDataRequest {
-    public static final Set<String> MODES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList("preview", "store"))
-    );
-
-    private String mode;
-    private String format;
-    private String storage;
-    private CustomStorageDTO custom;
-    private HashMap<String, String> metadata;
+    public static String currentTimestamp() {
+        return OffsetDateTime.now().toString();
+    }
 }

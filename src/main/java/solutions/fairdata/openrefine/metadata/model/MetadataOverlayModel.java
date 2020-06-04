@@ -29,7 +29,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import solutions.fairdata.openrefine.metadata.dto.audit.AuditLogDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectMetadataRecordDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,8 +38,12 @@ import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 @Setter
 public class MetadataOverlayModel implements OverlayModel {
 
-    private ProjectConfigDTO projectData;
+    private ProjectHistoryDTO projectData;
     private AuditLogDTO projectLog;
+
+    public void addProjectMetadata(ProjectMetadataRecordDTO projectMetadata) {
+        getProjectData().getRecords().add(projectMetadata);
+    }
 
     @Override
     public void onBeforeSave(Project project) {

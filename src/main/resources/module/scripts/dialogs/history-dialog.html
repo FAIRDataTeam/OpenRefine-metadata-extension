@@ -1,0 +1,33 @@
+<div class="dialog-frame metadata-dialog history-dialog" style="width: 800px;">
+    <div class="dialog-header">
+        <div class="dialog-title" bind="dialogTitle" data-i18n="history/title"></div>
+        <button class="button close-button" bind="closeButton" data-i18n="common/button-close"></button>
+    </div>
+    <div class="dialog-body" bind="dialogBody">
+        <p class="history-intro" data-i18n="history/intro"></p>
+        <div class="history-table scrollable-table">
+            <table>
+                <thead>
+                <tr>
+                    <th data-i18n="history/table/date">Date</th>
+                    <th data-i18n="history/table/time">Time</th>
+                    <th data-i18n="history/table/type">Type</th>
+                    <th data-i18n="history/table/entity">Entity</th>
+                    <th data-i18n="history/table/details">Details</th>
+                </tr>
+                </thead>
+                <tbody bind="historyTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="history-summary">
+            <div class="history-info">
+                <span bind="historyItems">?</span>&nbsp;<span data-i18n="history/entries"></span>
+            </div>
+            <div class="history-actions">
+                <button bind="refreshButton" data-i18n="history/button-refresh"></button>
+                <button bind="clearButton" data-i18n="history/button-clear"></button>
+            </div>
+        </div>
+    </div>
+</div>

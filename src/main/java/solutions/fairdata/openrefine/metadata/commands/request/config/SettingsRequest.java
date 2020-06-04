@@ -26,12 +26,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class SettingsRequest {
-    private ProjectConfigDTO projectData;
+    private String type;
+    private String repositoryUri;
+    private String lastUri;
 }

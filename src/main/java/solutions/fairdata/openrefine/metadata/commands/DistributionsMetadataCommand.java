@@ -23,6 +23,8 @@
 package solutions.fairdata.openrefine.metadata.commands;
 
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import solutions.fairdata.openrefine.metadata.MetadataModuleImpl;
 import solutions.fairdata.openrefine.metadata.ProjectAudit;
 import solutions.fairdata.openrefine.metadata.commands.request.metadata.DistributionPostRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
@@ -31,6 +33,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.metadata.Distrib
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DatasetDTO;
 import solutions.fairdata.openrefine.metadata.dto.metadata.DistributionDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectMetadataRecordDTO;
 import solutions.fairdata.openrefine.metadata.fdp.FairDataPointClient;
 
 import javax.servlet.ServletException;
@@ -80,13 +83,15 @@ public class DistributionsMetadataCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DistributionPostRequest distributionPostRequest = CommandUtils.objectMapper.readValue(request.getReader(), DistributionPostRequest.class);
         Writer w = CommandUtils.prepareWriter(response);
-        ProjectAudit pa = new ProjectAudit(getProject(request));
+        Project project = getProject(request);
+        ProjectAudit pa = new ProjectAudit(project);
         FairDataPointClient fdpClient = new FairDataPointClient(distributionPostRequest.getFdpUri(), distributionPostRequest.getToken(), pa);
 
         try {
             pa.reportDebug(EventSource.FDP_METADATA, "Creating distribution in dataset: " + distributionPostRequest.getDistribution().getParent());
             DistributionDTO distributionDTO = fdpClient.postDistribution(distributionPostRequest.getDistribution());
-
+            MetadataModuleImpl.getProjectModel(project).addProjectMetadata(ProjectMetadataRecordDTO.createFor(distributionDTO));
+            MetadataModuleImpl.forceSaveProject(project);
             pa.reportDebug(EventSource.FDP_METADATA, "Distribution created: " + distributionDTO.getIri());
             CommandUtils.objectMapper.writeValue(w, new DistributionPostResponse(distributionDTO));
         } catch (Exception e) {

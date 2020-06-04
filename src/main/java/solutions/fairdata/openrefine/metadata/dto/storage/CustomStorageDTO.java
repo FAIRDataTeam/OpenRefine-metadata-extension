@@ -20,8 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package solutions.fairdata.openrefine.metadata.dto.dashboard;
+package solutions.fairdata.openrefine.metadata.dto.storage;
 
-public enum MembershipEntity {
-    CATALOG, DATASET, DISTRIBUTION
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.HashMap;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class CustomStorageDTO {
+    private String type;
+    private HashMap<String, String> details;
 }

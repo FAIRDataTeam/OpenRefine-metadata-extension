@@ -27,7 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
 @NoArgsConstructor
@@ -38,10 +38,10 @@ public class SettingsResponse {
 
     private String status;
     private SettingsConfigDTO settings;
-    private ProjectConfigDTO projectData;
+    private ProjectHistoryDTO projectData;
     private ProjectInfoDTO projectInfo;
 
-    public SettingsResponse(SettingsConfigDTO settings, ProjectConfigDTO projectData, ProjectInfoDTO projectInfo) {
+    public SettingsResponse(SettingsConfigDTO settings, ProjectHistoryDTO projectData, ProjectInfoDTO projectInfo) {
         this.status = "ok";
         this.settings = settings;
         this.projectData = projectData;

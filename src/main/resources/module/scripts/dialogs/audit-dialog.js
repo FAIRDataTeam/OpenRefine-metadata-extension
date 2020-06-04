@@ -59,7 +59,7 @@ class MetadataAuditDialog {
                     .text($.i18n(`audit/${what}/${option}`))
             );
         });
-        select.val(toSelect)
+        select.val(toSelect);
     }
 
     showFilters() {
@@ -70,15 +70,17 @@ class MetadataAuditDialog {
 
     showLogTable(entries) {
         entries.forEach((entry) => {
-            const timestamp = Date.parse(entry.timestamp.split("Z", 1)[0]);
+            const timestamp = Date.parse(entry.timestamp.split(".", 1)[0]);
+            let date = "";
+            let time = "";
+            if (timestamp) {
+                date = timestamp.toLocaleDateString();
+                time = timestamp.toLocaleTimeString();
+            }
             this.elements.auditTableBody.append(
                 $("<tr>")
-                    .append($("<td>")
-                        .addClass("date")
-                        .text(timestamp.toLocaleDateString()))
-                    .append($("<td>")
-                        .addClass("time")
-                        .text(timestamp.toLocaleTimeString()))
+                    .append($("<td>").addClass("date").text(date))
+                    .append($("<td>").addClass("time").text(time))
                     .append($("<td>")
                         .addClass(`type-${entry.eventType.toLowerCase()}`)
                         .text($.i18n(`audit/type/${entry.eventType}`)))
@@ -109,10 +111,10 @@ class MetadataAuditDialog {
     filterEntries(entries) {
         const type = this.elements.typeSelect.val();
         const typeVal = this.eventTypes.get(type);
-        const typeFiltered = entries.filter(e => this.eventTypes.get(e.eventType) <= typeVal);
+        const typeFiltered = entries.filter((e) => this.eventTypes.get(e.eventType) <= typeVal);
         const source = this.elements.sourceSelect.val();
         if (source !== "ANY") {
-            return typeFiltered.filter(e => e.eventSource === source);
+            return typeFiltered.filter((e) => e.eventSource === source);
         }
         return typeFiltered;
     }

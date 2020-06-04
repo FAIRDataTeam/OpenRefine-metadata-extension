@@ -4,24 +4,28 @@
 # name = String for its identification
 # type = (one of: ftp, virtuoso, tripleStoreHTTP)
 # enabled = flag if currently possible to use
-# username & passwork = credentials for the storage (if applicable)
-# host = URI of the storage
-# directory = specification of location in the storage
+# details for connections (may differ based on type):
+# - username & password = credentials for the storage (if applicable)
+# - host = URI of the storage
+# - directory = specification of location in the storage
+# - repository = in case of triple-stores
 # contentTypes (optional) = list of allowed content types
 - name: Example FTP
   type: ftp
   enabled: true
-  username: test
-  password: example
-  host: localhost
-  directory: "/"
+  details:
+    username: test
+    password: example
+    host: localhost
+    directory: "/"
 - name: Example Virtuoso
   type: virtuoso
   enabled: true
-  username: dba
-  password: virtDemo
-  host: 127.0.0.1:8890
-  directory: "/DAV/home/dba/rdf_sink/"
+  details:
+    username: dba
+    password: virtDemo
+    host: 127.0.0.1:8890
+    directory: "/DAV/home/dba/rdf_sink/"
   contentTypes:
     - application/rdf+xml
     - application/x-turtle
@@ -33,10 +37,11 @@
 - name: Local GraphDB
   type: tripleStoreHTTP
   enabled: true
-  username: test
-  password: pass
-  host: localhost:7200
-  directory: test01
+  details:
+    username: test
+    password: pass
+    host: localhost:7200
+    repository: test01
   contentTypes:
     - application/rdf+xml
     - application/x-turtle
@@ -44,10 +49,11 @@
 - name: Local AllegroGraph
   type: tripleStoreHTTP
   enabled: true
-  username: test
-  password: pass
-  host: localhost:10035
-  directory: test01
+  details:
+    username: test
+    password: pass
+    host: localhost:10035
+    repository: test01
   contentTypes:
     - application/rdf+xml
     - application/x-turtle

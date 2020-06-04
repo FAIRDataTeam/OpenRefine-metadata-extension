@@ -29,7 +29,6 @@ import solutions.fairdata.openrefine.metadata.commands.request.ServiceRequest;
 import solutions.fairdata.openrefine.metadata.commands.response.ServiceResponse;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

@@ -39,24 +39,20 @@ import java.util.stream.Collectors;
 @Setter
 public class SettingsConfigDTO {
     private Boolean allowCustomFDP = true;
-    private EventType audit = EventType.INFO;
+    private Boolean allowCustomStorage = true;
+    private EventType audit = EventType.OFF;
     private Boolean auditShow = false;
     private HashMap<String, String> metadata = new HashMap<>();
     private List<FDPConnectionConfigDTO> fdpConnections = new LinkedList<>();
 
-    SettingsConfigDTO(Boolean allowCustomFDP, EventType audit, Boolean auditShow) {
-        this.allowCustomFDP = allowCustomFDP;
-        this.audit = audit;
-        this.auditShow = auditShow;
-    }
-
     public static SettingsConfigDTO getDefaultSettings() {
-        return new SettingsConfigDTO(true, EventType.OFF, false);
+        return new SettingsConfigDTO();
     }
 
     public SettingsConfigDTO copyDetails() {
         SettingsConfigDTO details = new SettingsConfigDTO();
         details.setAllowCustomFDP(getAllowCustomFDP());
+        details.setAllowCustomStorage(getAllowCustomStorage());
         details.setAudit(getAudit());
         details.setAuditShow(getAuditShow());
         details.setMetadata(getMetadata());

@@ -44,7 +44,7 @@ class PostFdpDialog {
         this.prepareConnections();
         this.recallCredentials();
         if (settings.settings.auditShow === true) {
-            this.elements.auditButton.removeClass('hidden');
+            this.elements.auditButton.removeClass("hidden");
         }
         this.elements.dialogBody.removeClass("hidden");
     }
@@ -64,12 +64,11 @@ class PostFdpDialog {
         this.level = null;
     }
 
-    persistProjectData() {
+    persistProjectData(repositoryUri, type, lastUri) {
         const settings = {
-            projectData: {
-                lastCatalog: Object.fromEntries(this.projectData.lastCatalog.entries()),
-                lastDataset: Object.fromEntries(this.projectData.lastDataset.entries())
-            }
+            repositoryUri,
+            type,
+            lastUri
         };
         this.apiClient.postSettings(settings, [
             (result) => {
@@ -95,7 +94,7 @@ class PostFdpDialog {
         const isCreatePermission = (permission) => { return permission.code === "C"; };
 
         elmts.closeButton.click(() => { self.dismiss(); });
-        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch() });
+        elmts.auditButton.click(() => { MetadataAuditDialog.createAndLaunch(); });
 
         elmts.connectButton.click(() => {
             const fdpConnection = elmts.fdpConnectionSelect.val();
@@ -161,7 +160,7 @@ class PostFdpDialog {
                 const repositoryUri = this.getCurrentRepositoryUri();
                 if (!this.projectData.lastCatalog.get(repositoryUri) !== catalogUri) {
                     this.projectData.lastCatalog.set(repositoryUri, catalogUri);
-                    this.persistProjectData();
+                    this.persistProjectData(repositoryUri, "catalog", catalogUri);
                 }
             }
         });
@@ -181,7 +180,7 @@ class PostFdpDialog {
                 const repositoryUri = this.getCurrentRepositoryUri();
                 if (this.projectData.lastDataset.get(repositoryUri) !== datasetUri) {
                     this.projectData.lastDataset.set(repositoryUri, datasetUri);
-                    this.persistProjectData();
+                    this.persistProjectData(repositoryUri, "dataset", datasetUri);
                 }
             }
         });

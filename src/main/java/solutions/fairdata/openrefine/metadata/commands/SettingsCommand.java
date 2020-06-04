@@ -32,7 +32,7 @@ import solutions.fairdata.openrefine.metadata.commands.response.ErrorResponse;
 import solutions.fairdata.openrefine.metadata.commands.response.config.SettingsResponse;
 import solutions.fairdata.openrefine.metadata.dto.ProjectInfoDTO;
 import solutions.fairdata.openrefine.metadata.dto.audit.EventSource;
-import solutions.fairdata.openrefine.metadata.dto.config.ProjectConfigDTO;
+import solutions.fairdata.openrefine.metadata.dto.project.ProjectHistoryDTO;
 import solutions.fairdata.openrefine.metadata.dto.config.SettingsConfigDTO;
 
 import javax.servlet.ServletException;
@@ -48,7 +48,7 @@ public class SettingsCommand extends Command {
 
     private SettingsResponse createSettingsResponse(Project project) {
         SettingsConfigDTO settings = MetadataModuleImpl.getInstance().getSettingsDetails();
-        ProjectConfigDTO projectData = MetadataModuleImpl.getProjectConfigDTO(project);
+        ProjectHistoryDTO projectData = MetadataModuleImpl.getProjectHistoryDTO(project);
         ProjectInfoDTO projectInfo = MetadataModuleImpl.getInstance().getProjectInfo();
         return new SettingsResponse(settings, projectData, projectInfo);
     }
@@ -80,8 +80,35 @@ public class SettingsCommand extends Command {
         ProjectAudit pa = new ProjectAudit(getProject(request));
 
         try {
-            pa.reportDebug(EventSource.SETTINGS,"Persisting project configuration");
-            MetadataModuleImpl.setProjectConfigDTO(project, settingsRequest.getProjectData());
+            if (settingsRequest.getType().equalsIgnoreCase("catalog")) {
+                pa.reportDebug(EventSource.SETTINGS,"Persisting last catalog for repository");
+                MetadataModuleImpl.getProjectHistoryDTO(project).getLastCatalog().put(settingsRequest.getRepositoryUri(), settingsRequest.getLastUri());
+                MetadataModuleImpl.forceSaveProject(project);
+            } else if (settingsRequest.getType().equalsIgnoreCase("dataset")) {
+                MetadataModuleImpl.getProjectHistoryDTO(project).getLastDataset().put(settingsRequest.getRepositoryUri(), settingsRequest.getLastUri());
+                MetadataModuleImpl.forceSaveProject(project);
+            }
+            CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
+        } catch (Exception e) {
+            pa.reportError(EventSource.SETTINGS,"Error occurred while persisting Settings");
+            pa.reportTrace(EventSource.SETTINGS, e);
+            CommandUtils.objectMapper.writeValue(w, new ErrorResponse("auth-fdp-command/error", e));
+        } finally {
+            w.flush();
+            w.close();
+        }
+    }
+
+    @Override
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        Project project = getProject(request);
+        Writer w = CommandUtils.prepareWriter(response);
+        ProjectAudit pa = new ProjectAudit(getProject(request));
+
+        try {
+            pa.reportInfo(EventSource.SETTINGS,"Clearing project history");
+            MetadataModuleImpl.getProjectModel(project).setProjectData(new ProjectHistoryDTO());
+            MetadataModuleImpl.forceSaveProject(project);
             CommandUtils.objectMapper.writeValue(w, createSettingsResponse(project));
         } catch (Exception e) {
             pa.reportError(EventSource.SETTINGS,"Error occurred while persisting Settings");

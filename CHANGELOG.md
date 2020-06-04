@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0]
+
+### Added
+
+- Possibility to specify custom storage in frontend
+- History of created metadata in new dialog and stored using overlay model
+  per project
+
+### Changed
+
+- Saving project when overlay model updated (history)
+- Localizable audit table headers
+- Adjusted for compatibility with FAIR Data Point 1.5.0
+
+### Fixed
+
+- Virtuoso storage can use HTTP Basic Auth
+
 ## [1.4.0]
 
 ### Changed
@@ -86,9 +104,10 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 - About dialog with basic information about the extension and its compatibility
 - Report a bug link to create a GitHub issue easily
 
-[Unreleased]: /../../compare/v1.4.0...develop
+[Unreleased]: /../../compare/v1.5.0...develop
 [1.0.0]: /../../tree/v1.0.0
 [1.1.0]: /../../tree/v1.1.0
 [1.2.0]: /../../tree/v1.2.0
 [1.3.0]: /../../tree/v1.3.0
 [1.4.0]: /../../tree/v1.4.0
+[1.5.0]: /../../tree/v1.5.0

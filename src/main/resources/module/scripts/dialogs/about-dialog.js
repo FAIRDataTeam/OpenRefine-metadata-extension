@@ -31,7 +31,7 @@ class MetadataAboutDialog {
 
     loadSettings(settings) {
         if (settings.settings.auditShow === true) {
-            this.elements.auditButton.removeClass('hidden');
+            this.elements.auditButton.removeClass("hidden");
         }
     }
 

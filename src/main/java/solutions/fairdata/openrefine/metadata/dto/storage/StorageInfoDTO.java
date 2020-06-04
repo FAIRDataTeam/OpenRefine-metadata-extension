@@ -22,11 +22,12 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.storage;
 
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Map;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -34,8 +35,7 @@ import lombok.Setter;
 public class StorageInfoDTO {
     private String name;
     private String type;
-    private String host;
-    private String directory;
+    private Map<String, String> details;
     private Set<String> contentTypes;
     private Integer maxByteSize;
     private Set<String> filenamePatterns;
@@ -44,21 +44,23 @@ public class StorageInfoDTO {
         this(
                 storageDTO.getName(),
                 storageDTO.getType(),
-                storageDTO.getHost(),
-                storageDTO.getDirectory(),
+                storageDTO.getDetails(),
                 storageDTO.getContentTypes(),
                 storageDTO.getMaxByteSize(),
                 storageDTO.getFilenamePatterns()
         );
     }
 
-    public StorageInfoDTO(String name, String type, String host, String directory, Set<String> contentTypes, Integer maxByteSize, Set<String> filenamePatterns) {
+    public StorageInfoDTO(String name, String type, Map<String, String> details, Set<String> contentTypes, Integer maxByteSize, Set<String> filenamePatterns) {
         this.name = name;
         this.type = type;
-        this.host = host;
-        this.directory = directory;
+        this.details = details;
         this.contentTypes = contentTypes;
         this.maxByteSize = maxByteSize;
         this.filenamePatterns = filenamePatterns;
+
+        if (details.containsKey("password")) {
+            details.put("password", "<hidden>");
+        }
     }
 }
