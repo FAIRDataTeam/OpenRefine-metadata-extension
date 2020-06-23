@@ -493,12 +493,15 @@ class PostFdpDialog {
     showMetadataSelect(select, metadatas, toSelect) {
         metadatas.forEach((metadata) => {
             const isNew = this.newlyCreatedIRIs.has(metadata.uri);
+            const title = metadata.title +
+                (metadata.state === "DRAFT" ? " (draft)" : "") +
+                (isNew ? " [new]" : "");
             select.append(
                 $("<option>")
                     .addClass("from-fdp")
                     .addClass(isNew ? "new" : "original")
                     .attr("value", metadata.uri)
-                    .text(isNew ? `${metadata.title} [new]` : metadata.title)
+                    .text(title)
             );
         });
         if (metadatas.has(toSelect)) {
