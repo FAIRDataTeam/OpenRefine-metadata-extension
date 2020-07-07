@@ -22,6 +22,7 @@
  */
 package solutions.fairdata.openrefine.metadata.dto.dashboard;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,12 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DashboardItemDTO {
     protected String identifier;
     protected String uri;
     protected String title;
+    protected String state = "PUBLISHED";
     protected List<DashboardItemDTO> children;
     protected MembershipDTO membership;
 }
