@@ -2,8 +2,8 @@
 FROM maven:3.6-jdk-8-slim as builder
 
 # You can specify OpenRefine version by: --build-arg OPENREFINE_VERSION=X.Y
-# Possible versions: 3.3 (supported, default), 3.2
-ARG OPENREFINE_VERSION=3.3
+# Possible versions: 3.4.1  (supported, default), 3.3, 3.2
+ARG OPENREFINE_VERSION=3.4.1
 
 WORKDIR /usr/src/app/
 
@@ -16,7 +16,7 @@ RUN mvn clean package
 # Prepare OpenRefine and metadata extension
 RUN curl -sSL https://github.com/OpenRefine/OpenRefine/releases/download/$OPENREFINE_VERSION/openrefine-linux-$OPENREFINE_VERSION.tar.gz | tar xz
 RUN mv openrefine-$OPENREFINE_VERSION openrefine
-RUN tar xzf target/metadata-OpenRefine-3.3.tgz --directory openrefine/webapp/extensions
+RUN tar xzf target/metadata-OpenRefine-3.4.1.tgz --directory openrefine/webapp/extensions
 
 # ===================================================================
 # Main image
