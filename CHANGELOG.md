@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
+### Changed
+
+- Updated to OpenRefine 3.4.1
+
 ## [1.6.0]
 
 ### Changed
@@ -110,11 +116,12 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 - About dialog with basic information about the extension and its compatibility
 - Report a bug link to create a GitHub issue easily
 
-[Unreleased]: /../../compare/v1.6.0...develop
+[Unreleased]: /../../compare/master...develop
 [1.0.0]: /../../tree/v1.0.0
 [1.1.0]: /../../tree/v1.1.0
 [1.2.0]: /../../tree/v1.2.0
 [1.3.0]: /../../tree/v1.3.0
 [1.4.0]: /../../tree/v1.4.0
 [1.5.0]: /../../tree/v1.5.0
-[1.6.0]: /../../tree/v1.5.0
+[1.6.0]: /../../tree/v1.6.0
+[1.7.0]: /../../tree/v1.7.0
