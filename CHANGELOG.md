@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.0]
+
+### Changed
+
+- Verified compatibility with FAIR Data Point 1.12.0
+
 ## [1.11.0]
 
 ### Changed
@@ -153,3 +159,4 @@ Initial version based on reproducing functionality of deprecated [FAIRifier](htt
 [1.9.0]: /../../tree/v1.9.0
 [1.10.0]: /../../tree/v1.10.0
 [1.11.0]: /../../tree/v1.11.0
+[1.12.0]: /../../tree/v1.12.0
