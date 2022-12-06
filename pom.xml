@@ -71,7 +71,7 @@
         <!-- Core - other -->
         <rdf4j.version>3.0.3</rdf4j.version>
         <jackson.version>2.12.1</jackson.version>
-        <commons.net.version>3.6</commons.net.version>
+        <commons.net.version>3.9.0</commons.net.version>
         <lombok.version>1.18.10</lombok.version>
 
         <!-- Test -->
